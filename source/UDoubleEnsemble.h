@@ -47,6 +47,7 @@
 
 #pragma once
 
+#include "UDoubleMS.h"
 #include "UDouble.h"
 
 // Ensemble uncertainty class.  Represents a distribution by a
@@ -159,7 +160,7 @@ class UDoubleEnsemble
   }
 
   // constructor from an ensemble.
-  // future direction: add similar function that shuffles its input
+  // \todo add similar function that shuffles its input
   UDoubleEnsemble(const double* const newensemble,
                   std::string name = "")
       : epoch(sources.get_epoch())
@@ -179,7 +180,7 @@ class UDoubleEnsemble
     memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
     source_num = sources.get_new_source(source_name);
   }
-// future direction: add constructors with other distributions.
+// \todo add constructors with other distributions.
 
   ~UDoubleEnsemble() {}
 
@@ -324,7 +325,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-// future direction: add procedures to make persistant
+// \todo add procedures to make persistant
   friend std::ostream& operator<<(std::ostream& os, const UDoubleEnsemble<esize>& ud)
   {
     double mean, sigma, skew, kurtosis, m5;
@@ -543,8 +544,8 @@ class UDoubleEnsemble
     return sum_prod_diff / sqrt(sum_2_diff * sum_2_diff_ud);
   }
 
-  // future direction: add function that gives a description
-  // future direction: allow superimposing histograms
+  // \todo add function that gives a description
+  // \todo allow superimposing histograms
   void print_histogram(std::ostream& os = std::cout) const
   {
     // centered bins for each 0.5 sigmas from -4 sigmas to +4 sigmas
@@ -772,8 +773,8 @@ double my_frexp(double a) { return frexp(a, &GlobalInt); }
 double my_modf(double a) { return modf(a, &GlobalDouble); }
 
 // test class has members of all of above classes
-// future direction: add timing of calls to subclasses
-// future direction: add method to compare to values gotten with +=,
+// \todo add timing of calls to subclasses
+// \todo add method to compare to values gotten with +=,
 //                   propogateby...()
 class UDoubleTest
 {
@@ -1298,7 +1299,7 @@ class UDoubleTest
     os << "Corr Track Adv: " << ctaa << std::endl;
   }
 
-  // future direction: add shortprint() only prints what's different
+  // \todo add shortprint() only prints what's different
   friend std::ostream& operator<<(std::ostream& os, const UDoubleTest& ud)
   {
     std::stringstream os_msu, os_msc, os_mscu, os_mscc, os_ctsa, os_ctaa;
@@ -1342,7 +1343,7 @@ class UDoubleTest
     return os;
   }
 
-  // future direction: add check for equality of ud*.ms*, ud*.cta
+  // \todo add check for equality of ud*.ms*, ud*.cta
   friend void print_multi(std::ostream& os,
                           const UDoubleTest& uda,
                           const UDoubleTest& udb,

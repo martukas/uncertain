@@ -63,8 +63,6 @@ T logistic(T r)
 }
 
 // square: just a notational convenience
-inline double sqr(const double& a) { return a * a; }
-
 inline UDoubleTest sqr(const UDoubleTest& a) { return a * a; }
 
 void infix_check()

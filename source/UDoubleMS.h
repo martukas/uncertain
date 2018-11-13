@@ -44,75 +44,14 @@
 
 #pragma once
 
+#include "functions.h"
+
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
-
-// future direction: restrict namespace
-// prints uncertainty to 2 digits and value to same precision
-inline void uncertain_print(double mean, double sigma, std::ostream& os = std::cout)
-{
-  auto original_precision = os.precision();
-  auto original_format = os.flags(std::ios::showpoint);
-
-  // std::cerr << "<" << mean << " +/- " << sigma << "> " << std::endl;
-  int precision;
-  // special cases for zero, NaN, and Infinities (positive & negative)
-  if ((sigma == 0.0) || (sigma != sigma) || (1.0 / sigma == 0.0))
-  {
-    precision = 0;
-  }
-  else
-  {
-    // round sigma to 2 digits
-    int sigma_digits = 1 - int(floor(log10(fabs(sigma))));
-    double round_10_pow = pow(10.0, sigma_digits);
-    sigma = floor(sigma * round_10_pow + 0.5) / round_10_pow;
-
-    // round mean to same # of digits
-    mean = floor(mean * round_10_pow + 0.5) / round_10_pow;
-    if (mean == 0.0)
-    {
-      if (sigma_digits > 0)
-        precision = sigma_digits + 1;
-      else
-        precision = 1;
-    }
-    else
-    {
-      precision = int(floor(log10(fabs(mean)))) + sigma_digits + 1;
-      if (precision < 1)
-      {
-        mean = 0.0;
-        if (sigma_digits > 0)
-          precision = sigma_digits + 1;
-        else
-          precision = 1;
-      }
-    }
-  }
-  os << std::setprecision(precision)
-     << mean << " +/- "
-     << std::setprecision(2)
-     << sigma
-     << std::setprecision(original_precision);
-  os.flags(original_format);
-}
-
-// future direction: restrict namespace
-// reads uncertainty as mean +/- sigma
-inline void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin)
-{
-  char plus, slash, minus;
-  is >> mean >> plus >> slash >> minus >> sigma;
-  if ((plus != '+') || (slash != '/') || (minus != '-'))
-  {
-    throw std::runtime_error("Error: illegal characters encountered in reading mean +/- sigma");
-  }
-}
 
 // model uncertain number using only mean and sigma (pure Gaussian)
 // This is the simplest possible model of uncertainty.  It ignores
