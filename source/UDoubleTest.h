@@ -49,7 +49,6 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include <cstring>
 
 // These global values are used to pass the extra argument to ldexp(),
 // modf(), and frexp() around the interface for my_ldexp(), etc. so
@@ -80,7 +79,7 @@ class UDoubleTest
   UDoubleTest(const UDoubleTest& ud)
       : msu(ud.msu), msc(ud.msc) {}
 
-  UDoubleTest operator+(void) const
+  UDoubleTest operator+() const
   {
     UDoubleTest retval;
 
@@ -89,7 +88,7 @@ class UDoubleTest
     return retval;
   }
 
-  UDoubleTest operator-(void) const
+  UDoubleTest operator-() const
   {
     UDoubleTest retval;
 
@@ -207,14 +206,14 @@ class UDoubleTest
   }
 
   // preincrement and predecrement operators return value after changes
-  UDoubleTest operator++(void)
+  UDoubleTest operator++()
   {
     ++msu;
     ++msc;
     return *this;
   }
 
-  UDoubleTest operator--(void)
+  UDoubleTest operator--()
   {
     --msu;
     --msc;
@@ -298,51 +297,47 @@ class UDoubleTest
 
   friend std::ostream& operator<<(std::ostream& os, const UDoubleTest& ud)
   {
-    std::ostrstream osu, osc;
-    char* up, * cp;
-    osu << ud.msu << std::ends;
-    osc << ud.msc << std::ends;
-    if (strcmp(up = osu.str(), cp = osc.str()))
+    std::stringstream osu, osc;
+    std::string up, cp;
+    osu << ud.msu;
+    osc << ud.msc;
+    if ((up = osu.str()) != (cp = osc.str()))
       os << "Uncorrelated: " << up << "  Correlated: " << cp;
     else
       os << up;
-    osu.freeze(0);
-    osc.freeze(0);
     return os;
   }
 
 #define UDoubleTestfunc1(func) \
       UDoubleTest func(UDoubleTest arg) \
       { \
-         std::ostrstream os, alt_os; \
-         char *str, *slope_str; \
+         std::stringstream os, alt_os; \
+         std::string str, slope_str; \
          UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg.msu);\
          arg.msu = func(arg.msu); \
-         os << arg.msu << std::ends; \
-         alt_os << alt_msu << std::ends; \
-         if (strcmp(slope_str = alt_os.str(), str = os.str())) \
+         os << arg.msu; \
+         alt_os << alt_msu; \
+         if ((slope_str = alt_os.str()) != (str = os.str())) \
             std::cerr << "Warning: different values for " << #func "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          arg.msc = func(arg.msc); \
-         os.freeze(0); alt_os.freeze(0); \
          return arg; \
       }
 #define UDoubleTestfunc2(func) \
       UDoubleTest func(const UDoubleTest& arg1, const UDoubleTest& arg2) \
       { \
          UDoubleTest retval; \
-         std::ostrstream os, alt_os; \
-         char *str, *slope_str; \
+         std::stringstream os, alt_os; \
+         std::string str, slope_str; \
          UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(func, \
                                                   arg1.msu, arg2.msu); \
          retval.msu = func(arg1.msu, arg2.msu); \
-         os << retval.msu << std::ends; \
-         alt_os << alt_msu << std::ends; \
-         if (strcmp(slope_str = alt_os.str(), str = os.str())) \
+         os << retval.msu; \
+         alt_os << alt_msu; \
+         if ((slope_str = alt_os.str()) != (str = os.str())) \
             std::cerr << "Warning: different values for " << #func << "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          retval.msc = func(arg1.msc, arg2.msc); \
-         os.freeze(0); alt_os.freeze(0); \
          return retval; \
       }
 
@@ -386,53 +381,47 @@ class UDoubleTest
 
   friend UDoubleTest ldexp(UDoubleTest arg, const int intarg)
   {
-    std::ostrstream os, alt_os;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::string str, slope_str;
     GlobalInt = intarg;
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
     arg.msu = ldexp(arg.msu, intarg);
-    os << arg.msu << std::ends;
-    alt_os << alt_msu << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu;
+    alt_os << alt_msu;
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for " << "ldexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = ldexp(arg.msc, intarg);
-    os.freeze(0);
-    alt_os.freeze(0);
     return arg;
   }
 
   friend UDoubleTest frexp(UDoubleTest arg, int* intarg)
   {
-    std::ostrstream os, alt_os;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::string str, slope_str;
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
     arg.msu = frexp(arg.msu, intarg);
-    os << arg.msu << std::ends;
-    alt_os << alt_msu << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu;
+    alt_os << alt_msu;
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for " << "frexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = frexp(arg.msc, intarg);
-    os.freeze(0);
-    alt_os.freeze(0);
     return arg;
   }
 
   friend UDoubleTest modf(UDoubleTest arg, double* dblarg)
   {
-    std::ostrstream os, alt_os;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::string str, slope_str;
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
     arg.msu = modf(arg.msu, dblarg);
-    os << arg.msu << std::ends;
-    alt_os << alt_msu << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu;
+    alt_os << alt_msu;
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for " << "modf(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = modf(arg.msc, dblarg);
-    os.freeze(0);
-    alt_os.freeze(0);
     return arg;
   }
 

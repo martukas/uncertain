@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <iomanip>
 
 // future direction: restrict namespace
@@ -144,11 +144,11 @@ class UDoubleMS
   UDoubleMS(const UDoubleMS& ud)
       : value(ud.value), uncertainty(ud.uncertainty) {}
 
-  ~UDoubleMS(void) {}
+  ~UDoubleMS() {}
 
-  UDoubleMS<is_correlated> operator+(void) const { return *this; }
+  UDoubleMS<is_correlated> operator+() const { return *this; }
 
-  UDoubleMS<is_correlated> operator-(void) const
+  UDoubleMS<is_correlated> operator-() const
   {
     if (is_correlated)
       return UDoubleMS<is_correlated>(-value, -uncertainty);
@@ -178,9 +178,9 @@ class UDoubleMS
     return -a;
   }
 
-  UDoubleMS<is_correlated> operator++(void) { return (*this += 1.0); }
+  UDoubleMS<is_correlated> operator++() { return (*this += 1.0); }
 
-  UDoubleMS<is_correlated> operator--(void) { return (*this -= 1.0); }
+  UDoubleMS<is_correlated> operator--() { return (*this -= 1.0); }
 
   UDoubleMS<is_correlated> operator++(int)
   {
@@ -547,9 +547,9 @@ class UDoubleMS
   }
 
   // read-only access to data members
-  double mean(void) const { return value; }
+  double mean() const { return value; }
 
-  double deviation(void) const { return fabs(uncertainty); }
+  double deviation() const { return fabs(uncertainty); }
 
   // To propogate an uncertainty through a function for which the slope
   // is not known, we estimate the slope by comparing values for

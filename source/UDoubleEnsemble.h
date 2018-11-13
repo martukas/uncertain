@@ -74,7 +74,7 @@ class UDoubleEnsemble
   // The main constructor initializes a new source of uncertainty
   // (if there is uncertainty).
   UDoubleEnsemble(const double val = 0.0, const double unc = 0.0,
-                  const char* const name = 0)
+                  std::string name = "")
       : epoch(sources.get_epoch())
   {
     if (unc < 0.0)
@@ -126,21 +126,17 @@ class UDoubleEnsemble
       }
       for (unsigned int i = 0; i < esize; i++)
         ensemble[i] = val + gauss_ensemble[i] * unc;
-      char source_name[MAX_SRC_NAME + 1];
-      if (name && name[0])
+      std::string source_name;
+      if (!name.empty())
       {
-        strncpy(source_name, name, MAX_SRC_NAME);
-        source_name[MAX_SRC_NAME] = 0;
+        source_name = name;
       }
       else
       {
-        std::ostrstream os;
+        std::stringstream os;
         os << "anon: ";
         uncertain_print(val, unc, os);
-        os << std::ends;
-        strncpy(source_name, os.str(), MAX_SRC_NAME);
-        os.rdbuf()->freeze(0);
-        source_name[MAX_SRC_NAME] = 0;
+        source_name = os.str();
       }
       unsigned long source_num = sources.get_num_sources();
       this->shuffle();
@@ -166,24 +162,19 @@ class UDoubleEnsemble
   // constructor from an ensemble.
   // future direction: add similar function that shuffles its input
   UDoubleEnsemble(const double* const newensemble,
-                  const char* const name = "")
+                  std::string name = "")
       : epoch(sources.get_epoch())
   {
     for (unsigned int i = 0; i < esize; i++)
       ensemble[i] = newensemble[i];
-    char source_name[MAX_SRC_NAME + 1];
-    if (name && name[0])
+    std::string source_name;
+    if (!name.empty())
     {
-      strncpy(source_name, name, MAX_SRC_NAME);
-      source_name[MAX_SRC_NAME] = 0;
+      source_name = name;
     }
     else
     {
-      std::ostrstream os;
-      os << "anon from ensemble: " << ensemble[0] << std::ends;
-      strncpy(source_name, os.str(), MAX_SRC_NAME);
-      os.rdbuf()->freeze(0);
-      source_name[MAX_SRC_NAME] = 0;
+      source_name = "anon from ensemble: " + std::to_string(ensemble[0]);
     }
     unsigned long source_num = sources.get_num_sources();
     memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
@@ -191,19 +182,17 @@ class UDoubleEnsemble
   }
 // future direction: add constructors with other distributions.
 
-  ~UDoubleEnsemble(void) {}
+  ~UDoubleEnsemble() {}
 
-  UDoubleEnsemble<esize> operator+(void) const
+  UDoubleEnsemble<esize> operator+() const
   {
     return *this;
   }
 
-  UDoubleEnsemble<esize> operator-(void) const
+  UDoubleEnsemble<esize> operator-() const
   {
     UDoubleEnsemble<esize> retval;
-    unsigned int i;
-
-    for (i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       retval.ensemble[i] = -ensemble[i];
     retval.epoch = epoch;
     return retval;
@@ -227,9 +216,9 @@ class UDoubleEnsemble
   friend UDoubleEnsemble<esize> operator-(const double& b,
                                           UDoubleEnsemble<esize> a) { return -(a -= b); }
 
-  UDoubleEnsemble<esize> operator++(void) { return (*this += 1.0); }
+  UDoubleEnsemble<esize> operator++() { return (*this += 1.0); }
 
-  UDoubleEnsemble<esize> operator--(void) { return (*this -= 1.0); }
+  UDoubleEnsemble<esize> operator--() { return (*this -= 1.0); }
 
   UDoubleEnsemble<esize> operator++(int)
   {
@@ -451,7 +440,7 @@ class UDoubleEnsemble
     return arg;
   }
 
-  double mean(void) const
+  double mean() const
   {
     double sum = 0.0;
 
@@ -460,7 +449,7 @@ class UDoubleEnsemble
     return sum / esize;
   }
 
-  double deviation(void) const
+  double deviation() const
   {
     unsigned int i;
     double diff, sum_2_diff = 0.0; // watch overflow!
@@ -474,7 +463,7 @@ class UDoubleEnsemble
     return sqrt(sum_2_diff / esize);
   }
 
-  static void new_epoch(void) { sources.new_epoch(); }
+  static void new_epoch() { sources.new_epoch(); }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
   {
@@ -639,7 +628,7 @@ class UDoubleEnsemble
     return retval;
   }
 
-  void shuffle(void)
+  void shuffle()
   {
     for (unsigned i = 0; i < esize - 1; i++)
     {
@@ -801,11 +790,15 @@ class UDoubleTest
 
  public:
   UDoubleTest(const double val = 0.0, const double unc = 0.0,
-              const char* const name = "")
-      : msu(val, unc), msc(val, unc), mscu(val, unc), mscc(val, unc), ctsa(val, unc, name), ctaa(val, unc, name), ens_a(
-      val,
-      unc,
-      name), ens_b(val, unc, name) {}
+              std::string name = "")
+      : msu(val, unc)
+        , msc(val, unc)
+        , mscu(val, unc)
+        , mscc(val, unc)
+        , ctsa(val, unc, name)
+        , ctaa(val, unc, name)
+        , ens_a(val, unc, name)
+        , ens_b(val, unc, name) {}
 
   UDoubleTest(const UDoubleTest& ud)
       : msu(ud.msu)
@@ -817,9 +810,9 @@ class UDoubleTest
         , ens_a(ud.ens_a)
         , ens_b(ud.ens_b) {}
 
-  ~UDoubleTest(void) {}
+  ~UDoubleTest() {}
 
-  UDoubleTest operator+(void) const
+  UDoubleTest operator+() const
   {
     UDoubleTest retval;
 
@@ -834,7 +827,7 @@ class UDoubleTest
     return retval;
   }
 
-  UDoubleTest operator-(void) const
+  UDoubleTest operator-() const
   {
     UDoubleTest retval;
 
@@ -1030,7 +1023,7 @@ class UDoubleTest
   }
 
   // preincrement and predecrement operators return value after changes
-  UDoubleTest operator++(void)
+  UDoubleTest operator++()
   {
     ++msu;
     ++msc;
@@ -1043,7 +1036,7 @@ class UDoubleTest
     return *this;
   }
 
-  UDoubleTest operator--(void)
+  UDoubleTest operator--()
   {
     --msu;
     --msc;
@@ -1191,7 +1184,7 @@ class UDoubleTest
     return *this;
   }
 
-  friend std::istrstream& operator>>(std::istrstream& is, UDoubleTest& ud)
+  friend std::istream& operator>>(std::istream& is, UDoubleTest& ud)
   {
     auto init_pos = is.tellg();        // remember initial position
     std::ios::iostate init_state = is.rdstate(); // remember initial state
@@ -1279,7 +1272,7 @@ class UDoubleTest
     return is;
   }
 
-  friend std::istream& operator>>(std::istream& is, UDoubleTest& ud)
+  friend std::stringstream& operator>>(std::stringstream& is, UDoubleTest& ud)
   {
     static bool warned = false;
     if (!warned)
@@ -1309,31 +1302,34 @@ class UDoubleTest
   // future direction: add shortprint() only prints what's different
   friend std::ostream& operator<<(std::ostream& os, const UDoubleTest& ud)
   {
-    std::ostrstream os_msu, os_msc, os_mscu, os_mscc, os_ctsa, os_ctaa;
-    std::ostrstream os_ens_a, os_ens_b;
+    std::stringstream os_msu, os_msc, os_mscu, os_mscc, os_ctsa, os_ctaa;
+    std::stringstream os_ens_a, os_ens_b;
 
-    os_msu << ud.msu << std::ends;
-    char* str_msu = os_msu.str();
-    os_msc << ud.msc << std::ends;
-    char* str_msc = os_msc.str();
-    os_mscu << ud.mscu << std::ends;
-    char* str_mscu = os_mscu.str();
-    os_mscc << ud.mscc << std::ends;
-    char* str_mscc = os_mscc.str();
-    os_ctsa << ud.ctsa << std::ends;
-    char* str_ctsa = os_ctsa.str();
-    os_ctaa << ud.ctaa << std::ends;
-    char* str_ctaa = os_ctaa.str();
-    os_ens_a << ud.ens_a << std::ends;
-    char* str_ens_a = os_ens_a.str();
-    os_ens_b << ud.ens_b << std::ends;
-    char* str_ens_b = os_ens_b.str();
+    os_msu << ud.msu;
+    std::string str_msu = os_msu.str();
+    os_msc << ud.msc;
+    std::string str_msc = os_msc.str();
+    os_mscu << ud.mscu;
+    std::string str_mscu = os_mscu.str();
+    os_mscc << ud.mscc;
+    std::string str_mscc = os_mscc.str();
+    os_ctsa << ud.ctsa;
+    std::string str_ctsa = os_ctsa.str();
+    os_ctaa << ud.ctaa;
+    std::string str_ctaa = os_ctaa.str();
+    os_ens_a << ud.ens_a;
+    std::string str_ens_a = os_ens_a.str();
+    os_ens_b << ud.ens_b;
+    std::string str_ens_b = os_ens_b.str();
 
-    size_t len = strlen(str_msu);  // will ignore higher moments in ensembles
-    if (strncmp(str_msu, str_msc, len)
-        || strncmp(str_msu, str_mscu, len) || strncmp(str_msu, str_mscc, len)
-        || strncmp(str_msu, str_ctsa, len) || strncmp(str_msu, str_ctaa, len)
-        || strncmp(str_msu, str_ens_a, len) || strncmp(str_msu, str_ens_b, len))
+    size_t len = str_msu.length();  // will ignore higher moments in ensembles
+    if (str_msu.compare(0, len, str_msc, 0, len)
+        || str_msu.compare(0, len, str_mscu, 0, len)
+        || str_msu.compare(0, len, str_mscc, 0, len)
+        || str_msu.compare(0, len, str_ctsa, 0, len)
+        || str_msu.compare(0, len, str_ctaa, 0, len)
+        || str_msu.compare(0, len, str_ens_a, 0, len)
+        || str_msu.compare(0, len, str_ens_b, 0, len))
     {
       ud.print_nonrandom_part(os);
       os << "Ensemble<" << ens_a_size << ">: " << ud.ens_a << std::endl;
@@ -1343,14 +1339,6 @@ class UDoubleTest
     {  // if all the same print just one
       os << ud.msc;
     }
-    os_msu.rdbuf()->freeze(0);
-    os_msc.rdbuf()->freeze(0);
-    os_mscu.rdbuf()->freeze(0);
-    os_mscc.rdbuf()->freeze(0);
-    os_ctsa.rdbuf()->freeze(0);
-    os_ctaa.rdbuf()->freeze(0);
-    os_ens_a.rdbuf()->freeze(0);
-    os_ens_b.rdbuf()->freeze(0);
 
     return os;
   }
@@ -1373,37 +1361,35 @@ class UDoubleTest
 #define UDoubleTestfunc1(func) \
       UDoubleTest func(UDoubleTest arg) \
       { \
-         std::ostrstream os, alt_os; \
-         std::ostrstream osc, alt_osc; \
-         std::ostrstream osa, alt_osa; \
-         char *str, *slope_str, *a_str, *alt_a_str; \
+         std::stringstream os, alt_os; \
+         std::stringstream osc, alt_osc; \
+         std::stringstream osa, alt_osa; \
+         std::string str, slope_str, a_str, alt_a_str; \
          UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg.msu);\
          arg.msu = func(arg.msu); \
-         os << arg.msu << std::ends; \
-         alt_os << alt_msu << std::ends; \
-         if (strcmp(slope_str = alt_os.str(), str = os.str())) \
+         os << arg.msu; \
+         alt_os << alt_msu; \
+         if ((slope_str = alt_os.str()) != (str = os.str())) \
             std::cerr << "Warning: different values for " << #func "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          arg.msc = func(arg.msc); \
-         os.rdbuf()->freeze(0); alt_os.rdbuf()->freeze(0); \
          \
          UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(func, arg.mscu);\
          arg.mscu = func(arg.mscu); \
-         osc << arg.mscu << std::ends; \
-         alt_osc << alt_mscu << std::ends; \
-         if (strcmp(slope_str = alt_osc.str(), str = osc.str())) \
+         osc << arg.mscu; \
+         alt_osc << alt_mscu; \
+         if ((slope_str = alt_osc.str()) != (str = osc.str())) \
             std::cerr << "Warning: different values for curved " << #func "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          arg.mscc = func(arg.mscc); \
-         osc.rdbuf()->freeze(0); alt_osc.rdbuf()->freeze(0); \
          \
          arg.ctsa = func(arg.ctsa); \
          arg.ctaa = func(arg.ctaa); \
          UDoubleEnsemble<ens_a_size> alt_ens_a = Invoke(func, arg.ens_a); \
          arg.ens_a = func(arg.ens_a); \
-         osa << arg.ens_a << std::ends; \
-         alt_osa << alt_ens_a << std::ends; \
-         if (strcmp(a_str = alt_osa.str(), alt_a_str = osa.str())) \
+         osa << arg.ens_a; \
+         alt_osa << alt_ens_a; \
+         if ((a_str = alt_osa.str()) != (alt_a_str = osa.str())) \
             std::cerr << "Warning: different values for ensemble<" << ens_a_size \
                  << "> " << #func "(): " \
                  << a_str << " vs. " << alt_a_str << std::endl; \
@@ -1414,30 +1400,28 @@ class UDoubleTest
       UDoubleTest func(const UDoubleTest& arg1, const UDoubleTest& arg2) \
       { \
          UDoubleTest retval; \
-         std::ostrstream os, alt_os; \
-         std::ostrstream osc, alt_osc; \
-         char *str, *slope_str; \
+         std::stringstream os, alt_os; \
+         std::stringstream osc, alt_osc; \
+         std::string str, slope_str; \
          UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg1.msu, \
                                                                 arg2.msu);\
          retval.msu = func(arg1.msu, arg2.msu); \
-         os << retval.msu << std::ends; \
-         alt_os << alt_msu << std::ends; \
-         if (strcmp(slope_str = alt_os.str(), str = os.str())) \
+         os << retval.msu; \
+         alt_os << alt_msu; \
+         if ((slope_str = alt_os.str()) != (str = os.str())) \
             std::cerr << "Warning: different values for " << #func "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          retval.msc = func(arg1.msc, arg2.msc); \
-         os.rdbuf()->freeze(0); alt_os.rdbuf()->freeze(0); \
          \
          UDoubleMSC<0> alt_mscu =PropagateUncertaintiesBySlope(func, arg1.mscu, \
                                                                arg2.mscu);\
          retval.mscu = func(arg1.mscu, arg2.mscu); \
-         osc << retval.mscu << std::ends; \
-         alt_osc << alt_mscu << std::ends; \
-         if (strcmp(slope_str = alt_osc.str(), str = osc.str())) \
+         osc << retval.mscu; \
+         alt_osc << alt_mscu; \
+         if ((slope_str = alt_osc.str()) != (str = osc.str())) \
             std::cerr << "Warning: different values for curved " << #func "(): " \
                  << str << " vs. " << slope_str << std::endl; \
          retval.mscc = func(arg1.mscc, arg2.mscc); \
-         osc.rdbuf()->freeze(0); alt_osc.rdbuf()->freeze(0); \
          \
          retval.ctsa = func(arg1.ctsa, arg2.ctsa); \
          retval.ctaa = func(arg1.ctaa, arg2.ctaa); \
@@ -1486,32 +1470,28 @@ class UDoubleTest
 
   friend UDoubleTest ldexp(UDoubleTest arg, const int intarg)
   {
-    std::ostrstream os, alt_os;
-    std::ostrstream osc, alt_osc;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::stringstream osc, alt_osc;
+    std::string str, slope_str;
 
     GlobalInt = intarg;
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
     arg.msu = ldexp(arg.msu, intarg);
-    os << arg.msu << std::ends;
-    alt_os << alt_msu << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu;
+    alt_os << alt_msu;
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for ldexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = ldexp(arg.msc, intarg);
-    os.rdbuf()->freeze(0);
-    alt_os.rdbuf()->freeze(0);
 
     UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_ldexp, arg.mscu);
     arg.mscu = ldexp(arg.mscu, intarg);
-    osc << arg.mscu << std::ends;
-    alt_osc << alt_mscu << std::ends;
-    if (strcmp(slope_str = alt_osc.str(), str = osc.str()))
+    osc << arg.mscu;
+    alt_osc << alt_mscu;
+    if ((slope_str = alt_osc.str()) != (str = osc.str()))
       std::cerr << "Warning: different values for curved ldexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.mscc = ldexp(arg.mscc, intarg);
-    osc.rdbuf()->freeze(0);
-    alt_osc.rdbuf()->freeze(0);
 
     arg.ctsa = ldexp(arg.ctsa, intarg);
     arg.ctaa = ldexp(arg.ctaa, intarg);
@@ -1522,31 +1502,27 @@ class UDoubleTest
 
   friend UDoubleTest frexp(UDoubleTest arg, int* intarg)
   {
-    std::ostrstream os, alt_os;
-    std::ostrstream osc, alt_osc;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::stringstream osc, alt_osc;
+    std::string str, slope_str;
 
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
-    alt_os << alt_msu << " (" << GlobalInt << ")" << std::ends;
+    alt_os << alt_msu << " (" << GlobalInt << ")";
     arg.msu = frexp(arg.msu, intarg);
-    os << arg.msu << " (" << *intarg << ")" << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu << " (" << *intarg << ")";
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for frexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = frexp(arg.msc, intarg);
-    os.rdbuf()->freeze(0);
-    alt_os.rdbuf()->freeze(0);
 
     UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_frexp, arg.mscu);
-    alt_osc << alt_mscu << " (" << GlobalInt << ")" << std::ends;
+    alt_osc << alt_mscu << " (" << GlobalInt << ")";
     arg.mscu = frexp(arg.mscu, intarg);
-    osc << arg.mscu << " (" << *intarg << ")" << std::ends;
-    if (strcmp(slope_str = alt_osc.str(), str = osc.str()))
+    osc << arg.mscu << " (" << *intarg << ")";
+    if ((slope_str = alt_osc.str()) != (str = osc.str()))
       std::cerr << "Warning: different values for curved frexp(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.mscc = frexp(arg.mscc, intarg);
-    osc.rdbuf()->freeze(0);
-    alt_osc.rdbuf()->freeze(0);
 
     arg.ctsa = frexp(arg.ctsa, intarg);
     arg.ctaa = frexp(arg.ctaa, intarg);
@@ -1557,31 +1533,27 @@ class UDoubleTest
 
   friend UDoubleTest modf(UDoubleTest arg, double* dblarg)
   {
-    std::ostrstream os, alt_os;
-    std::ostrstream osc, alt_osc;
-    char* str, * slope_str;
+    std::stringstream os, alt_os;
+    std::stringstream osc, alt_osc;
+    std::string str, slope_str;
 
     UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
-    alt_os << alt_msu << " (" << GlobalDouble << ")" << std::ends;
+    alt_os << alt_msu << " (" << GlobalDouble << ")";
     arg.msu = modf(arg.msu, dblarg);
-    os << arg.msu << " (" << *dblarg << ")" << std::ends;
-    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+    os << arg.msu << " (" << *dblarg << ")";
+    if ((slope_str = alt_os.str()) != (str = os.str()))
       std::cerr << "Warning: different values for modf(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = modf(arg.msc, dblarg);
-    os.rdbuf()->freeze(0);
-    alt_os.rdbuf()->freeze(0);
 
     UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_modf, arg.mscu);
-    alt_osc << alt_mscu << " (" << GlobalDouble << ")" << std::ends;
+    alt_osc << alt_mscu << " (" << GlobalDouble << ")";
     arg.mscu = modf(arg.mscu, dblarg);
-    osc << arg.mscu << " (" << *dblarg << ")" << std::ends;
-    if (strcmp(slope_str = alt_osc.str(), str = osc.str()))
+    osc << arg.mscu << " (" << *dblarg << ")";
+    if ((slope_str = alt_osc.str()) != (str = osc.str()))
       std::cerr << "Warning: different values for curved modf(): "
                 << str << " vs. " << slope_str << std::endl;
     arg.mscc = modf(arg.mscc, dblarg);
-    osc.rdbuf()->freeze(0);
-    alt_osc.rdbuf()->freeze(0);
 
     arg.ctsa = modf(arg.ctsa, dblarg);
     arg.ctaa = modf(arg.ctaa, dblarg);
@@ -1590,7 +1562,7 @@ class UDoubleTest
     return arg;
   }
 
-  static void new_epoch(void)
+  static void new_epoch()
   {
     UDoubleCTSA::new_epoch();
     UDoubleCTAA::new_epoch();
@@ -1640,7 +1612,7 @@ class UDoubleInit
  private:
   static unsigned short count; // # of UDoubleInit objects existing
  public:
-  UDoubleInit(void)
+  UDoubleInit()
   {
     if (count++ == 0)
     {
@@ -1651,7 +1623,7 @@ class UDoubleInit
     }
   }
 
-  ~UDoubleInit(void)
+  ~UDoubleInit()
   {
     if (--count == 0)
     {

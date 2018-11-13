@@ -67,7 +67,7 @@ inline double sqr(const double& a) { return a * a; }
 
 inline UDoubleTest sqr(const UDoubleTest& a) { return a * a; }
 
-void infix_check(void)
+void infix_check()
 {
   UDoubleTest a, b(0.0, 0.02);
   UDoubleTest c(5.0, 0.03), t;
@@ -87,7 +87,7 @@ void infix_check(void)
   std::cout << "-a = " << -a << std::endl;
   std::cout << "preincrement to " << ++a << std::endl;
   std::cout << "postincrement leaves at " << a++ << std::endl;
-  std::cout << "a std::ends as " << a << std::endl << std::endl;
+  std::cout << "a ends as " << a << std::endl << std::endl;
   std::cout << "-= 2.0 restores a to " << (a -= 2.0) << std::endl << std::endl;
 
   std::cout << "INFIX OPERATORS" << std::endl << std::endl;
@@ -154,11 +154,11 @@ void infix_check(void)
             << std::endl;
 }
 
-void io_check(void)
+void io_check()
 {
-  const int size = 80;
-  char input[size] = "3 +/- 4 1+/-2 2.+/-1 3+/-.3";
-  std::istrstream ibuf(input, size);
+  std::string input = "3 +/- 4 1+/-2 2.+/-1 3+/-.3";
+  std::stringstream ibuf;
+  ibuf.str(input);
   UDoubleMSUncorr a, b;
   UDoubleMSCorr x, y;
 
@@ -174,7 +174,7 @@ void io_check(void)
   std::cout << y << "," << std::endl;
 }
 
-int main(void)
+int main()
 {
 
   infix_check();

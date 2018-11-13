@@ -52,7 +52,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #include <iomanip>
 #include <time.h>
 
@@ -516,8 +516,8 @@ inline double inverse_gaussian_density(const double& p)
 // future direction: include skewing of distribution
 inline void gauss_loss(const double& uncertainty, const double& disc_dist,
                        const discontinuity_type& disc_type,
-                       const char* const id_string,
-                       const char* const func_str,
+                       std::string id_string,
+                       std::string func_str,
                        const double& disc_thresh)
 {
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
@@ -584,11 +584,11 @@ class UDoubleMSC
   UDoubleMSC(const UDoubleMSC& ud)
       : value(ud.value), uncertainty(ud.uncertainty) {}
 
-  ~UDoubleMSC(void) {}
+  ~UDoubleMSC() {}
 
-  UDoubleMSC<is_correlated> operator+(void) const { return *this; }
+  UDoubleMSC<is_correlated> operator+() const { return *this; }
 
-  UDoubleMSC<is_correlated> operator-(void) const
+  UDoubleMSC<is_correlated> operator-() const
   {
     if (is_correlated)
       return UDoubleMSC<is_correlated>(-value, -uncertainty);
@@ -602,9 +602,9 @@ class UDoubleMSC
   friend UDoubleMSC<is_correlated> operator-(UDoubleMSC<is_correlated> a,
                                              const UDoubleMSC<is_correlated>& b) { return a -= b; }
 
-  UDoubleMSC<is_correlated> operator++(void) { return (*this += 1.0); }
+  UDoubleMSC<is_correlated> operator++() { return (*this += 1.0); }
 
-  UDoubleMSC<is_correlated> operator--(void) { return (*this -= 1.0); }
+  UDoubleMSC<is_correlated> operator--() { return (*this -= 1.0); }
 
   UDoubleMSC<is_correlated> operator++(int)
   {
@@ -726,15 +726,14 @@ class UDoubleMSC
 #define UDoubleMSCfunc1(func) \
       UDoubleMSC<is_correlated> func(UDoubleMSC<is_correlated> arg) \
       { \
-         std::ostrstream os; \
-         os << #func "(" << arg << ") " << std::ends; \
+         std::stringstream os; \
+         os << #func "(" << arg << ") "; \
          one_arg_ret funcret = func ## _w_moments(arg.value); \
          arg.value = funcret.value + sqr(arg.uncertainty) \
                       * funcret.arg.curve / 2.0; \
          gauss_loss(arg.uncertainty, funcret.arg.disc_dist, \
                     funcret.arg.disc_type, "", os.str(), \
                     UDoubleMSC<is_correlated>::discontinuity_thresh); \
-         os.rdbuf()->freeze(0); \
          if (funcret.arg.slope == 0.0) \
             arg.uncertainty *= arg.uncertainty * funcret.arg.curve \
                                * 0.7071067781; \
@@ -757,9 +756,9 @@ class UDoubleMSC
       { \
          UDoubleMSC<is_correlated> retval; \
          double unc1, unc2; \
-         std::ostrstream os; \
-         os << #func "(" << arg1 << ", " << arg2 << ") " << std::ends; \
-         char *str = os.str(); \
+         std::stringstream os; \
+         os << #func "(" << arg1 << ", " << arg2 << ") "; \
+         std::string str = os.str(); \
          two_arg_ret funcret = func ## _w_moments(arg1.value, arg2.value); \
          retval.value = funcret.value \
                         + 0.5 * (funcret.arg1.curve * sqr(arg1.uncertainty) \
@@ -770,7 +769,6 @@ class UDoubleMSC
          gauss_loss(arg2.uncertainty, funcret.arg2.disc_dist, \
                     funcret.arg2.disc_type, " on 2nd argument", \
                     str, UDoubleMSC<is_correlated>::discontinuity_thresh); \
-         os.rdbuf()->freeze(0); \
          if (funcret.arg1.slope == 0.0) \
             unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * 0.7071067781; \
          else \
@@ -831,13 +829,12 @@ class UDoubleMSC
   friend UDoubleMSC<is_correlated> ldexp(UDoubleMSC<is_correlated> arg,
                                          const int intarg)
   {
-    std::ostrstream os;
-    os << "ldexp(" << arg << ", " << intarg << ") " << std::ends;
+    std::stringstream os;
+    os << "ldexp(" << arg << ", " << intarg << ") ";
     one_arg_ret funcret = ldexp_w_moments(arg.value, intarg);
     arg.value = funcret.value + sqr(arg.uncertainty) * funcret.arg.curve / 2.0;
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
-    os.rdbuf()->freeze(0);
     if (funcret.arg.slope == 0.0)
       arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
     else
@@ -855,13 +852,12 @@ class UDoubleMSC
   friend UDoubleMSC<is_correlated> frexp(UDoubleMSC<is_correlated> arg,
                                          int* intarg)
   {
-    std::ostrstream os;
-    os << "frexp(" << arg << ", " << *intarg << ") " << std::ends;
+    std::stringstream os;
+    os << "frexp(" << arg << ", " << *intarg << ") ";
     one_arg_ret funcret = frexp_w_moments(arg.value, *intarg);
     arg.value = funcret.value + sqr(arg.uncertainty) * funcret.arg.curve / 2.0;
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
-    os.rdbuf()->freeze(0);
     if (funcret.arg.slope == 0.0)
       arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
     else
@@ -879,13 +875,12 @@ class UDoubleMSC
   friend UDoubleMSC<is_correlated> modf(UDoubleMSC<is_correlated> arg,
                                         double* dblarg)
   {
-    std::ostrstream os;
-    os << "modf(" << arg << ", " << *dblarg << ") " << std::ends;
+    std::stringstream os;
+    os << "modf(" << arg << ", " << *dblarg << ") ";
     one_arg_ret funcret = modf_w_moments(arg.value, *dblarg);
     arg.value = funcret.value + sqr(arg.uncertainty) * funcret.arg.curve / 2.0;
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
-    os.rdbuf()->freeze(0);
     if (funcret.arg.slope == 0.0)
       arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
     else
@@ -901,9 +896,9 @@ class UDoubleMSC
   }
 
   // read-only access to data members
-  double mean(void) const { return value; }
+  double mean() const { return value; }
 
-  double deviation(void) const { return fabs(uncertainty); }
+  double deviation() const { return fabs(uncertainty); }
 
   friend UDoubleMSC<is_correlated> PropagateUncertaintiesBySlope(
       double (* certain_func)(double),
@@ -1000,7 +995,6 @@ double UDoubleMSC<1>::discontinuity_thresh = 0.0;
 
 // future direction: make template variables or class consts
 #define MAX_UNC_ELEMENTS 5
-#define MAX_SRC_NAME 64
 
 // A class for sources of uncertainties.
 class UncertainSourceSet
@@ -1008,19 +1002,18 @@ class UncertainSourceSet
  private:
   unsigned long num_sources;
   unsigned long source_epoch;
-  char source_name[MAX_UNC_ELEMENTS][MAX_SRC_NAME + 1];
-  char class_name[100];
+  std::string source_name[MAX_UNC_ELEMENTS];
+  std::string class_name;
  public:
-  UncertainSourceSet(char* cname = "") : num_sources(0), source_epoch(0)
+  UncertainSourceSet(std::string cname = "") : num_sources(0), source_epoch(0)
   {
     for (unsigned int i = 0; i < MAX_UNC_ELEMENTS; i++)
       source_name[i][0] = 0;
-    strcpy(class_name, cname);
+    class_name = cname;
   }
 
-  unsigned long get_epoch(void) const { return source_epoch; }
+  unsigned long get_epoch() const { return source_epoch; }
 
-  const
   void check_epoch(const unsigned long& epoch) const
   {
     if (epoch != source_epoch)
@@ -1031,7 +1024,7 @@ class UncertainSourceSet
     }
   }
 
-  void new_epoch(void)
+  void new_epoch()
   {
     for (unsigned int i = 0; i < num_sources; i++)
       source_name[i][0] = 0;
@@ -1039,7 +1032,7 @@ class UncertainSourceSet
     num_sources = 0;
   }
 
-  int can_get_new_source(void) const
+  int can_get_new_source() const
   {
     if (num_sources >= MAX_UNC_ELEMENTS)
     {
@@ -1054,22 +1047,21 @@ class UncertainSourceSet
     return 1;
   }
 
-  unsigned long get_new_source(const char* const name)
+  unsigned long get_new_source(std::string name)
   {
     // std::cerr << "trying to get new source (" << num_sources << ") for "
     //      << name << std::endl;
     (void) can_get_new_source();
-    strncpy(source_name[num_sources], name, MAX_SRC_NAME);
-    source_name[num_sources][MAX_SRC_NAME] = 0;
+    source_name[num_sources] = name;
     return num_sources++;
   }
 
-  unsigned long get_num_sources(void) const
+  unsigned long get_num_sources() const
   {
     return num_sources;
   }
 
-  const char* const get_source_name(const unsigned long i) const
+  std::string get_source_name(const unsigned long i) const
   {
     if (i >= num_sources)
     {
@@ -1103,9 +1095,9 @@ class SimpleArray
       element[i] = a.element[i];
   }
 
-  ~SimpleArray(void) {}
+  ~SimpleArray() {}
 
-  SimpleArray operator-(void) const
+  SimpleArray operator-() const
   {
     SimpleArray retval;
 
@@ -1178,7 +1170,7 @@ class SimpleArray
     element[subscript] = value;
   }
 
-  double norm(void) const
+  double norm() const
   {
     double tot = 0.0;
     for (int i = 0; i < size; i++)
@@ -1214,9 +1206,9 @@ class ArrayWithScale
     scale = a.scale;
   }
 
-  ~ArrayWithScale(void) {}
+  ~ArrayWithScale() {}
 
-  ArrayWithScale operator-(void) const
+  ArrayWithScale operator-() const
   {
     ArrayWithScale retval;
 
@@ -1309,7 +1301,7 @@ class ArrayWithScale
       element[subscript] = value / scale;
   }
 
-  double norm(void) const
+  double norm() const
   {
     if (scale == 0.0)
       return 0.0;
@@ -1335,7 +1327,7 @@ class UDoubleCT
  public:
   // default constructor creates a new independent uncertainty element
   UDoubleCT(const double val = 0.0, const double unc = 0.0,
-            const char* const name = "")
+            std::string name = "")
       : value(val), unc_components(0.0)
   {
     epoch = sources.get_epoch();
@@ -1346,21 +1338,17 @@ class UDoubleCT
     }
     if (unc != 0.0)
     {
-      char source_name[MAX_SRC_NAME + 1];
-      if (name && name[0])
+      std::string source_name;
+      if (!name.empty())
       {
-        strncpy(source_name, name, MAX_SRC_NAME);
-        source_name[MAX_SRC_NAME] = 0;
+        source_name = name;
       }
       else
       {
-        std::ostrstream os;
+        std::stringstream os;
         os << "anon: ";
         uncertain_print(val, unc, os);
-        os << std::ends;
-        strncpy(source_name, os.str(), MAX_SRC_NAME);
-        os.rdbuf()->freeze(0);
-        source_name[MAX_SRC_NAME] = 0;
+        source_name = os.str();
       }
       unsigned long new_source_num = sources.get_new_source(source_name);
       unc_components.setelement(new_source_num, unc);
@@ -1374,9 +1362,9 @@ class UDoubleCT
   }
   // operator= ?
 
-  ~UDoubleCT(void) {}
+  ~UDoubleCT() {}
 
-  static void new_epoch(void) { sources.new_epoch(); }
+  static void new_epoch() { sources.new_epoch(); }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
   {
@@ -1394,9 +1382,9 @@ class UDoubleCT
     os << std::endl;
   }
 
-  UDoubleCT operator+(void) const { return *this; }
+  UDoubleCT operator+() const { return *this; }
 
-  UDoubleCT operator-(void) const
+  UDoubleCT operator-() const
   {
     UDoubleCT retval;
 
@@ -1468,9 +1456,9 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT operator++(void) { return (*this += 1.0); }
+  UDoubleCT operator++() { return (*this += 1.0); }
 
-  UDoubleCT operator--(void) { return (*this -= 1.0); }
+  UDoubleCT operator--() { return (*this -= 1.0); }
 
   UDoubleCT operator++(int)
   {
@@ -1531,16 +1519,13 @@ class UDoubleCT
   friend std::istream& operator>>(std::istream& is, UDoubleCT& ud)
   {
     double mean, sigma;
-    char source_name[MAX_SRC_NAME + 1];
+    std::string source_name;
 
     uncertain_read(mean, sigma, is);
-    std::ostrstream os;
+    std::stringstream os;
     os << "input: ";
     uncertain_print(mean, sigma, os);
-    os << std::ends;
-    strncpy(source_name, os.str(), MAX_SRC_NAME);
-    os.rdbuf()->freeze(0);
-    source_name[MAX_SRC_NAME] = 0;
+    source_name = os.str();
     ud = UDoubleCT<T>(mean, sigma, source_name);
     return is;
   }
@@ -1628,9 +1613,9 @@ class UDoubleCT
     return arg;
   }
 
-  double mean(void) const { return value; }
+  double mean() const { return value; }
 
-  double deviation(void) const { return unc_components.norm(); }
+  double deviation() const { return unc_components.norm(); }
 
 };
 

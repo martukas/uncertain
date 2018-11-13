@@ -38,6 +38,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <sstream>
 #include "UDouble.h"
 #include "UDoubleEnsemble.h"
 
@@ -61,7 +62,7 @@ T logistic(T r)
   return x;
 }
 
-void infix_check(void)
+void infix_check()
 {
   UDoubleTest a, b(0.0, 0.02, "b (0.0 +/- 0.02)");
   UDoubleTest c(5.0, 0.03, "c (5.00 +/- 0.03)"), t;
@@ -94,10 +95,10 @@ void infix_check(void)
   std::cout << "-a = " << -a << std::endl;
   std::cout << "preincrement to " << ++a << std::endl;
   std::cout << "postincrement leaves at " << a++ << std::endl;
-  std::cout << "a std::ends as " << a << std::endl << std::endl;
+  std::cout << "a ends as " << a << std::endl << std::endl;
   std::cout << "predecrement to " << --a << std::endl;
   std::cout << "postdecrement leaves at " << a-- << std::endl;
-  std::cout << "a std::ends as " << a << std::endl << std::endl;
+  std::cout << "a ends as " << a << std::endl << std::endl;
 
   std::cout << "INFIX OPERATORS" << std::endl << std::endl;
 
@@ -198,11 +199,11 @@ void infix_check(void)
   t.print_uncertain_sources();
 }
 
-void io_check(void)
+void io_check()
 {
-  const int size = 80;
-  char input[size] = "3 +/- 4 1+/-2 2.+/-1 3+/-.3";
-  std::istrstream ibuf(input, size);
+  std::string input = "3 +/- 4 1+/-2 2.+/-1 3+/-.3";
+  std::stringstream ibuf;
+  ibuf.str(input);
   UDoubleTest a, b, c, d;
 
   std::cout << "EXTRACTOR" << std::endl;
@@ -215,7 +216,7 @@ void io_check(void)
   std::cout << c << "," << std::endl << d << std::endl;
 }
 
-int main(void)
+int main()
 {
   UDoubleInit udi_main;
 
