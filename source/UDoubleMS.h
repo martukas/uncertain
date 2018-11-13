@@ -52,68 +52,68 @@
 
 // future direction: restrict namespace
 // prints uncertainty to 2 digits and value to same precision
-inline void uncertain_print(double mean, double sigma, std::ostream &os = std::cout)
-   {
-      auto original_precision = os.precision();
-      auto original_format = os.flags(std::ios::showpoint);
+inline void uncertain_print(double mean, double sigma, std::ostream& os = std::cout)
+{
+  auto original_precision = os.precision();
+  auto original_format = os.flags(std::ios::showpoint);
 
-      // std::cerr << "<" << mean << " +/- " << sigma << "> " << std::endl;
-      int precision;
-      // special cases for zero, NaN, and Infinities (positive & negative)
-      if ((sigma == 0.0) || (sigma != sigma) || (1.0/sigma == 0.0))
-      {
-         precision = 0;
-      }
+  // std::cerr << "<" << mean << " +/- " << sigma << "> " << std::endl;
+  int precision;
+  // special cases for zero, NaN, and Infinities (positive & negative)
+  if ((sigma == 0.0) || (sigma != sigma) || (1.0 / sigma == 0.0))
+  {
+    precision = 0;
+  }
+  else
+  {
+    // round sigma to 2 digits
+    int sigma_digits = 1 - int(floor(log10(fabs(sigma))));
+    double round_10_pow = pow(10.0, sigma_digits);
+    sigma = floor(sigma * round_10_pow + 0.5) / round_10_pow;
+
+    // round mean to same # of digits
+    mean = floor(mean * round_10_pow + 0.5) / round_10_pow;
+    if (mean == 0.0)
+    {
+      if (sigma_digits > 0)
+        precision = sigma_digits + 1;
       else
+        precision = 1;
+    }
+    else
+    {
+      precision = int(floor(log10(fabs(mean)))) + sigma_digits + 1;
+      if (precision < 1)
       {
-         // round sigma to 2 digits
-         int sigma_digits = 1 - int(floor(log10(fabs(sigma))));
-         double round_10_pow = pow(10.0, sigma_digits);
-         sigma = floor(sigma * round_10_pow + 0.5) / round_10_pow;
-
-         // round mean to same # of digits
-         mean = floor(mean * round_10_pow + 0.5) / round_10_pow;
-         if (mean == 0.0)
-         {
-            if (sigma_digits > 0)
-               precision = sigma_digits + 1;
-            else
-               precision = 1;
-         }
-         else
-         {
-            precision = int(floor(log10(fabs(mean)))) + sigma_digits + 1;
-            if (precision < 1)
-            {
-              mean = 0.0;
-              if (sigma_digits > 0)
-                 precision = sigma_digits + 1;
-              else
-                 precision = 1;
-            }
-         }
+        mean = 0.0;
+        if (sigma_digits > 0)
+          precision = sigma_digits + 1;
+        else
+          precision = 1;
       }
-      os << std::setprecision(precision)
-         << mean << " +/- "
-         << std::setprecision(2)
-         << sigma
-         << std::setprecision(original_precision);
-      os.flags(original_format);
-   }
+    }
+  }
+  os << std::setprecision(precision)
+     << mean << " +/- "
+     << std::setprecision(2)
+     << sigma
+     << std::setprecision(original_precision);
+  os.flags(original_format);
+}
 
 // future direction: restrict namespace
 // reads uncertainty as mean +/- sigma
-inline void uncertain_read(double& mean, double& sigma, std::istream &is = std::cin)
-   {
-      char plus, slash, minus;
-      is >> mean >> plus >> slash >> minus >> sigma;
-      if ((plus != '+') || (slash != '/') || (minus != '-'))
-      {
-         std::cerr << "Error: illegal characters encountered in reading "
+inline void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin)
+{
+  char plus, slash, minus;
+  is >> mean >> plus >> slash >> minus >> sigma;
+  if ((plus != '+') || (slash != '/') || (minus != '-'))
+  {
+    std::cerr << "Error: illegal characters encountered in reading "
                  "mean +/- sigma" << std::endl;
-         exit(EXIT_FAILURE);
-      }
-   }
+    exit(EXIT_FAILURE);
+  }
+}
 
 // model uncertain number using only mean and sigma (pure Gaussian)
 // This is the simplest possible model of uncertainty.  It ignores
@@ -122,14 +122,14 @@ inline void uncertain_read(double& mean, double& sigma, std::istream &is = std::
 // are 100% correlated or that they are 100% uncorrelated, depending
 // on the template parameter. (The template parameter is conceptual
 // a bool, but g++ 2.6.3 chokes on that.)
-template <int is_correlated>
+template<int is_correlated>
 class UDoubleMS
 {
-private:
+ private:
   double value;          // the central (expected) value
   double uncertainty;    // the uncertainty (standard deviation)
 
-public:
+ public:
   // This is the default conversion from type double
   UDoubleMS(const double val = 0.0, const double unc = 0.0)
       : value(val), uncertainty(unc)
@@ -140,78 +140,87 @@ public:
       exit(EXIT_FAILURE);
     }
   }
+
   UDoubleMS(const UDoubleMS& ud)
       : value(ud.value), uncertainty(ud.uncertainty) {}
 
   ~UDoubleMS(void) {}
 
-  UDoubleMS<is_correlated> operator +(void) const
-  {return *this;}
-  UDoubleMS<is_correlated> operator -(void) const
+  UDoubleMS<is_correlated> operator+(void) const { return *this; }
+
+  UDoubleMS<is_correlated> operator-(void) const
   {
     if (is_correlated)
       return UDoubleMS<is_correlated>(-value, -uncertainty);
     else
       return UDoubleMS<is_correlated>(-value, uncertainty);
   }
-  friend UDoubleMS<is_correlated> operator +(UDoubleMS<is_correlated> a,
-                                             const UDoubleMS<is_correlated>& b)
-  { return a += b; }
-  friend UDoubleMS<is_correlated> operator +(UDoubleMS<is_correlated> a,
-                                             const double& b)
-  { return a += b; }
-  friend UDoubleMS<is_correlated> operator +(const double& b,
-                                             UDoubleMS<is_correlated> a)
-  { return a += b; }
-  friend UDoubleMS<is_correlated> operator -(UDoubleMS<is_correlated> a,
-                                             const UDoubleMS<is_correlated>& b)
-  { return a -= b; }
-  friend UDoubleMS<is_correlated> operator -(UDoubleMS<is_correlated> a,
-                                             const double& b)
-  { return a -= b; }
-  friend UDoubleMS<is_correlated> operator -(const double& b,
-                                             UDoubleMS<is_correlated> a)
-  { a -= b; return -a; }
-  UDoubleMS<is_correlated> operator ++(void)
-  { return (*this += 1.0); }
-  UDoubleMS<is_correlated> operator --(void)
-  { return (*this -= 1.0); }
-  UDoubleMS<is_correlated> operator ++(int)
+
+  friend UDoubleMS<is_correlated> operator+(UDoubleMS<is_correlated> a,
+                                            const UDoubleMS<is_correlated>& b) { return a += b; }
+
+  friend UDoubleMS<is_correlated> operator+(UDoubleMS<is_correlated> a,
+                                            const double& b) { return a += b; }
+
+  friend UDoubleMS<is_correlated> operator+(const double& b,
+                                            UDoubleMS<is_correlated> a) { return a += b; }
+
+  friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
+                                            const UDoubleMS<is_correlated>& b) { return a -= b; }
+
+  friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
+                                            const double& b) { return a -= b; }
+
+  friend UDoubleMS<is_correlated> operator-(const double& b,
+                                            UDoubleMS<is_correlated> a)
+  {
+    a -= b;
+    return -a;
+  }
+
+  UDoubleMS<is_correlated> operator++(void) { return (*this += 1.0); }
+
+  UDoubleMS<is_correlated> operator--(void) { return (*this -= 1.0); }
+
+  UDoubleMS<is_correlated> operator++(int)
   {
     UDoubleMS<is_correlated> retval(*this);
     *this += 1.0;
     return retval;
   }
-  UDoubleMS<is_correlated> operator --(int)
+
+  UDoubleMS<is_correlated> operator--(int)
   {
     UDoubleMS<is_correlated> retval(*this);
     *this -= 1.0;
     return retval;
   }
-  friend UDoubleMS<is_correlated> operator *(UDoubleMS<is_correlated> a,
-                                             const UDoubleMS<is_correlated>& b)
-  { return a *= b; }
-  friend UDoubleMS<is_correlated> operator *(UDoubleMS<is_correlated> a,
-                                             const double& b)
-  { return a *= b; }
-  friend UDoubleMS<is_correlated> operator *(const double& b,
-                                             UDoubleMS<is_correlated> a)
-  { return a *= b; }
-  friend UDoubleMS<is_correlated> operator /(UDoubleMS<is_correlated> a,
-                                             const UDoubleMS<is_correlated>& b)
-  { return a /= b; }
-  friend UDoubleMS<is_correlated> operator /(UDoubleMS<is_correlated> a,
-                                             const double& b)
-  { return a /= b; }
-  friend UDoubleMS<is_correlated> operator /(const double& b,
-                                             UDoubleMS<is_correlated> a)
+
+  friend UDoubleMS<is_correlated> operator*(UDoubleMS<is_correlated> a,
+                                            const UDoubleMS<is_correlated>& b) { return a *= b; }
+
+  friend UDoubleMS<is_correlated> operator*(UDoubleMS<is_correlated> a,
+                                            const double& b) { return a *= b; }
+
+  friend UDoubleMS<is_correlated> operator*(const double& b,
+                                            UDoubleMS<is_correlated> a) { return a *= b; }
+
+  friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
+                                            const UDoubleMS<is_correlated>& b) { return a /= b; }
+
+  friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
+                                            const double& b) { return a /= b; }
+
+  friend UDoubleMS<is_correlated> operator/(const double& b,
+                                            UDoubleMS<is_correlated> a)
   {
     UDoubleMS<is_correlated> retval;
     retval.uncertainty = -b * a.uncertainty / (a.value * a.value);
     retval.value = b / a.value;
     return retval;
   }
-  UDoubleMS<is_correlated> &operator +=(const UDoubleMS<is_correlated>& ud)
+
+  UDoubleMS<is_correlated>& operator+=(const UDoubleMS<is_correlated>& ud)
   {
     if (is_correlated)
       uncertainty += ud.uncertainty;
@@ -220,12 +229,14 @@ public:
     value += ud.value;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator +=(const double& a)
+
+  UDoubleMS<is_correlated>& operator+=(const double& a)
   {
     value += a;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator -=(const UDoubleMS<is_correlated>& ud)
+
+  UDoubleMS<is_correlated>& operator-=(const UDoubleMS<is_correlated>& ud)
   {
     if (is_correlated)
       uncertainty -= ud.uncertainty;
@@ -234,12 +245,14 @@ public:
     value -= ud.value;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator -=(const double& a)
+
+  UDoubleMS<is_correlated>& operator-=(const double& a)
   {
     value -= a;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator *=(const UDoubleMS<is_correlated>& ud)
+
+  UDoubleMS<is_correlated>& operator*=(const UDoubleMS<is_correlated>& ud)
   {
     if (is_correlated)
       uncertainty = uncertainty * ud.value + ud.uncertainty * value;
@@ -248,13 +261,15 @@ public:
     value *= ud.value;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator *=(const double& a)
+
+  UDoubleMS<is_correlated>& operator*=(const double& a)
   {
     value *= a;
     uncertainty *= a;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator /=(const UDoubleMS<is_correlated>& ud)
+
+  UDoubleMS<is_correlated>& operator/=(const UDoubleMS<is_correlated>& ud)
   {
     if (is_correlated)
       uncertainty = uncertainty / ud.value
@@ -265,18 +280,21 @@ public:
     value /= ud.value;
     return *this;
   }
-  UDoubleMS<is_correlated> &operator /=(const double& a)
+
+  UDoubleMS<is_correlated>& operator/=(const double& a)
   {
     value /= a;
     uncertainty /= a;
     return *this;
   }
-  friend std::ostream& operator <<(std::ostream &os, const UDoubleMS<is_correlated> &ud)
+
+  friend std::ostream& operator<<(std::ostream& os, const UDoubleMS<is_correlated>& ud)
   {
     uncertain_print(ud.mean(), ud.deviation(), os);
     return os;
   }
-  friend std::istream& operator >>(std::istream &is, UDoubleMS<is_correlated> &ud)
+
+  friend std::istream& operator>>(std::istream& is, UDoubleMS<is_correlated>& ud)
   {
     double mean, sigma;
     uncertain_read(mean, sigma, is);
@@ -292,12 +310,14 @@ public:
     arg.uncertainty = 0.0;
     return arg;
   }
+
   friend UDoubleMS<is_correlated> floor(UDoubleMS<is_correlated> arg)
   {
     arg.value = floor(arg.value);
     arg.uncertainty = 0.0;
     return arg;
   }
+
   friend UDoubleMS<is_correlated> fabs(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated && (arg.value < 0.0))
@@ -305,6 +325,7 @@ public:
     arg.value = fabs(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> ldexp(UDoubleMS<is_correlated> arg,
                                         int intarg)
   {
@@ -315,19 +336,22 @@ public:
     arg.value = ldexp(arg.value, intarg);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> modf(UDoubleMS<is_correlated> arg,
-                                       double *intpart)
+                                       double* intpart)
   {
     arg.value = modf(arg.value, intpart);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> frexp(UDoubleMS<is_correlated> arg,
-                                        int *intarg)
+                                        int* intarg)
   {
     arg.uncertainty *= pow(2.0, double(-*intarg));
     arg.value = frexp(arg.value, intarg);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> fmod(const UDoubleMS<is_correlated>& arg1,
                                        const UDoubleMS<is_correlated>& arg2)
   {
@@ -335,10 +359,10 @@ public:
     double slope1, slope2;
 
     slope1 = 1.0 / arg2.value;
-    if ((arg1.value/arg2.value) > 0.0)
-      slope2 = -floor(arg1.value/arg2.value);
+    if ((arg1.value / arg2.value) > 0.0)
+      slope2 = -floor(arg1.value / arg2.value);
     else
-      slope2 = floor(-arg1.value/arg2.value);
+      slope2 = floor(-arg1.value / arg2.value);
     if (is_correlated)
       retval.uncertainty = slope1 * arg1.uncertainty
           + slope2 * arg2.uncertainty;
@@ -348,6 +372,7 @@ public:
     retval.value = fmod(arg1.value, arg2.value);
     return retval;
   }
+
   friend UDoubleMS<is_correlated> sqrt(UDoubleMS<is_correlated> arg)
   {
     arg.value = sqrt(arg.value);
@@ -357,6 +382,7 @@ public:
       arg.uncertainty /= fabs(2.0 * arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> sin(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -366,6 +392,7 @@ public:
     arg.value = sin(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> cos(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -375,6 +402,7 @@ public:
     arg.value = cos(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> tan(UDoubleMS<is_correlated> arg)
   {
     double costemp = cos(arg.value);
@@ -382,12 +410,14 @@ public:
     arg.value = tan(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> asin(UDoubleMS<is_correlated> arg)
   {
     arg.uncertainty /= sqrt(1.0 - arg.value * arg.value);
     arg.value = asin(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> acos(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -397,12 +427,14 @@ public:
     arg.value = acos(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> atan(UDoubleMS<is_correlated> arg)
   {
     arg.uncertainty /= 1.0 + arg.value * arg.value;
     arg.value = atan(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> atan2(const UDoubleMS<is_correlated>& arg1,
                                         const UDoubleMS<is_correlated>& arg2)
   {
@@ -424,6 +456,7 @@ public:
     retval.value = atan2(arg1.value, arg2.value);
     return retval;
   }
+
   friend UDoubleMS<is_correlated> exp(UDoubleMS<is_correlated> arg)
   {
     arg.value = exp(arg.value);
@@ -433,6 +466,7 @@ public:
       arg.uncertainty *= fabs(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> log(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -442,6 +476,7 @@ public:
     arg.value = log(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> log10(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -451,12 +486,14 @@ public:
     arg.value = log10(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> sinh(UDoubleMS<is_correlated> arg)
   {
     arg.uncertainty *= cosh(arg.value);
     arg.value = sinh(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> cosh(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
@@ -466,6 +503,7 @@ public:
     arg.value = cosh(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> tanh(UDoubleMS<is_correlated> arg)
   {
     double coshtemp = cosh(arg.value);
@@ -473,6 +511,7 @@ public:
     arg.value = tanh(arg.value);
     return arg;
   }
+
   friend UDoubleMS<is_correlated> pow(const UDoubleMS<is_correlated>& arg1,
                                       const UDoubleMS<is_correlated>& arg2)
   {
@@ -508,8 +547,9 @@ public:
   }
 
   // read-only access to data members
-  double mean(void) const {return value;}
-  double deviation(void) const {return fabs(uncertainty);}
+  double mean(void) const { return value; }
+
+  double deviation(void) const { return fabs(uncertainty); }
 
   // To propogate an uncertainty through a function for which the slope
   // is not known, we estimate the slope by comparing values for
@@ -530,8 +570,9 @@ public:
 
     return retval;
   }
+
   friend UDoubleMS<is_correlated> PropagateUncertaintiesBySlope(
-      double (*certain_func)(double, double),
+      double (* certain_func)(double, double),
       const UDoubleMS<is_correlated>& arg1,
       const UDoubleMS<is_correlated>& arg2)
   {

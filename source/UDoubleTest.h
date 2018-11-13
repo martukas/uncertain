@@ -61,228 +61,257 @@ static double GlobalDouble;
 // These function uses GlobalInt & GlobalDouble (above) to pass the
 // extra arguments to ldexp(), etc. around the interface for my_ldexp(), etc.
 double my_ldexp(double a) { return ldexp(a, GlobalInt); }
-double my_frexp(double a) { return frexp(a, &GlobalInt); }
-double my_modf(double a) { return modf(a, &GlobalDouble); }
 
+double my_frexp(double a) { return frexp(a, &GlobalInt); }
+
+double my_modf(double a) { return modf(a, &GlobalDouble); }
 
 // test class has UDoubleUncorr and UDoubleCorr members
 class UDoubleTest
 {
-private:
-   UDoubleMSUncorr msu;
-   UDoubleMSCorr msc;
+ private:
+  UDoubleMSUncorr msu;
+  UDoubleMSCorr msc;
 
-public:
-   UDoubleTest(const double val = 0.0, const double unc = 0.0)
-   : msu(val, unc), msc(val, unc) {}
-   UDoubleTest(const UDoubleTest& ud)
-   : msu(ud.msu), msc(ud.msc) {}
+ public:
+  UDoubleTest(const double val = 0.0, const double unc = 0.0)
+      : msu(val, unc), msc(val, unc) {}
 
-   UDoubleTest operator +(void) const
-   {
-      UDoubleTest retval;
+  UDoubleTest(const UDoubleTest& ud)
+      : msu(ud.msu), msc(ud.msc) {}
 
-      retval.msu = +msu;
-      retval.msc = +msc;
-      return retval;
-   }
-   UDoubleTest operator -(void) const
-   {
-      UDoubleTest retval;
+  UDoubleTest operator+(void) const
+  {
+    UDoubleTest retval;
 
-      retval.msu = -msu;
-      retval.msc = -msc;
-      return retval;
-   }
-   friend UDoubleTest operator +(const UDoubleTest& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+    retval.msu = +msu;
+    retval.msc = +msc;
+    return retval;
+  }
 
-      retval.msu = a.msu + b.msu;
-      retval.msc = a.msc + b.msc;
-      return retval;
-   }
-   friend UDoubleTest operator +(const double& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
-      retval.msu = a + b.msu;
-      retval.msc = a + b.msc;
-      return retval;
-   }
-   friend UDoubleTest operator +(const UDoubleTest& a, const double& b)
-   {
-      UDoubleTest retval;
+  UDoubleTest operator-(void) const
+  {
+    UDoubleTest retval;
 
-      retval.msu = a.msu + b;
-      retval.msc = a.msc + b;
-      return retval;
-   }
-   friend UDoubleTest operator -(const UDoubleTest& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+    retval.msu = -msu;
+    retval.msc = -msc;
+    return retval;
+  }
 
-      retval.msu = a.msu - b.msu;
-      retval.msc = a.msc - b.msc;
-       return retval;
-   }
-   friend UDoubleTest operator -(const double& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+  friend UDoubleTest operator+(const UDoubleTest& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
 
-      retval.msu = a - b.msu;
-      retval.msc = a - b.msc;
-      return retval;
-   }
-   friend UDoubleTest operator -(const UDoubleTest& a, const double& b)
-   {
-      UDoubleTest retval;
+    retval.msu = a.msu + b.msu;
+    retval.msc = a.msc + b.msc;
+    return retval;
+  }
 
-      retval.msu = a.msu - b;
-      retval.msc = a.msc - b;
-      return retval;
-   }
-   friend UDoubleTest operator *(const UDoubleTest& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+  friend UDoubleTest operator+(const double& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
+    retval.msu = a + b.msu;
+    retval.msc = a + b.msc;
+    return retval;
+  }
 
-      retval.msu = a.msu * b.msu;
-      retval.msc = a.msc * b.msc;
-       return retval;
-   }
-   friend UDoubleTest operator *(const double& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+  friend UDoubleTest operator+(const UDoubleTest& a, const double& b)
+  {
+    UDoubleTest retval;
 
-      retval.msu = a * b.msu;
-      retval.msc = a * b.msc;
-      return retval;
-   }
-   friend UDoubleTest operator *(const UDoubleTest& a, const double& b)
-   {
-      UDoubleTest retval;
+    retval.msu = a.msu + b;
+    retval.msc = a.msc + b;
+    return retval;
+  }
 
-      retval.msu = a.msu * b;
-      retval.msc = a.msc * b;
-      return retval;
-   }
-   friend UDoubleTest operator /(const UDoubleTest& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+  friend UDoubleTest operator-(const UDoubleTest& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
 
-      retval.msu = a.msu / b.msu;
-      retval.msc = a.msc / b.msc;
-      return retval;
-   }
-   friend UDoubleTest operator /(const double& a, const UDoubleTest& b)
-   {
-      UDoubleTest retval;
+    retval.msu = a.msu - b.msu;
+    retval.msc = a.msc - b.msc;
+    return retval;
+  }
 
-      retval.msu = a / b.msu;
-      retval.msc = a / b.msc;
+  friend UDoubleTest operator-(const double& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
 
-      return retval;
-   }
-   friend UDoubleTest operator /(const UDoubleTest& a, const double& b)
-   {
-      UDoubleTest retval;
+    retval.msu = a - b.msu;
+    retval.msc = a - b.msc;
+    return retval;
+  }
 
-      retval.msu = a.msu / b;
-      retval.msc = a.msc / b;
-      return retval;
-   }
-   // preincrement and predecrement operators return value after changes
-   UDoubleTest operator ++(void)
-   {
-      ++msu;
-      ++msc;
-      return *this;
-   }
-   UDoubleTest operator --(void)
-   {
-      --msu;
-      --msc;
-       return *this;
-   }
-   // postincrement and postdecrement operators return value before changes
-   UDoubleTest operator ++(int)
-   {
-      UDoubleTest retval(*this);
+  friend UDoubleTest operator-(const UDoubleTest& a, const double& b)
+  {
+    UDoubleTest retval;
 
-      msu++;
-      msc++;
-      return retval;
-   }
-   UDoubleTest operator --(int)
-   {
-      UDoubleTest retval(*this);
+    retval.msu = a.msu - b;
+    retval.msc = a.msc - b;
+    return retval;
+  }
 
-      msu--;
-      msc--;
-      return retval;
-   }
-   UDoubleTest &operator +=(const UDoubleTest& ud)
-   {
-      msu += ud.msu;
-      msc += ud.msc;
-      return *this;
-   }
-   UDoubleTest &operator -=(const UDoubleTest& ud)
-   {
-      msu -= ud.msu;
-      msc -= ud.msc;
-       return *this;
-   }
-   UDoubleTest &operator *=(const UDoubleTest& ud)
-   {
-      msu *= ud.msu;
-      msc *= ud.msc;
-      return *this;
-   }
-   UDoubleTest &operator /=(const UDoubleTest& ud)
-   {
-      msu /= ud.msu;
-      msc /= ud.msc;
-      return *this;
-   }
-   UDoubleTest &operator +=(const double& d)
-   {
-      msu += d;
-      msc += d;
-      return *this;
-   }
-   UDoubleTest &operator -=(const double& d)
-   {
-      msu -= d;
-      msc -= d;
-      return *this;
-   }
-   UDoubleTest &operator *=(const double& d)
-   {
-      msu *= d;
-      msc *= d;
-      return *this;
-   }
-   UDoubleTest &operator /=(const double& d)
-   {
-      msu /= d;
-      msc /= d;
-      return *this;
-   }
-   friend std::ostream& operator <<(std::ostream &os, const UDoubleTest &ud)
-   {
-      std::ostrstream osu, osc;
-      char *up, *cp;
-      osu << ud.msu << std::ends;
-      osc << ud.msc << std::ends;
-      if (strcmp(up = osu.str(), cp = osc.str()))
-         os << "Uncorrelated: " << up << "  Correlated: " << cp;
-      else
-         os << up;
-      osu.freeze(0);
-      osc.freeze(0);
-      return os;
-   }
-   #define UDoubleTestfunc1(func) \
+  friend UDoubleTest operator*(const UDoubleTest& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a.msu * b.msu;
+    retval.msc = a.msc * b.msc;
+    return retval;
+  }
+
+  friend UDoubleTest operator*(const double& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a * b.msu;
+    retval.msc = a * b.msc;
+    return retval;
+  }
+
+  friend UDoubleTest operator*(const UDoubleTest& a, const double& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a.msu * b;
+    retval.msc = a.msc * b;
+    return retval;
+  }
+
+  friend UDoubleTest operator/(const UDoubleTest& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a.msu / b.msu;
+    retval.msc = a.msc / b.msc;
+    return retval;
+  }
+
+  friend UDoubleTest operator/(const double& a, const UDoubleTest& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a / b.msu;
+    retval.msc = a / b.msc;
+
+    return retval;
+  }
+
+  friend UDoubleTest operator/(const UDoubleTest& a, const double& b)
+  {
+    UDoubleTest retval;
+
+    retval.msu = a.msu / b;
+    retval.msc = a.msc / b;
+    return retval;
+  }
+
+  // preincrement and predecrement operators return value after changes
+  UDoubleTest operator++(void)
+  {
+    ++msu;
+    ++msc;
+    return *this;
+  }
+
+  UDoubleTest operator--(void)
+  {
+    --msu;
+    --msc;
+    return *this;
+  }
+
+  // postincrement and postdecrement operators return value before changes
+  UDoubleTest operator++(int)
+  {
+    UDoubleTest retval(*this);
+
+    msu++;
+    msc++;
+    return retval;
+  }
+
+  UDoubleTest operator--(int)
+  {
+    UDoubleTest retval(*this);
+
+    msu--;
+    msc--;
+    return retval;
+  }
+
+  UDoubleTest& operator+=(const UDoubleTest& ud)
+  {
+    msu += ud.msu;
+    msc += ud.msc;
+    return *this;
+  }
+
+  UDoubleTest& operator-=(const UDoubleTest& ud)
+  {
+    msu -= ud.msu;
+    msc -= ud.msc;
+    return *this;
+  }
+
+  UDoubleTest& operator*=(const UDoubleTest& ud)
+  {
+    msu *= ud.msu;
+    msc *= ud.msc;
+    return *this;
+  }
+
+  UDoubleTest& operator/=(const UDoubleTest& ud)
+  {
+    msu /= ud.msu;
+    msc /= ud.msc;
+    return *this;
+  }
+
+  UDoubleTest& operator+=(const double& d)
+  {
+    msu += d;
+    msc += d;
+    return *this;
+  }
+
+  UDoubleTest& operator-=(const double& d)
+  {
+    msu -= d;
+    msc -= d;
+    return *this;
+  }
+
+  UDoubleTest& operator*=(const double& d)
+  {
+    msu *= d;
+    msc *= d;
+    return *this;
+  }
+
+  UDoubleTest& operator/=(const double& d)
+  {
+    msu /= d;
+    msc /= d;
+    return *this;
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, const UDoubleTest& ud)
+  {
+    std::ostrstream osu, osc;
+    char* up, * cp;
+    osu << ud.msu << std::ends;
+    osc << ud.msc << std::ends;
+    if (strcmp(up = osu.str(), cp = osc.str()))
+      os << "Uncorrelated: " << up << "  Correlated: " << cp;
+    else
+      os << up;
+    osu.freeze(0);
+    osc.freeze(0);
+    return os;
+  }
+
+#define UDoubleTestfunc1(func) \
       UDoubleTest func(UDoubleTest arg) \
       { \
          std::ostrstream os, alt_os; \
@@ -298,7 +327,7 @@ public:
          os.freeze(0); alt_os.freeze(0); \
          return arg; \
       }
-   #define UDoubleTestfunc2(func) \
+#define UDoubleTestfunc2(func) \
       UDoubleTest func(const UDoubleTest& arg1, const UDoubleTest& arg2) \
       { \
          UDoubleTest retval; \
@@ -316,71 +345,95 @@ public:
          os.freeze(0); alt_os.freeze(0); \
          return retval; \
       }
-   friend UDoubleTestfunc1(sqrt)
-   friend UDoubleTestfunc1(sin)
-   friend UDoubleTestfunc1(cos)
-   friend UDoubleTestfunc1(tan)
-   friend UDoubleTestfunc1(asin)
-   friend UDoubleTestfunc1(acos)
-   friend UDoubleTestfunc1(atan)
-   friend UDoubleTestfunc2(atan2)
-   friend UDoubleTestfunc1(ceil)
-   friend UDoubleTestfunc1(floor)
-   friend UDoubleTestfunc1(fabs)
-   friend UDoubleTestfunc2(fmod)
-   friend UDoubleTestfunc1(exp)
-   friend UDoubleTestfunc1(log)
-   friend UDoubleTestfunc1(log10)
-   friend UDoubleTestfunc1(sinh)
-   friend UDoubleTestfunc1(cosh)
-   friend UDoubleTestfunc1(tanh)
-   friend UDoubleTestfunc2(pow)
 
-   friend UDoubleTest ldexp(UDoubleTest arg, const int intarg)
-   {
-      std::ostrstream os, alt_os;
-      char *str, *slope_str;
-      GlobalInt = intarg;
-      UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
-      arg.msu = ldexp(arg.msu, intarg);
-      os << arg.msu << std::ends;
-      alt_os << alt_msu << std::ends;
-      if (strcmp(slope_str = alt_os.str(), str = os.str()))
-         std::cerr << "Warning: different values for " << "ldexp(): "
-              << str << " vs. " << slope_str << std::endl;
-      arg.msc = ldexp(arg.msc, intarg);
-      os.freeze(0); alt_os.freeze(0);
-      return arg;
-   }
-   friend UDoubleTest frexp(UDoubleTest arg, int *intarg)
-   {
-      std::ostrstream os, alt_os;
-      char *str, *slope_str;
-      UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(my_frexp, arg.msu);
-      arg.msu = frexp(arg.msu, intarg);
-      os << arg.msu << std::ends;
-      alt_os << alt_msu << std::ends;
-      if (strcmp(slope_str = alt_os.str(), str = os.str()))
-         std::cerr << "Warning: different values for " << "frexp(): "
-              << str << " vs. " << slope_str << std::endl;
-      arg.msc = frexp(arg.msc, intarg);
-      os.freeze(0); alt_os.freeze(0);
-      return arg;
-   }
-   friend UDoubleTest modf(UDoubleTest arg, double *dblarg)
-   {
-      std::ostrstream os, alt_os;
-      char *str, *slope_str;
-      UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
-      arg.msu = modf(arg.msu, dblarg);
-      os << arg.msu << std::ends;
-      alt_os << alt_msu << std::ends;
-      if (strcmp(slope_str = alt_os.str(), str = os.str()))
-         std::cerr << "Warning: different values for " << "modf(): "
-              << str << " vs. " << slope_str << std::endl;
-      arg.msc = modf(arg.msc, dblarg);
-      os.freeze(0); alt_os.freeze(0);
-      return arg;
-   }
+  friend UDoubleTestfunc1(sqrt)
+
+  friend UDoubleTestfunc1(sin)
+
+  friend UDoubleTestfunc1(cos)
+
+  friend UDoubleTestfunc1(tan)
+
+  friend UDoubleTestfunc1(asin)
+
+  friend UDoubleTestfunc1(acos)
+
+  friend UDoubleTestfunc1(atan)
+
+  friend UDoubleTestfunc2(atan2)
+
+  friend UDoubleTestfunc1(ceil)
+
+  friend UDoubleTestfunc1(floor)
+
+  friend UDoubleTestfunc1(fabs)
+
+  friend UDoubleTestfunc2(fmod)
+
+  friend UDoubleTestfunc1(exp)
+
+  friend UDoubleTestfunc1(log)
+
+  friend UDoubleTestfunc1(log10)
+
+  friend UDoubleTestfunc1(sinh)
+
+  friend UDoubleTestfunc1(cosh)
+
+  friend UDoubleTestfunc1(tanh)
+
+  friend UDoubleTestfunc2(pow)
+
+  friend UDoubleTest ldexp(UDoubleTest arg, const int intarg)
+  {
+    std::ostrstream os, alt_os;
+    char* str, * slope_str;
+    GlobalInt = intarg;
+    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
+    arg.msu = ldexp(arg.msu, intarg);
+    os << arg.msu << std::ends;
+    alt_os << alt_msu << std::ends;
+    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+      std::cerr << "Warning: different values for " << "ldexp(): "
+                << str << " vs. " << slope_str << std::endl;
+    arg.msc = ldexp(arg.msc, intarg);
+    os.freeze(0);
+    alt_os.freeze(0);
+    return arg;
+  }
+
+  friend UDoubleTest frexp(UDoubleTest arg, int* intarg)
+  {
+    std::ostrstream os, alt_os;
+    char* str, * slope_str;
+    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
+    arg.msu = frexp(arg.msu, intarg);
+    os << arg.msu << std::ends;
+    alt_os << alt_msu << std::ends;
+    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+      std::cerr << "Warning: different values for " << "frexp(): "
+                << str << " vs. " << slope_str << std::endl;
+    arg.msc = frexp(arg.msc, intarg);
+    os.freeze(0);
+    alt_os.freeze(0);
+    return arg;
+  }
+
+  friend UDoubleTest modf(UDoubleTest arg, double* dblarg)
+  {
+    std::ostrstream os, alt_os;
+    char* str, * slope_str;
+    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
+    arg.msu = modf(arg.msu, dblarg);
+    os << arg.msu << std::ends;
+    alt_os << alt_msu << std::ends;
+    if (strcmp(slope_str = alt_os.str(), str = os.str()))
+      std::cerr << "Warning: different values for " << "modf(): "
+                << str << " vs. " << slope_str << std::endl;
+    arg.msc = modf(arg.msc, dblarg);
+    os.freeze(0);
+    alt_os.freeze(0);
+    return arg;
+  }
 
 };

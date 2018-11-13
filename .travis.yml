@@ -1,5 +1,4 @@
 sudo: required
-dist: xenial
 
 # Enable C++ support
 language: cpp
