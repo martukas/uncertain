@@ -494,15 +494,13 @@ inline double inverse_gaussian_density(const double& p)
 {
   if (p <= 0.0)
   {
-    std::cerr << "inverse_gaussian_density() called for negative value: "
-              << p << std::endl;
-    exit(EXIT_FAILURE);
+    throw std::runtime_error("inverse_gaussian_density() called for negative value: "
+                                 + std::to_string(p));
   }
   else if (p > 0.5)
   {
-    std::cerr << "inverse_gaussian_density() called for too large value: "
-              << p << std::endl;
-    exit(EXIT_FAILURE);
+    throw std::runtime_error("inverse_gaussian_density() called for too large value: "
+                                 + std::to_string(p));
   }
 
   const double c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
@@ -553,7 +551,7 @@ inline void gauss_loss(const double& uncertainty, const double& disc_dist,
 //
 // Ultimately this work will be more useful when it is incorporated
 // into a correlation tracking class.
-template<int is_correlated>
+template<bool is_correlated>
 class UDoubleMSC
 {
  private:
@@ -576,8 +574,7 @@ class UDoubleMSC
   {
     if ((unc < 0.0) && !is_correlated)
     {
-      std::cerr << "Error: negative uncertainty: " << unc << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative uncertainty: " + std::to_string(unc));
     }
   }
 
@@ -987,10 +984,10 @@ class UDoubleMSC
 };
 
 template<>
-double UDoubleMSC<0>::discontinuity_thresh = 3.0;
+double UDoubleMSC<false>::discontinuity_thresh = 3.0;
 
 template<>
-double UDoubleMSC<1>::discontinuity_thresh = 0.0;
+double UDoubleMSC<true>::discontinuity_thresh = 0.0;
 
 
 // future direction: make template variables or class consts
@@ -1018,9 +1015,9 @@ class UncertainSourceSet
   {
     if (epoch != source_epoch)
     {
-      std::cerr << "Bad epoch: " << epoch << " expected: " << source_epoch
-                << " in class " << class_name << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Bad epoch: "
+                                   + std::to_string(epoch) + " expected: " + std::to_string(source_epoch)
+                                   + " in class " + class_name);
     }
   }
 
@@ -1036,13 +1033,12 @@ class UncertainSourceSet
   {
     if (num_sources >= MAX_UNC_ELEMENTS)
     {
-      std::cerr << "Cannot make new UncertainSource" << std::endl;
-      std::cerr << "Already have maximum number of permissible uncertainty "
-                << "elements: " << MAX_UNC_ELEMENTS << "(" << num_sources
-                << ")" << "in class " << class_name << std::endl;
-      std::cerr << "Change the value of MAX_UNC_ELEMENTS and recompile"
-                << " or use new_epoch()" << std::endl;
-      exit(EXIT_FAILURE);
+      std::stringstream ss;
+      ss << "Already at maximum number of permissible uncertainty elements: "
+         << MAX_UNC_ELEMENTS << "(" << num_sources << ")" << "in class "
+         << class_name << ".Change the value of MAX_UNC_ELEMENTS and recompile"
+         << " or use new_epoch().";
+      throw std::runtime_error(ss.str());
     }
     return 1;
   }
@@ -1065,9 +1061,8 @@ class UncertainSourceSet
   {
     if (i >= num_sources)
     {
-      std::cerr << "get_source_name called with illegal source number: "
-                << i << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("get_source_name called with illegal source number: "
+                                   + std::to_string(i));
     }
     return source_name[i];
   }
@@ -1142,14 +1137,14 @@ class SimpleArray
   {
     if (subscript < 0)
     {
-      std::cerr << "Error: negative subscript: " << subscript << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative subscript: "
+                                   + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      std::cerr << "Error: oversize subscript: " << subscript
-                << " Greater than " << (size - 1) << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: oversize subscript: "
+                                   + std::to_string(subscript)
+                                   + " Greater than " + std::to_string(size - 1));
     }
     return element[subscript];
   }
@@ -1158,14 +1153,14 @@ class SimpleArray
   {
     if (subscript < 0)
     {
-      std::cerr << "Error: negative subscript: " << subscript << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative subscript: "
+                                   + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      std::cerr << "Error: oversize subscript: " << subscript
-                << " Greater than " << (size - 1) << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: oversize subscript: "
+                                   + std::to_string(subscript) +
+          " Greater than " + std::to_string(size - 1));
     }
     element[subscript] = value;
   }
@@ -1272,14 +1267,12 @@ class ArrayWithScale
   {
     if (subscript < 0)
     {
-      std::cerr << "Error: negative subscript: " << subscript << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      std::cerr << "Error: oversize subscript: " << subscript
-                << " Greater than " << (size - 1) << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
+                " Greater than " + std::to_string(size - 1));
     }
     return element[subscript] * scale;
   }
@@ -1288,14 +1281,12 @@ class ArrayWithScale
   {
     if (subscript < 0)
     {
-      std::cerr << "Error: negative subscript: " << subscript << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      std::cerr << "Error: oversize subscript: " << subscript
-                << " Greater than " << (size - 1) << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
+                " Greater than " + std::to_string(size - 1));
     }
     if (scale != 0.0)
       element[subscript] = value / scale;
@@ -1333,8 +1324,7 @@ class UDoubleCT
     epoch = sources.get_epoch();
     if (unc < 0.0)
     {
-      std::cerr << "Error: negative uncertainty: " << unc << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative uncertainty: " + std::to_string(unc));
     }
     if (unc != 0.0)
     {

@@ -79,8 +79,7 @@ class UDoubleEnsemble
   {
     if (unc < 0.0)
     {
-      std::cerr << "Error: negative uncertainty: " << unc << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative uncertainty: " + std::to_string(unc));
     }
     if (unc != 0.0)
     {
@@ -781,8 +780,8 @@ class UDoubleTest
  private:
   UDoubleMSUncorr msu;
   UDoubleMSCorr msc;
-  UDoubleMSC<0> mscu;
-  UDoubleMSC<1> mscc;
+  UDoubleMSC<false> mscu;
+  UDoubleMSC<true> mscc;
   UDoubleCTSA ctsa;
   UDoubleCTAA ctaa;
   UDoubleEnsemble<ens_a_size> ens_a;
@@ -1374,7 +1373,7 @@ class UDoubleTest
                  << str << " vs. " << slope_str << std::endl; \
          arg.msc = func(arg.msc); \
          \
-         UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(func, arg.mscu);\
+         UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(func, arg.mscu);\
          arg.mscu = func(arg.mscu); \
          osc << arg.mscu; \
          alt_osc << alt_mscu; \
@@ -1413,7 +1412,7 @@ class UDoubleTest
                  << str << " vs. " << slope_str << std::endl; \
          retval.msc = func(arg1.msc, arg2.msc); \
          \
-         UDoubleMSC<0> alt_mscu =PropagateUncertaintiesBySlope(func, arg1.mscu, \
+         UDoubleMSC<false> alt_mscu =PropagateUncertaintiesBySlope(func, arg1.mscu, \
                                                                arg2.mscu);\
          retval.mscu = func(arg1.mscu, arg2.mscu); \
          osc << retval.mscu; \
@@ -1484,7 +1483,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = ldexp(arg.msc, intarg);
 
-    UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_ldexp, arg.mscu);
+    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_ldexp, arg.mscu);
     arg.mscu = ldexp(arg.mscu, intarg);
     osc << arg.mscu;
     alt_osc << alt_mscu;
@@ -1515,7 +1514,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = frexp(arg.msc, intarg);
 
-    UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_frexp, arg.mscu);
+    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_frexp, arg.mscu);
     alt_osc << alt_mscu << " (" << GlobalInt << ")";
     arg.mscu = frexp(arg.mscu, intarg);
     osc << arg.mscu << " (" << *intarg << ")";
@@ -1546,7 +1545,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = modf(arg.msc, dblarg);
 
-    UDoubleMSC<0> alt_mscu = PropagateUncertaintiesBySlope(my_modf, arg.mscu);
+    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_modf, arg.mscu);
     alt_osc << alt_mscu << " (" << GlobalDouble << ")";
     arg.mscu = modf(arg.mscu, dblarg);
     osc << arg.mscu << " (" << *dblarg << ")";

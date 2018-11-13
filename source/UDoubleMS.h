@@ -109,9 +109,7 @@ inline void uncertain_read(double& mean, double& sigma, std::istream& is = std::
   is >> mean >> plus >> slash >> minus >> sigma;
   if ((plus != '+') || (slash != '/') || (minus != '-'))
   {
-    std::cerr << "Error: illegal characters encountered in reading "
-                 "mean +/- sigma" << std::endl;
-    exit(EXIT_FAILURE);
+    throw std::runtime_error("Error: illegal characters encountered in reading mean +/- sigma");
   }
 }
 
@@ -122,7 +120,7 @@ inline void uncertain_read(double& mean, double& sigma, std::istream& is = std::
 // are 100% correlated or that they are 100% uncorrelated, depending
 // on the template parameter. (The template parameter is conceptual
 // a bool, but g++ 2.6.3 chokes on that.)
-template<int is_correlated>
+template<bool is_correlated>
 class UDoubleMS
 {
  private:
@@ -136,8 +134,7 @@ class UDoubleMS
   {
     if ((unc < 0.0) && !is_correlated)
     {
-      std::cerr << "Error: negative uncertainty: " << unc << std::endl;
-      exit(EXIT_FAILURE);
+      throw std::runtime_error("Error: negative uncertainty: " + std::to_string(unc));
     }
   }
 
@@ -605,6 +602,6 @@ class UDoubleMS
 };
 
 // typedefs to hide the use of templates in the implementation
-typedef UDoubleMS<0> UDoubleMSUncorr;
-typedef UDoubleMS<1> UDoubleMSCorr;
+typedef UDoubleMS<false> UDoubleMSUncorr;
+typedef UDoubleMS<true> UDoubleMSCorr;
 
