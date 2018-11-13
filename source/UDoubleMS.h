@@ -49,6 +49,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
 
 // future direction: restrict namespace
 // prints uncertainty to 2 digits and value to same precision
