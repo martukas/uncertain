@@ -26,4 +26,4 @@ before_script:
   - cd build
   - cmake ..
 
-script: make && ./bin/udmtest && ./bin/utest
+script: make && ./bin/udmstest && ./bin/utest
