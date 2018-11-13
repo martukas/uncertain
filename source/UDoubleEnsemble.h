@@ -62,10 +62,12 @@
 template <unsigned int esize>
 class UDoubleEnsemble
 {
+public:
+  static double src_ensemble[MAX_UNC_ELEMENTS][esize];
+
 private:
    double ensemble[esize];
    static UncertainSourceSet sources;
-   static double src_ensemble[MAX_UNC_ELEMENTS][esize];
    unsigned long epoch;
 
 public:

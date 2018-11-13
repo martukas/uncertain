@@ -39,8 +39,13 @@
 #include <math.h>
 #include <iostream>
 #include "UDouble.h"
-#include "UDoubleTest.h"
+#include "UDoubleEnsemble.h"
 
+template <>
+double UDoubleEnsemble<128u>::src_ensemble[MAX_UNC_ELEMENTS][128u] = {};
+
+template <>
+double UDoubleEnsemble<1024u>::src_ensemble[MAX_UNC_ELEMENTS][1024u] = {};
 
 // logistic function is chaotic for some inputs
 #define LOGISTIC_ITERATIONS 50
