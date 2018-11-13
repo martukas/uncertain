@@ -15,25 +15,15 @@ install:
 - sudo apt-get install -qq g++-4.9
 - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 - sudo apt-get install -qq python-pip
-#- sudo apt-get install libffi-dev libssl-dev
-#- sudo -H pip2 install requests[security]
-#- sudo -H pip2 install pyopenssl ndg-httpsclient pyasn1
 # Install conan
 - sudo -H pip2 install conan
-# Automatic detection of your arch, compiler, etc.
 - conan profile new --detect default
 - conan profile update settings.compiler.libcxx=libstdc++11 default  
-#- conan user
-#- conan remote add conancommunity https://api.bintray.com/conan/conan-community/conan
-#- conan remote add conan-transit https://api.bintray.com/conan/conan/conan-transit
-#- conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 - conan remote add ess-dmsc https://api.bintray.com/conan/ess-dmsc/conan
-#TODO: only ubuntu
 
-# Build steps
-#script:
-- mkdir build
-- cd build
-#- conan install --build=outdated ..
-- cmake ..
-- make
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script: make && ./bin/udmtest && ./bin/utest
