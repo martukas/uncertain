@@ -29,5 +29,6 @@ before_script:
 script:
   - make
   - make run_tests
-  - ./bin/udmstest
-  - ./bin/utest
+  - ./bin/ms_demo
+  - ./bin/full_demo
+

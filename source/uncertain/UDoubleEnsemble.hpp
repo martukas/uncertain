@@ -50,8 +50,8 @@
 // \todo get rid of this include
 #include <string.h>
 
-#include "UDoubleMS.h"
-#include "SourceSet.h"
+#include <uncertain/UDoubleMS.hpp>
+#include <uncertain/SourceSet.hpp>
 
 // Ensemble uncertainty class.  Represents a distribution by a
 // set of n=esize possible values distributed at intervals of

@@ -47,7 +47,7 @@
 
 #pragma once
 
-#include "functions.h"
+#include <uncertain/functions.hpp>
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -60,66 +60,90 @@
 
 // Specialized array class has only those members needed to be an array
 // of uncertainty elements used as the template parameter in UDoubleCT<>.
-// This is the simplest possible implementation.
+// This class is like SimpleArray but adds an undistributed factor for
+// greater efficiency in the common case when all members of an array
+// are to be multiplied by some factor.
 template<int size>
-class SimpleArray
+class ArrayWithScale
 {
  private:
   double element[size];
+  double scale;
 
  public:
-  SimpleArray(double initval = 0.0)
+  ArrayWithScale(double initval = 0.0)
   {
     for (int i = 0; i < size; i++)
       element[i] = initval;
+    scale = 1.0;
   }
 
-  SimpleArray(const SimpleArray& a)
+  ArrayWithScale(const ArrayWithScale& a)
   {
     for (int i = 0; i < size; i++)
       element[i] = a.element[i];
+    scale = a.scale;
   }
 
-  ~SimpleArray() {}
+  ~ArrayWithScale() {}
 
-  SimpleArray operator-() const
+  ArrayWithScale operator-() const
   {
-    SimpleArray retval;
+    ArrayWithScale retval;
 
     for (int i = 0; i < size; i++)
-      retval.element[i] = -element[i];
+      retval.element[i] = element[i];
+    retval.scale = -scale;
     return retval;
   }
 
-  SimpleArray& operator+=(const SimpleArray& b)
+  ArrayWithScale& operator+=(const ArrayWithScale& b)
   {
-    for (int i = 0; i < size; i++)
-      element[i] += b.element[i];
+    if (scale)
+    {
+      double scale_factor = b.scale / scale;
+      for (int i = 0; i < size; i++)
+        element[i] += b.element[i] * scale_factor;
+    }
+    else
+    {
+      scale = b.scale;
+      for (int i = 0; i < size; i++)
+        element[i] = b.element[i];
+    }
     return *this;
   }
 
-  friend SimpleArray operator+(SimpleArray a, const SimpleArray& b) { return a += b; }
+  friend ArrayWithScale operator+(ArrayWithScale a, const ArrayWithScale& b) { return a += b; }
 
-  SimpleArray& operator-=(const SimpleArray& b)
+  ArrayWithScale& operator-=(const ArrayWithScale& b)
   {
-    for (int i = 0; i < size; i++)
-      element[i] -= b.element[i];
+    if (scale)
+    {
+      double scale_factor = b.scale / scale;
+      for (int i = 0; i < size; i++)
+        element[i] -= b.element[i] * scale_factor;
+    }
+    else
+    {
+      scale = -b.scale;
+      for (int i = 0; i < size; i++)
+        element[i] = b.element[i];
+    }
     return *this;
   }
 
-  SimpleArray& operator*=(const double& b)
+  ArrayWithScale& operator*=(const double& b)
   {
-    for (int i = 0; i < size; i++)
-      element[i] *= b;
+    scale *= b;
     return *this;
   }
 
-  friend SimpleArray operator*(SimpleArray a, const double& b) { return a *= b; }
+  friend ArrayWithScale operator*(ArrayWithScale a, const double& b) { return a *= b; }
 
-  SimpleArray& operator/=(const double& b)
+  ArrayWithScale& operator/=(const double& b)
   {
-    for (int i = 0; i < size; i++)
-      element[i] /= b;
+    scale /= b;
     return *this;
   }
 
@@ -127,39 +151,38 @@ class SimpleArray
   {
     if (subscript < 0)
     {
-      throw std::runtime_error("Error: negative subscript: "
-                                   + std::to_string(subscript));
+      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      throw std::runtime_error("Error: oversize subscript: "
-                                   + std::to_string(subscript)
-                                   + " Greater than " + std::to_string(size - 1));
+      throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
+                " Greater than " + std::to_string(size - 1));
     }
-    return element[subscript];
+    return element[subscript] * scale;
   }
 
   void setelement(int subscript, double value)
   {
     if (subscript < 0)
     {
-      throw std::runtime_error("Error: negative subscript: "
-                                   + std::to_string(subscript));
+      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
     }
     if (subscript >= size)
     {
-      throw std::runtime_error("Error: oversize subscript: "
-                                   + std::to_string(subscript) +
-          " Greater than " + std::to_string(size - 1));
+      throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
+                " Greater than " + std::to_string(size - 1));
     }
-    element[subscript] = value;
+    if (scale != 0.0)
+      element[subscript] = value / scale;
   }
 
   double norm() const
   {
+    if (scale == 0.0)
+      return 0.0;
     double tot = 0.0;
     for (int i = 0; i < size; i++)
       tot += element[i] * element[i];
-    return sqrt(tot);
+    return sqrt(tot * scale * scale);
   }
 };

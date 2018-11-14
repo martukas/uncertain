@@ -1,14 +1,14 @@
 set(dir ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(HEADERS
-  ${dir}/functions.h
-  ${dir}/ScaledArray.h
-  ${dir}/SimpleArray.h
-  ${dir}/SourceSet.h
-  ${dir}/UDoubleCT.h
-  ${dir}/UDoubleEnsemble.h
-  ${dir}/UDoubleMS.h
-  ${dir}/UDoubleMSC.h
+  ${dir}/functions.hpp
+  ${dir}/ScaledArray.hpp
+  ${dir}/SimpleArray.hpp
+  ${dir}/SourceSet.hpp
+  ${dir}/UDoubleCT.hpp
+  ${dir}/UDoubleEnsemble.hpp
+  ${dir}/UDoubleMS.hpp
+  ${dir}/UDoubleMSC.hpp
   )
 install(FILES ${HEADERS}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/uncertain)

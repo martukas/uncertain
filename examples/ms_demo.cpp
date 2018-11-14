@@ -43,7 +43,7 @@
 // in udouble.h.
 
 
-#include "UDoubleTest.h"
+#include "UDoubleTest.hpp"
 #include <cmath>
 #include <string>
 #include <iostream>

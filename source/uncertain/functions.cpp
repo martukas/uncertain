@@ -44,8 +44,7 @@
 // Warning: This header has not yet been corrected to work with more
 // than one source file.
 
-
-#include "functions.h"
+#include <uncertain/functions.hpp>
 
 // \todo add exceptions
 

@@ -1,4 +1,4 @@
-#include <uncertain/functions.h>
+#include <uncertain/functions.hpp>
 #include "gtest_print.hpp"
 
 TEST(Functions, HalfPi) {

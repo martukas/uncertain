@@ -47,10 +47,10 @@
 
 #pragma once
 
-#include "functions.h"
-#include "SourceSet.h"
-#include "SimpleArray.h"
-#include "ScaledArray.h"
+#include <uncertain/functions.hpp>
+#include <uncertain/SourceSet.hpp>
+#include <uncertain/SimpleArray.hpp>
+#include <uncertain/ScaledArray.hpp>
 
 // \todo add exceptions
 

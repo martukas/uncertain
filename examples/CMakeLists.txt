@@ -2,18 +2,18 @@ include_directories(${PROJECT_SOURCE_DIR}/source)
 
 set(dir ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(udmstest
-  ${dir}/UDoubleTest.h
-  ${dir}/demo1.cpp
+add_executable(ms_demo
+  ${dir}/UDoubleTest.hpp
+  ${dir}/ms_demo.cpp
   )
-target_link_libraries(udmstest
+target_link_libraries(ms_demo
   PRIVATE uncertain
   )
 
-add_executable(utest
-  ${dir}/UDoubleTest2.h
-  ${dir}/demo2.cpp
+add_executable(full_demo
+  ${dir}/UDoubleTest2.hpp
+  ${dir}/full_demo.cpp
   )
-target_link_libraries(utest
+target_link_libraries(full_demo
   PRIVATE uncertain
   )
