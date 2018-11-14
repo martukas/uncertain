@@ -49,9 +49,6 @@
 
 #include <uncertain/functions.hpp>
 
-// \todo make template variables or class consts
-#define MAX_UNC_ELEMENTS 5
-
 namespace uncertain
 {
 

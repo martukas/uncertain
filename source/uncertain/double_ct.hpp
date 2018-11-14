@@ -47,9 +47,9 @@
 
 #pragma once
 
-#include <uncertain/SourceSet.hpp>
-#include <uncertain/SimpleArray.hpp>
-#include <uncertain/ScaledArray.hpp>
+#include <uncertain/source_set.hpp>
+#include <uncertain/simple_array.hpp>
+#include <uncertain/scaled_array.hpp>
 
 namespace uncertain
 {
@@ -103,9 +103,11 @@ class UDoubleCT
   }
   // operator= ?
 
-  ~UDoubleCT() {}
+  ~UDoubleCT()
+  {}
 
-  static void new_epoch() { sources.new_epoch(); }
+  static void new_epoch()
+  { sources.new_epoch(); }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
   {
@@ -123,7 +125,8 @@ class UDoubleCT
     os << std::endl;
   }
 
-  UDoubleCT operator+() const { return *this; }
+  UDoubleCT operator+() const
+  { return *this; }
 
   UDoubleCT operator-() const
   {
@@ -149,11 +152,14 @@ class UDoubleCT
     return *this;
   }
 
-  friend UDoubleCT operator+(UDoubleCT a, const UDoubleCT& b) { return a += b; }
+  friend UDoubleCT operator+(UDoubleCT a, const UDoubleCT& b)
+  { return a += b; }
 
-  friend UDoubleCT operator+(UDoubleCT a, double b) { return a += b; }
+  friend UDoubleCT operator+(UDoubleCT a, double b)
+  { return a += b; }
 
-  friend UDoubleCT operator+(double b, UDoubleCT a) { return a += b; }
+  friend UDoubleCT operator+(double b, UDoubleCT a)
+  { return a += b; }
 
   UDoubleCT& operator-=(const UDoubleCT& b)
   {
@@ -170,9 +176,11 @@ class UDoubleCT
     return *this;
   }
 
-  friend UDoubleCT operator-(UDoubleCT a, const UDoubleCT& b) { return a -= b; }
+  friend UDoubleCT operator-(UDoubleCT a, const UDoubleCT& b)
+  { return a -= b; }
 
-  friend UDoubleCT operator-(UDoubleCT a, double b) { return a -= b; }
+  friend UDoubleCT operator-(UDoubleCT a, double b)
+  { return a -= b; }
 
   friend UDoubleCT operator-(double b, UDoubleCT a)
   {
@@ -197,9 +205,11 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT operator++() { return (*this += 1.0); }
+  UDoubleCT operator++()
+  { return (*this += 1.0); }
 
-  UDoubleCT operator--() { return (*this -= 1.0); }
+  UDoubleCT operator--()
+  { return (*this -= 1.0); }
 
   UDoubleCT operator++(int)
   {
@@ -215,11 +225,14 @@ class UDoubleCT
     return retval;
   }
 
-  friend UDoubleCT operator*(UDoubleCT a, const UDoubleCT& b) { return a *= b; }
+  friend UDoubleCT operator*(UDoubleCT a, const UDoubleCT& b)
+  { return a *= b; }
 
-  friend UDoubleCT operator*(UDoubleCT a, double b) { return a *= b; }
+  friend UDoubleCT operator*(UDoubleCT a, double b)
+  { return a *= b; }
 
-  friend UDoubleCT operator*(double b, UDoubleCT a) { return a *= b; }
+  friend UDoubleCT operator*(double b, UDoubleCT a)
+  { return a *= b; }
 
   UDoubleCT& operator/=(const UDoubleCT& b)
   {
@@ -238,9 +251,11 @@ class UDoubleCT
     return *this;
   }
 
-  friend UDoubleCT operator/(UDoubleCT a, const UDoubleCT& b) { return a /= b; }
+  friend UDoubleCT operator/(UDoubleCT a, const UDoubleCT& b)
+  { return a /= b; }
 
-  friend UDoubleCT operator/(UDoubleCT a, double b) { return a /= b; }
+  friend UDoubleCT operator/(UDoubleCT a, double b)
+  { return a /= b; }
 
   friend UDoubleCT operator/(const double a, const UDoubleCT& b)
   {
@@ -354,22 +369,15 @@ class UDoubleCT
     return arg;
   }
 
-  double mean() const { return value; }
+  double mean() const
+  {
+    return value;
+  }
 
-  double deviation() const { return unc_components.norm(); }
-
+  double deviation() const
+  {
+    return unc_components.norm();
+  }
 };
-
-typedef SimpleArray<MAX_UNC_ELEMENTS> SizedSimpleArray;
-typedef ArrayWithScale<MAX_UNC_ELEMENTS> SizedArrayWithScale;
-
-template<>
-SourceSet<MAX_UNC_ELEMENTS> UDoubleCT<SizedSimpleArray, MAX_UNC_ELEMENTS>::sources("Simple Array");
-
-template<>
-SourceSet<MAX_UNC_ELEMENTS> UDoubleCT<SizedArrayWithScale, MAX_UNC_ELEMENTS>::sources("Array with Scale");
-
-typedef UDoubleCT<SizedSimpleArray, MAX_UNC_ELEMENTS> UDoubleCTSA;
-typedef UDoubleCT<SizedArrayWithScale, MAX_UNC_ELEMENTS> UDoubleCTAA;
 
 }

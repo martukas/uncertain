@@ -538,7 +538,7 @@ class UDoubleMS
 };
 
 // typedefs to hide the use of templates in the implementation
-typedef UDoubleMS<false> UDoubleMSUncorr;
-typedef UDoubleMS<true> UDoubleMSCorr;
+using UDoubleMSUncorr = UDoubleMS<false>;
+using UDoubleMSCorr = UDoubleMS<true>;
 
 }

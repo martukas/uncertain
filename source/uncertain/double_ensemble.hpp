@@ -47,7 +47,7 @@
 
 #pragma once
 
-#include <uncertain/SourceSet.hpp>
+#include <uncertain/source_set.hpp>
 #include <iomanip>
 
 // \todo get rid of this include
@@ -57,24 +57,23 @@ namespace uncertain
 {
 
 // Ensemble uncertainty class.  Represents a distribution by a
-// set of n=esize possible values distributed at intervals of
-// uniform probability throughout the
-// distribution.  The order of the possible values is randomized
-// so that all operations can be done element-by-element with
-// a minimum of spurious correlations between independent sources
-// of uncertainty.  Depending on esize this class can be anywhere
-// from very expensive computationally to unusably expensive.
-// But for small problems and big esizes it gives "perfect"
-// answers.
-template<size_t esize>
+// set of n=ensemble_size possible values distributed at intervals of
+// uniform probability throughout the distribution.  The order of the
+// possible values is randomized so that all operations can be done
+// element-by-element with a minimum of spurious correlations between
+// independent sources of uncertainty.  Depending on ensemble_size this
+// class can be anywhere from very expensive computationally to unusably
+// expensive. But for small problems and big ensemble_sizes it gives
+// "perfect" answers.
+template<size_t num_elements, size_t ensemble_size>
 class UDoubleEnsemble
 {
  public:
-  static double src_ensemble[MAX_UNC_ELEMENTS][esize];
+  static double src_ensemble[num_elements][ensemble_size];
 
  private:
-  double ensemble[esize];
-  static SourceSet<MAX_UNC_ELEMENTS> sources;
+  double ensemble[ensemble_size];
+  static SourceSet <num_elements> sources;
   size_t epoch;
 
  public:
@@ -90,10 +89,10 @@ class UDoubleEnsemble
     }
     if (unc != 0.0)
     {
-      static double gauss_ensemble[esize];
+      static double gauss_ensemble[ensemble_size];
       static int gauss_ensemble_inited = 0;
 
-      // The base ensemble of n=esize points needs be initialized only
+      // The base ensemble of n=ensemble_size points needs be initialized only
       // once for each ensemble size.  Once it is initialized, each new
       // independent uncertainty element can be made by copying & shuffling
       // this array then scaling it to the appropriate uncertainty and
@@ -101,26 +100,26 @@ class UDoubleEnsemble
       if (!gauss_ensemble_inited)
       {
         gauss_ensemble_inited = 1;
-        if (esize & 1) // odd ensemble size
+        if (ensemble_size & 1) // odd ensemble size
         {
-          for (size_t i = 0; i < esize / 2; i++)
+          for (size_t i = 0; i < ensemble_size / 2; i++)
           {
             double deviate = inverse_gaussian_density(
-                (2.0 * (i + 1.0)) / (2.0 * esize));
+                (2.0 * (i + 1.0)) / (2.0 * ensemble_size));
             gauss_ensemble[2 * i] = deviate;
             gauss_ensemble[2 * i + 1] = -deviate;
           }
-          gauss_ensemble[esize - 1] = 0.0;
+          gauss_ensemble[ensemble_size - 1] = 0.0;
         }
         else
         {
-          for (size_t i = 0; i < esize / 2; i++)
+          for (size_t i = 0; i < ensemble_size / 2; i++)
           {
             double deviate = 0.0;
-            double k = (2.0 * i + 1.0) / (2.0 * esize);
+            double k = (2.0 * i + 1.0) / (2.0 * ensemble_size);
             for (unsigned j = 0; j < 100; j++)
               deviate += inverse_gaussian_density(k + (j - 49.5)
-                  / (100.0 * esize));
+                  / (100.0 * ensemble_size));
             deviate /= 100.0;
             gauss_ensemble[2 * i] = deviate;
             gauss_ensemble[2 * i + 1] = -deviate;
@@ -128,9 +127,9 @@ class UDoubleEnsemble
         }
         // Move the points a little to make all the first 5 moments give
         // exact values.
-        PerfectEnsemble(gauss_ensemble, esize);
+        PerfectEnsemble(gauss_ensemble, ensemble_size);
       }
-      for (size_t i = 0; i < esize; i++)
+      for (size_t i = 0; i < ensemble_size; i++)
         ensemble[i] = val + gauss_ensemble[i] * unc;
       std::string source_name;
       if (!name.empty())
@@ -153,7 +152,7 @@ class UDoubleEnsemble
       }
     }
     else  // uncertainty is zero
-      for (size_t i = 0; i < esize; i++)
+      for (size_t i = 0; i < ensemble_size; i++)
         ensemble[i] = val;
   }
 
@@ -161,7 +160,7 @@ class UDoubleEnsemble
   UDoubleEnsemble(const UDoubleEnsemble& ud)
       : epoch(ud.epoch)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] = ud.ensemble[i];
   }
 
@@ -171,7 +170,7 @@ class UDoubleEnsemble
                   std::string name = "")
       : epoch(sources.get_epoch())
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] = newensemble[i];
     std::string source_name;
     if (!name.empty())
@@ -188,154 +187,168 @@ class UDoubleEnsemble
   }
 // \todo add constructors with other distributions.
 
-  ~UDoubleEnsemble() {}
+  ~UDoubleEnsemble()
+  {}
 
-  UDoubleEnsemble<esize> operator+() const
+  UDoubleEnsemble<num_elements, ensemble_size> operator+() const
   {
     return *this;
   }
 
-  UDoubleEnsemble<esize> operator-() const
+  UDoubleEnsemble<num_elements, ensemble_size> operator-() const
   {
-    UDoubleEnsemble<esize> retval;
-    for (size_t i = 0; i < esize; i++)
+    UDoubleEnsemble<num_elements, ensemble_size> retval;
+    for (size_t i = 0; i < ensemble_size; i++)
       retval.ensemble[i] = -ensemble[i];
     retval.epoch = epoch;
     return retval;
   }
 
-  friend UDoubleEnsemble<esize> operator+(UDoubleEnsemble<esize> a,
-                                          const UDoubleEnsemble<esize>& b) { return a += b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator+(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                const UDoubleEnsemble<num_elements, ensemble_size>& b)
+  { return a += b; }
 
-  friend UDoubleEnsemble<esize> operator+(UDoubleEnsemble<esize> a,
-                                          double b) { return a += b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator+(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                double b)
+  { return a += b; }
 
-  friend UDoubleEnsemble<esize> operator+(double b,
-                                          UDoubleEnsemble<esize> a) { return a += b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator+(double b,
+                                                                UDoubleEnsemble<num_elements, ensemble_size> a)
+  { return a += b; }
 
-  friend UDoubleEnsemble<esize> operator-(UDoubleEnsemble<esize> a,
-                                          const UDoubleEnsemble<esize>& b) { return a -= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator-(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                const UDoubleEnsemble<num_elements, ensemble_size>& b)
+  { return a -= b; }
 
-  friend UDoubleEnsemble<esize> operator-(UDoubleEnsemble<esize> a,
-                                          double b) { return a -= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator-(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                double b)
+  { return a -= b; }
 
-  friend UDoubleEnsemble<esize> operator-(double b,
-                                          UDoubleEnsemble<esize> a) { return -(a -= b); }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator-(double b,
+                                                                UDoubleEnsemble<num_elements, ensemble_size> a)
+  { return -(a -= b); }
 
-  UDoubleEnsemble<esize> operator++() { return (*this += 1.0); }
+  UDoubleEnsemble<num_elements, ensemble_size> operator++()
+  { return (*this += 1.0); }
 
-  UDoubleEnsemble<esize> operator--() { return (*this -= 1.0); }
+  UDoubleEnsemble<num_elements, ensemble_size> operator--()
+  { return (*this -= 1.0); }
 
-  UDoubleEnsemble<esize> operator++(int)
+  UDoubleEnsemble<num_elements, ensemble_size> operator++(int)
   {
-    UDoubleEnsemble<esize> retval(*this);
+    UDoubleEnsemble<num_elements, ensemble_size> retval(*this);
     *this += 1.0;
     return retval;
   }
 
-  UDoubleEnsemble<esize> operator--(int)
+  UDoubleEnsemble<num_elements, ensemble_size> operator--(int)
   {
-    UDoubleEnsemble<esize> retval(*this);
+    UDoubleEnsemble<num_elements, ensemble_size> retval(*this);
     *this -= 1.0;
     return retval;
   }
 
-  friend UDoubleEnsemble<esize> operator*(UDoubleEnsemble<esize> a,
-                                          const UDoubleEnsemble<esize>& b) { return a *= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator*(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                const UDoubleEnsemble<num_elements, ensemble_size>& b)
+  { return a *= b; }
 
-  friend UDoubleEnsemble<esize> operator*(UDoubleEnsemble<esize> a,
-                                          double b) { return a *= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator*(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                double b)
+  { return a *= b; }
 
-  friend UDoubleEnsemble<esize> operator*(double b,
-                                          UDoubleEnsemble<esize> a) { return a *= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator*(double b,
+                                                                UDoubleEnsemble<num_elements, ensemble_size> a)
+  { return a *= b; }
 
-  friend UDoubleEnsemble<esize> operator/(UDoubleEnsemble<esize> a,
-                                          const UDoubleEnsemble<esize>& b) { return a /= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator/(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                const UDoubleEnsemble<num_elements, ensemble_size>& b)
+  { return a /= b; }
 
-  friend UDoubleEnsemble<esize> operator/(UDoubleEnsemble<esize> a,
-                                          double b) { return a /= b; }
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator/(UDoubleEnsemble<num_elements, ensemble_size> a,
+                                                                double b)
+  { return a /= b; }
 
   // this one promotes a to UDoubleEnsemble
-  friend UDoubleEnsemble<esize> operator/(double a,
-                                          const UDoubleEnsemble<esize>& b)
+  friend UDoubleEnsemble<num_elements, ensemble_size> operator/(double a,
+                                                                const UDoubleEnsemble<num_elements, ensemble_size>& b)
   {
-    UDoubleEnsemble<esize> uda(a);
+    UDoubleEnsemble<num_elements, ensemble_size> uda(a);
     return uda /= b;
   }
 
-  UDoubleEnsemble<esize>& operator+=(const UDoubleEnsemble<esize>& ud)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator+=(const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] += ud.ensemble[i];
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator+=(double d)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator+=(double d)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] += d;
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator-=(const UDoubleEnsemble<esize>& ud)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator-=(const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] -= ud.ensemble[i];
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator-=(double d)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator-=(double d)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] -= d;
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator*=(const UDoubleEnsemble<esize>& ud)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator*=(const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] *= ud.ensemble[i];
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator*=(double d)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator*=(double d)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] *= d;
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator/=(const UDoubleEnsemble<esize>& ud)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator/=(const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] /= ud.ensemble[i];
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator/=(double d)
+  UDoubleEnsemble<num_elements, ensemble_size>& operator/=(double d)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       ensemble[i] /= d;
     return *this;
   }
 
 // \todo add procedures to make persistant
-  friend std::ostream& operator<<(std::ostream& os, const UDoubleEnsemble<esize>& ud)
+  friend std::ostream& operator<<(std::ostream& os, const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     double mean, sigma, skew, kurtosis, m5;
-    moments(ud.ensemble, mean, sigma, skew, kurtosis, m5, esize);
+    moments(ud.ensemble, mean, sigma, skew, kurtosis, m5, ensemble_size);
     uncertain_print(mean, sigma, os);
 
     if (sigma != 0.0)
@@ -350,27 +363,27 @@ class UDoubleEnsemble
     return os;
   }
 
-  friend std::istream& operator>>(std::istream& is, UDoubleEnsemble<esize>& ud)
+  friend std::istream& operator>>(std::istream& is, UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     double mean, sigma;
     uncertain_read(mean, sigma, is);
-    ud = UDoubleEnsemble<esize>(mean, sigma);
+    ud = UDoubleEnsemble<num_elements, ensemble_size>(mean, sigma);
     return is;
   }
 
 #define UDoubleEnsemblefunc1(func) \
-      UDoubleEnsemble<esize> func(UDoubleEnsemble<esize> arg) \
+      UDoubleEnsemble<num_elements, ensemble_size> func(UDoubleEnsemble<num_elements, ensemble_size> arg) \
       { \
-         for (size_t i = 0; i < esize; i++) \
+         for (size_t i = 0; i < ensemble_size; i++) \
             arg.ensemble[i] = std:: func(arg.ensemble[i]); \
          return arg; \
       }
 #define UDoubleEnsemblefunc2(func) \
-      UDoubleEnsemble<esize> func(const UDoubleEnsemble<esize>& arg1, \
-                                  const UDoubleEnsemble<esize>& arg2) \
+      UDoubleEnsemble<num_elements, ensemble_size> func(const UDoubleEnsemble<num_elements, ensemble_size>& arg1, \
+                                  const UDoubleEnsemble<num_elements, ensemble_size>& arg2) \
       { \
-         UDoubleEnsemble<esize> retval(arg1); \
-         for (size_t i = 0; i < esize; i++) \
+         UDoubleEnsemble<num_elements, ensemble_size> retval(arg1); \
+         for (size_t i = 0; i < ensemble_size; i++) \
             retval.ensemble[i] = std:: func(arg1.ensemble[i], arg2.ensemble[i]); \
          return retval; \
       }
@@ -413,19 +426,20 @@ class UDoubleEnsemble
 
   friend UDoubleEnsemblefunc2(pow)
 
-  friend UDoubleEnsemble<esize> ldexp(UDoubleEnsemble<esize> arg,
-                                      const int intarg)
+  friend UDoubleEnsemble<num_elements, ensemble_size> ldexp(UDoubleEnsemble<num_elements, ensemble_size> arg,
+                                                            const int intarg)
   {
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       arg.ensemble[i] = std::ldexp(arg.ensemble[i], intarg);
     return arg;
   }
 
-  friend UDoubleEnsemble<esize> frexp(UDoubleEnsemble<esize> arg, int* intarg)
+  friend UDoubleEnsemble<num_elements, ensemble_size> frexp(UDoubleEnsemble<num_elements, ensemble_size> arg,
+                                                            int* intarg)
   {
     // use library frexp on mean to get value of return in second arg
     std::frexp(arg.mean(), intarg);
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
     {
       int tempint;  // ignore return in second arg in loop
       arg.ensemble[i] = std::frexp(arg.ensemble[i], &tempint);
@@ -433,12 +447,12 @@ class UDoubleEnsemble
     return arg;
   }
 
-  friend UDoubleEnsemble<esize> modf(UDoubleEnsemble<esize> arg,
-                                     double* dblarg)
+  friend UDoubleEnsemble<num_elements, ensemble_size> modf(UDoubleEnsemble<num_elements, ensemble_size> arg,
+                                                           double* dblarg)
   {
     // use library modf on mean to get value of return in second arg
     std::modf(arg.mean(), dblarg);
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
     {
       double tempdbl;  // ignore return in second arg in loop
       arg.ensemble[i] = std::modf(arg.ensemble[i], &tempdbl);
@@ -450,9 +464,9 @@ class UDoubleEnsemble
   {
     double sum = 0.0;
 
-    for (size_t i = 0; i < esize; i++)
+    for (size_t i = 0; i < ensemble_size; i++)
       sum += ensemble[i];
-    return sum / esize;
+    return sum / ensemble_size;
   }
 
   double deviation() const
@@ -461,15 +475,16 @@ class UDoubleEnsemble
     double diff, sum_2_diff = 0.0; // watch overflow!
     double value = this->mean();
 
-    for (i = 0; i < esize; i++)
+    for (i = 0; i < ensemble_size; i++)
     {
       diff = ensemble[i] - value;
       sum_2_diff += sqr(diff);
     }
-    return std::sqrt(sum_2_diff / esize);
+    return std::sqrt(sum_2_diff / ensemble_size);
   }
 
-  static void new_epoch() { sources.new_epoch(); }
+  static void new_epoch()
+  { sources.new_epoch(); }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
   {
@@ -491,7 +506,7 @@ class UDoubleEnsemble
     os << std::endl;
   }
 
-  double correlation(const UDoubleEnsemble<esize>& ud,
+  double correlation(const UDoubleEnsemble<num_elements, ensemble_size>& ud,
                      const size_t offset = 0) const
   {
     size_t i;
@@ -501,11 +516,11 @@ class UDoubleEnsemble
     // watch overflow!
     double sum_2_diff = 0.0, sum_2_diff_ud = 0.0, sum_prod_diff = 0.0;
 
-    for (i = 0; i < esize; i++)
+    for (i = 0; i < ensemble_size; i++)
     {
       diff = ensemble[i] - value;
       sum_2_diff += diff * diff;
-      size_t j = (i + offset) % esize;
+      size_t j = (i + offset) % ensemble_size;
       diff_ud = ud.ensemble[j] - ud_value;
       sum_2_diff_ud += diff_ud * diff_ud;
       sum_prod_diff += diff * diff_ud;
@@ -519,7 +534,7 @@ class UDoubleEnsemble
     return sum_prod_diff / std::sqrt(sum_2_diff * sum_2_diff_ud);
   }
 
-  double correlation(const double ens[esize],
+  double correlation(const double ens[ensemble_size],
                      const size_t offset = 0) const
   {
     size_t i;
@@ -529,14 +544,14 @@ class UDoubleEnsemble
     // watch overflow!
     double sum_2_diff = 0, sum_2_diff_ud = 0, sum_prod_diff = 0;
 
-    for (i = 0; i < esize; i++)
+    for (i = 0; i < ensemble_size; i++)
       ud_value += ens[i];
-    ud_value /= esize;
-    for (i = 0; i < esize; i++)
+    ud_value /= ensemble_size;
+    for (i = 0; i < ensemble_size; i++)
     {
       diff = ensemble[i] - value;
       sum_2_diff += diff * diff;
-      size_t j = (i + offset) % esize;
+      size_t j = (i + offset) % ensemble_size;
       diff_ud = ens[j] - ud_value;
       sum_2_diff_ud += diff_ud * diff_ud;
       sum_prod_diff += diff * diff_ud;
@@ -566,7 +581,7 @@ class UDoubleEnsemble
       os << "No histogram when no uncertainty" << std::endl;
       return;
     }
-    for (i = 0; i < esize; i++)
+    for (i = 0; i < ensemble_size; i++)
     {
       double normval = (ensemble[i] - value) / sigma;
       int intval = int(std::floor(2.0 * normval + 0.5) + 8.0);
@@ -613,32 +628,32 @@ class UDoubleEnsemble
     os << resetiosflags(std::ios::showpos) << std::endl;
   }
 
-  friend UDoubleEnsemble<esize> Invoke(double (* certainfunc)(double),
-                                       const UDoubleEnsemble<esize>& arg)
+  friend UDoubleEnsemble<num_elements, ensemble_size> Invoke(double (* certainfunc)(double),
+                                                             const UDoubleEnsemble<num_elements, ensemble_size>& arg)
   {
-    UDoubleEnsemble<esize> retval;
+    UDoubleEnsemble<num_elements, ensemble_size> retval;
 
-    for (unsigned i = 0; i < esize; i++)
+    for (unsigned i = 0; i < ensemble_size; i++)
       retval.ensemble[i] = certainfunc(arg.ensemble[i]);
     return retval;
   }
 
-  friend UDoubleEnsemble<esize> Invoke(double (* certainfunc)(double, double),
-                                       const UDoubleEnsemble<esize>& arg1,
-                                       const UDoubleEnsemble<esize>& arg2)
+  friend UDoubleEnsemble<num_elements, ensemble_size> Invoke(double (* certainfunc)(double, double),
+                                                             const UDoubleEnsemble<num_elements, ensemble_size>& arg1,
+                                                             const UDoubleEnsemble<num_elements, ensemble_size>& arg2)
   {
-    UDoubleEnsemble<esize> retval;
+    UDoubleEnsemble<num_elements, ensemble_size> retval;
 
-    for (unsigned i = 0; i < esize; i++)
+    for (unsigned i = 0; i < ensemble_size; i++)
       retval.ensemble[i] = certainfunc(arg1.ensemble[i], arg2.ensemble[i]);
     return retval;
   }
 
   void shuffle()
   {
-    for (size_t i = 0; i < esize - 1; i++)
+    for (size_t i = 0; i < ensemble_size - 1; i++)
     {
-      size_t j = i + (size_t) rand() % (esize - i);
+      size_t j = i + (size_t) rand() % (ensemble_size - i);
       if (j != i)
       {
         double temp = ensemble[i];

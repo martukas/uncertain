@@ -42,10 +42,10 @@
 #include "UDoubleTest2.hpp"
 
 template<>
-double uncertain::UDoubleEnsemble<128u>::src_ensemble[MAX_UNC_ELEMENTS][128u] = {};
+double uncertain::UDoubleEnsemble<max_elements, ens_a_size>::src_ensemble[max_elements][ens_a_size] = {};
 
 template<>
-double uncertain::UDoubleEnsemble<1024u>::src_ensemble[MAX_UNC_ELEMENTS][1024u] = {};
+double uncertain::UDoubleEnsemble<max_elements, ens_b_size>::src_ensemble[max_elements][ens_b_size] = {};
 
 // logistic function is chaotic for some inputs
 #define LOGISTIC_ITERATIONS 50

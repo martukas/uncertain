@@ -52,8 +52,6 @@
 namespace uncertain
 {
 
-
-
 // model uncertain number using only mean and sigma, like UDoubleMS,
 // but also use some knowledge of curve & skew & discontinuities.
 // (The "C" is for "Curve").  For simple cases this gives better
@@ -495,6 +493,7 @@ class UDoubleMSC
 // \todo add Monte-Carlo propogation
 };
 
+// \todo do not hardcode this
 template<>
 double UDoubleMSC<false>::discontinuity_thresh = 3.0;
 

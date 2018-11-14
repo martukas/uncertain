@@ -47,8 +47,6 @@
 #include <uncertain/functions.hpp>
 #include <iomanip>
 
-
-
 namespace uncertain
 {
 
@@ -121,25 +119,26 @@ void gauss_loss(double uncertainty, double disc_dist,
                 double disc_thresh)
 {
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
-  if ((scaled_disc_dist < disc_thresh) && (disc_type != none))
+  if ((scaled_disc_dist < disc_thresh) && (disc_type != discontinuity_type::none))
   {
     auto original_precision = std::cerr.precision();
     std::cerr << std::setprecision(2);
     std::cerr << func_str << "is " << scaled_disc_dist << " sigmas"
               << id_string;
-    if (disc_type == step)
+    if (disc_type == discontinuity_type::step)
       std::cerr << " from a step discontinuity" << std::endl;
-    else if (disc_type == infinite_wrap)
+    else if (disc_type == discontinuity_type::infinite_wrap)
       std::cerr << " from an infinite wrap discontinuity" << std::endl;
-    else if (disc_type == infinite_then_undef)
+    else if (disc_type == discontinuity_type::infinite_then_undef)
       std::cerr << " from an infinite "
                 << "discontinuity beyond which it is undefined" << std::endl;
-    else if (disc_type == slope_only)
+    else if (disc_type == discontinuity_type::slope_only)
       std::cerr << " from a discontinuity in slope" << std::endl;
-    else if (disc_type == undefined_beyond)
+    else if (disc_type == discontinuity_type::undefined_beyond)
       std::cerr << " from a point beyond which it is undefined" << std::endl;
     else
-      std::cerr << " from unknown discontinuity " << disc_type << std::endl;
+      std::cerr << " from unknown discontinuity "
+      << int(disc_type) << std::endl;
     std::cerr << std::setprecision(original_precision);
   }
 }

@@ -2,13 +2,13 @@ set(dir ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(HEADERS
   ${dir}/functions.hpp
-  ${dir}/ScaledArray.hpp
-  ${dir}/SimpleArray.hpp
-  ${dir}/SourceSet.hpp
-  ${dir}/UDoubleCT.hpp
-  ${dir}/UDoubleEnsemble.hpp
-  ${dir}/UDoubleMS.hpp
-  ${dir}/UDoubleMSC.hpp
+  ${dir}/double_ct.hpp
+  ${dir}/double_ensemble.hpp
+  ${dir}/double_ms.hpp
+  ${dir}/double_msc.hpp
+  ${dir}/scaled_array.hpp
+  ${dir}/simple_array.hpp
+  ${dir}/source_set.hpp
   )
 install(FILES ${HEADERS}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/uncertain)

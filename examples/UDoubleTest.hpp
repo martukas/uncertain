@@ -45,7 +45,7 @@
 
 #pragma once
 
-#include <uncertain/UDoubleMS.hpp>
+#include <uncertain/double_ms.hpp>
 #include <sstream>
 
 // These global values are used to pass the extra argument to ldexp(),
