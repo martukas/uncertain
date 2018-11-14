@@ -56,24 +56,23 @@ namespace uncertain
 {
 
 // A class for sources of uncertainties.
-class UncertainSourceSet
+template<size_t size>
+class SourceSet
 {
  private:
-  unsigned long num_sources;
-  unsigned long source_epoch;
-  std::string source_name[MAX_UNC_ELEMENTS];
+  size_t num_sources {0};
+  size_t source_epoch {0};
+  std::string source_name[size];
   std::string class_name;
  public:
-  UncertainSourceSet(std::string cname = "") : num_sources(0), source_epoch(0)
+  SourceSet(std::string cname = {})
   {
-    for (unsigned int i = 0; i < MAX_UNC_ELEMENTS; i++)
-      source_name[i][0] = 0;
     class_name = cname;
   }
 
-  unsigned long get_epoch() const { return source_epoch; }
+  size_t get_epoch() const { return source_epoch; }
 
-  void check_epoch(const unsigned long& epoch) const
+  void check_epoch(size_t epoch) const
   {
     if (epoch != source_epoch)
     {
@@ -85,41 +84,39 @@ class UncertainSourceSet
 
   void new_epoch()
   {
-    for (unsigned int i = 0; i < num_sources; i++)
-      source_name[i][0] = 0;
+    for (size_t i = 0; i < num_sources; i++)
+      source_name[i].clear();
     source_epoch++;
     num_sources = 0;
   }
 
-  int can_get_new_source() const
+  bool can_get_new_source() const
   {
-    if (num_sources >= MAX_UNC_ELEMENTS)
-    {
-      std::stringstream ss;
-      ss << "Already at maximum number of permissible uncertainty elements: "
-         << MAX_UNC_ELEMENTS << "(" << num_sources << ")" << "in class "
-         << class_name << ".Change the value of MAX_UNC_ELEMENTS and recompile"
-         << " or use new_epoch().";
-      throw std::runtime_error(ss.str());
-    }
-    return 1;
+    return (num_sources < size);
   }
 
-  unsigned long get_new_source(std::string name)
+  size_t get_new_source(std::string name)
   {
-    // std::cerr << "trying to get new source (" << num_sources << ") for "
-    //      << name << std::endl;
-    (void) can_get_new_source();
+    if (!can_get_new_source()) {
+      {
+        std::stringstream ss;
+        ss << "Already at maximum number of permissible uncertainty elements: "
+           << size << "(" << num_sources << ")" << "in class "
+           << class_name << ".Change the value of size and recompile"
+           << " or use new_epoch().";
+        throw std::runtime_error(ss.str());
+      }
+    }
     source_name[num_sources] = name;
     return num_sources++;
   }
 
-  unsigned long get_num_sources() const
+  size_t get_num_sources() const
   {
     return num_sources;
   }
 
-  std::string get_source_name(const unsigned long i) const
+  std::string get_source_name(size_t i) const
   {
     if (i >= num_sources)
     {

@@ -47,7 +47,6 @@
 
 #pragma once
 
-#include <uncertain/functions.hpp>
 #include <uncertain/SourceSet.hpp>
 #include <uncertain/SimpleArray.hpp>
 #include <uncertain/ScaledArray.hpp>
@@ -58,14 +57,14 @@ namespace uncertain
 // Correlation tracking class keeps an array of uncertainty
 // components from various sources.  (Array implementation
 // is specified by template parameter.)
-template<class T>
+template<class T, size_t size>
 class UDoubleCT
 {
  private:
   double value;
   T unc_components;
-  unsigned long epoch;
-  static UncertainSourceSet sources;
+  size_t epoch;
+  static SourceSet<size> sources;
 
  public:
   // default constructor creates a new independent uncertainty element
@@ -92,7 +91,7 @@ class UDoubleCT
         uncertain_print(val, unc, os);
         source_name = os.str();
       }
-      unsigned long new_source_num = sources.get_new_source(source_name);
+      size_t new_source_num = sources.get_new_source(source_name);
       unc_components.setelement(new_source_num, unc);
     }
   }
@@ -268,7 +267,7 @@ class UDoubleCT
     os << "input: ";
     uncertain_print(mean, sigma, os);
     source_name = os.str();
-    ud = UDoubleCT<T>(mean, sigma, source_name);
+    ud = UDoubleCT<T, size>(mean, sigma, source_name);
     return is;
   }
 
@@ -283,8 +282,8 @@ class UDoubleCT
 #define UDoubleCTfunc2(func) \
    UDoubleCT func(const UDoubleCT& arg1, const UDoubleCT& arg2) \
    { \
-      UDoubleCT<T>::sources.check_epoch(arg1.epoch); \
-      UDoubleCT<T>::sources.check_epoch(arg2.epoch); \
+      UDoubleCT<T, size>::sources.check_epoch(arg1.epoch); \
+      UDoubleCT<T, size>::sources.check_epoch(arg2.epoch); \
       UDoubleCT retval(arg1); \
       two_arg_ret funcret = func ## _w_moments(arg1.value, arg2.value); \
       retval.value = funcret.value; \
@@ -365,12 +364,12 @@ typedef SimpleArray<MAX_UNC_ELEMENTS> SizedSimpleArray;
 typedef ArrayWithScale<MAX_UNC_ELEMENTS> SizedArrayWithScale;
 
 template<>
-UncertainSourceSet UDoubleCT<SizedSimpleArray>::sources("Simple Array");
+SourceSet<MAX_UNC_ELEMENTS> UDoubleCT<SizedSimpleArray, MAX_UNC_ELEMENTS>::sources("Simple Array");
 
 template<>
-UncertainSourceSet UDoubleCT<SizedArrayWithScale>::sources("Array with Scale");
+SourceSet<MAX_UNC_ELEMENTS> UDoubleCT<SizedArrayWithScale, MAX_UNC_ELEMENTS>::sources("Array with Scale");
 
-typedef UDoubleCT<SizedSimpleArray> UDoubleCTSA;
-typedef UDoubleCT<SizedArrayWithScale> UDoubleCTAA;
+typedef UDoubleCT<SizedSimpleArray, MAX_UNC_ELEMENTS> UDoubleCTSA;
+typedef UDoubleCT<SizedArrayWithScale, MAX_UNC_ELEMENTS> UDoubleCTAA;
 
 }

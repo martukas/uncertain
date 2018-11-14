@@ -901,13 +901,13 @@ class UDoubleTest
 };
 
 template<>
-uncertain::UncertainSourceSet uncertain::UDoubleEnsemble<ens_a_size>::sources("Small Ensemble");
+uncertain::SourceSet<MAX_UNC_ELEMENTS> uncertain::UDoubleEnsemble<ens_a_size>::sources("Small Ensemble");
 
 template<>
 double uncertain::UDoubleEnsemble<ens_a_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_a_size];
 
 template<>
-uncertain::UncertainSourceSet uncertain::UDoubleEnsemble<ens_b_size>::sources("Large Ensemble");
+uncertain::SourceSet<MAX_UNC_ELEMENTS> uncertain::UDoubleEnsemble<ens_b_size>::sources("Large Ensemble");
 
 template<>
 double uncertain::UDoubleEnsemble<ens_b_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_b_size];

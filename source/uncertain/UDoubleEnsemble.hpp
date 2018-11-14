@@ -47,12 +47,11 @@
 
 #pragma once
 
-// \todo get rid of this include
-#include <string.h>
-
-#include <uncertain/UDoubleMS.hpp>
 #include <uncertain/SourceSet.hpp>
 #include <iomanip>
+
+// \todo get rid of this include
+#include <string.h>
 
 namespace uncertain
 {
@@ -75,8 +74,8 @@ class UDoubleEnsemble
 
  private:
   double ensemble[esize];
-  static UncertainSourceSet sources;
-  unsigned long epoch;
+  static SourceSet<MAX_UNC_ELEMENTS> sources;
+  size_t epoch;
 
  public:
   // The main constructor initializes a new source of uncertainty
@@ -145,7 +144,7 @@ class UDoubleEnsemble
         uncertain_print(val, unc, os);
         source_name = os.str();
       }
-      unsigned long source_num = sources.get_num_sources();
+      size_t source_num = sources.get_num_sources();
       this->shuffle();
       if (sources.can_get_new_source())
       {
@@ -154,7 +153,7 @@ class UDoubleEnsemble
       }
     }
     else  // uncertainty is zero
-      for (unsigned long i = 0; i < esize; i++)
+      for (size_t i = 0; i < esize; i++)
         ensemble[i] = val;
   }
 
@@ -183,7 +182,7 @@ class UDoubleEnsemble
     {
       source_name = "anon from ensemble: " + std::to_string(ensemble[0]);
     }
-    unsigned long source_num = sources.get_num_sources();
+    size_t source_num = sources.get_num_sources();
     memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
     source_num = sources.get_new_source(source_name);
   }
@@ -716,7 +715,7 @@ class UDoubleEnsemble
   // get measured at precisely the expected values.
   static void PerfectEnsemble(double* ensemble, const size_t ens_size)
   {
-    unsigned long i;
+    size_t i;
     double value, sigma, skew, kurtosis, m5;
 
     double* test_ensemble = new double[ens_size];
