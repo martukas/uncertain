@@ -60,6 +60,9 @@
 // \todo make template variables or class consts
 #define MAX_UNC_ELEMENTS 5
 
+namespace uncertain
+{
+
 // A class for sources of uncertainties.
 class UncertainSourceSet
 {
@@ -134,3 +137,5 @@ class UncertainSourceSet
     return source_name[i];
   }
 };
+
+}

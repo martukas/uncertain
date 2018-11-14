@@ -82,14 +82,14 @@ double my_modf(double a) { return modf(a, &GlobalDouble); }
 class UDoubleTest
 {
  private:
-  UDoubleMSUncorr msu;
-  UDoubleMSCorr msc;
-  UDoubleMSC<false> mscu;
-  UDoubleMSC<true> mscc;
-  UDoubleCTSA ctsa;
-  UDoubleCTAA ctaa;
-  UDoubleEnsemble<ens_a_size> ens_a;
-  UDoubleEnsemble<ens_b_size> ens_b;
+  uncertain::UDoubleMSUncorr msu;
+  uncertain::UDoubleMSCorr msc;
+  uncertain::UDoubleMSC<false> mscu;
+  uncertain::UDoubleMSC<true> mscc;
+  uncertain::UDoubleCTSA ctsa;
+  uncertain::UDoubleCTAA ctaa;
+  uncertain::UDoubleEnsemble<ens_a_size> ens_a;
+  uncertain::UDoubleEnsemble<ens_b_size> ens_b;
 
  public:
   UDoubleTest(const double val = 0.0, const double unc = 0.0,
@@ -587,7 +587,7 @@ class UDoubleTest
                    "those tests." << std::endl;
     }
     double mean, sigma;
-    uncertain_read(mean, sigma, is);
+    uncertain::uncertain_read(mean, sigma, is);
     ud = UDoubleTest(mean, sigma);
     return is;
   }
@@ -668,7 +668,7 @@ class UDoubleTest
          std::stringstream osc, alt_osc; \
          std::stringstream osa, alt_osa; \
          std::string str, slope_str, a_str, alt_a_str; \
-         UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg.msu);\
+         uncertain::UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg.msu);\
          arg.msu = func(arg.msu); \
          os << arg.msu; \
          alt_os << alt_msu; \
@@ -677,7 +677,7 @@ class UDoubleTest
                  << str << " vs. " << slope_str << std::endl; \
          arg.msc = func(arg.msc); \
          \
-         UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(func, arg.mscu);\
+         uncertain::UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(func, arg.mscu);\
          arg.mscu = func(arg.mscu); \
          osc << arg.mscu; \
          alt_osc << alt_mscu; \
@@ -688,7 +688,7 @@ class UDoubleTest
          \
          arg.ctsa = func(arg.ctsa); \
          arg.ctaa = func(arg.ctaa); \
-         UDoubleEnsemble<ens_a_size> alt_ens_a = Invoke(func, arg.ens_a); \
+         uncertain::UDoubleEnsemble<ens_a_size> alt_ens_a = Invoke(func, arg.ens_a); \
          arg.ens_a = func(arg.ens_a); \
          osa << arg.ens_a; \
          alt_osa << alt_ens_a; \
@@ -706,7 +706,7 @@ class UDoubleTest
          std::stringstream os, alt_os; \
          std::stringstream osc, alt_osc; \
          std::string str, slope_str; \
-         UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg1.msu, \
+         uncertain::UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg1.msu, \
                                                                 arg2.msu);\
          retval.msu = func(arg1.msu, arg2.msu); \
          os << retval.msu; \
@@ -716,7 +716,7 @@ class UDoubleTest
                  << str << " vs. " << slope_str << std::endl; \
          retval.msc = func(arg1.msc, arg2.msc); \
          \
-         UDoubleMSC<false> alt_mscu =PropagateUncertaintiesBySlope(func, arg1.mscu, \
+         uncertain::UDoubleMSC<false> alt_mscu =PropagateUncertaintiesBySlope(func, arg1.mscu, \
                                                                arg2.mscu);\
          retval.mscu = func(arg1.mscu, arg2.mscu); \
          osc << retval.mscu; \
@@ -778,7 +778,7 @@ class UDoubleTest
     std::string str, slope_str;
 
     GlobalInt = intarg;
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
     arg.msu = ldexp(arg.msu, intarg);
     os << arg.msu;
     alt_os << alt_msu;
@@ -787,7 +787,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = ldexp(arg.msc, intarg);
 
-    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_ldexp, arg.mscu);
+    uncertain::UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_ldexp, arg.mscu);
     arg.mscu = ldexp(arg.mscu, intarg);
     osc << arg.mscu;
     alt_osc << alt_mscu;
@@ -809,7 +809,7 @@ class UDoubleTest
     std::stringstream osc, alt_osc;
     std::string str, slope_str;
 
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
     alt_os << alt_msu << " (" << GlobalInt << ")";
     arg.msu = frexp(arg.msu, intarg);
     os << arg.msu << " (" << *intarg << ")";
@@ -818,7 +818,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = frexp(arg.msc, intarg);
 
-    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_frexp, arg.mscu);
+    uncertain::UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_frexp, arg.mscu);
     alt_osc << alt_mscu << " (" << GlobalInt << ")";
     arg.mscu = frexp(arg.mscu, intarg);
     osc << arg.mscu << " (" << *intarg << ")";
@@ -840,7 +840,7 @@ class UDoubleTest
     std::stringstream osc, alt_osc;
     std::string str, slope_str;
 
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
     alt_os << alt_msu << " (" << GlobalDouble << ")";
     arg.msu = modf(arg.msu, dblarg);
     os << arg.msu << " (" << *dblarg << ")";
@@ -849,7 +849,7 @@ class UDoubleTest
                 << str << " vs. " << slope_str << std::endl;
     arg.msc = modf(arg.msc, dblarg);
 
-    UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_modf, arg.mscu);
+    uncertain::UDoubleMSC<false> alt_mscu = PropagateUncertaintiesBySlope(my_modf, arg.mscu);
     alt_osc << alt_mscu << " (" << GlobalDouble << ")";
     arg.mscu = modf(arg.mscu, dblarg);
     osc << arg.mscu << " (" << *dblarg << ")";
@@ -867,10 +867,10 @@ class UDoubleTest
 
   static void new_epoch()
   {
-    UDoubleCTSA::new_epoch();
-    UDoubleCTAA::new_epoch();
-    UDoubleEnsemble<ens_a_size>::new_epoch();
-    UDoubleEnsemble<ens_b_size>::new_epoch();
+    uncertain::UDoubleCTSA::new_epoch();
+    uncertain::UDoubleCTAA::new_epoch();
+    uncertain::UDoubleEnsemble<ens_a_size>::new_epoch();
+    uncertain::UDoubleEnsemble<ens_b_size>::new_epoch();
   }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
@@ -899,16 +899,16 @@ class UDoubleTest
 };
 
 template<>
-UncertainSourceSet UDoubleEnsemble<ens_a_size>::sources("Small Ensemble");
+uncertain::UncertainSourceSet uncertain::UDoubleEnsemble<ens_a_size>::sources("Small Ensemble");
 
 template<>
-double UDoubleEnsemble<ens_a_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_a_size];
+double uncertain::UDoubleEnsemble<ens_a_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_a_size];
 
 template<>
-UncertainSourceSet UDoubleEnsemble<ens_b_size>::sources("Large Ensemble");
+uncertain::UncertainSourceSet uncertain::UDoubleEnsemble<ens_b_size>::sources("Large Ensemble");
 
 template<>
-double UDoubleEnsemble<ens_b_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_b_size];
+double uncertain::UDoubleEnsemble<ens_b_size>::src_ensemble[MAX_UNC_ELEMENTS][ens_b_size];
 
 class UDoubleInit
 {

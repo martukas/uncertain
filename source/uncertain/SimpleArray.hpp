@@ -57,6 +57,8 @@
 
 // \todo add exceptions
 
+namespace uncertain
+{
 
 // Specialized array class has only those members needed to be an array
 // of uncertainty elements used as the template parameter in UDoubleCT<>.
@@ -163,3 +165,5 @@ class SimpleArray
     return sqrt(tot);
   }
 };
+
+}

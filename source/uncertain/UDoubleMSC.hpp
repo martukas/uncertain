@@ -55,6 +55,9 @@
 #include <iomanip>
 #include <time.h>
 
+namespace uncertain
+{
+
 // \todo add exceptions
 
 // model uncertain number using only mean and sigma, like UDoubleMS,
@@ -143,7 +146,7 @@ class UDoubleMSC
     if (is_correlated)
       uncertainty += ud.uncertainty;
     else
-      uncertainty = hypot(uncertainty, ud.uncertainty);
+      uncertainty = std::hypot(uncertainty, ud.uncertainty);
     value += ud.value;
     return *this;
   }
@@ -153,7 +156,7 @@ class UDoubleMSC
     if (is_correlated)
       uncertainty -= ud.uncertainty;
     else
-      uncertainty = hypot(uncertainty, ud.uncertainty);
+      uncertainty = std::hypot(uncertainty, ud.uncertainty);
     value -= ud.value;
     return *this;
   }
@@ -296,7 +299,7 @@ class UDoubleMSC
          if (is_correlated) \
             retval.uncertainty = unc1 + unc2; \
          else \
-            retval.uncertainty = hypot(unc1, unc2); \
+            retval.uncertainty = std::hypot(unc1, unc2); \
          return retval; \
       }
 
@@ -492,7 +495,7 @@ class UDoubleMSC
     if (is_correlated)
       retval.uncertainty = unc1 + unc2;
     else
-      retval.uncertainty = hypot(unc1, unc2);
+      retval.uncertainty = std::hypot(unc1, unc2);
     return retval;
   }
 // \todo add Monte-Carlo propogation
@@ -504,3 +507,4 @@ double UDoubleMSC<false>::discontinuity_thresh = 3.0;
 template<>
 double UDoubleMSC<true>::discontinuity_thresh = 0.0;
 
+}

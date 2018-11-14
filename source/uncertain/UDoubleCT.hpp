@@ -54,6 +54,8 @@
 
 // \todo add exceptions
 
+namespace uncertain
+{
 
 // Correlation tracking class keeps an array of uncertainty
 // components from various sources.  (Array implementation
@@ -372,3 +374,5 @@ UncertainSourceSet UDoubleCT<SizedArrayWithScale>::sources("Array with Scale");
 
 typedef UDoubleCT<SizedSimpleArray> UDoubleCTSA;
 typedef UDoubleCT<SizedArrayWithScale> UDoubleCTAA;
+
+}

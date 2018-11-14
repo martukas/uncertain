@@ -48,12 +48,9 @@
 
 // \todo add exceptions
 
+namespace uncertain
+{
 
-// \todo these functions should be static in implementation
-//                   file or hidden in a namespace
-
-
-// \todo restrict namespace
 // prints uncertainty to 2 digits and value to same precision
 void uncertain_print(double mean, double sigma, std::ostream& os)
 {
@@ -104,7 +101,6 @@ void uncertain_print(double mean, double sigma, std::ostream& os)
   os.flags(original_format);
 }
 
-// \todo restrict namespace
 // reads uncertainty as mean +/- sigma
 void uncertain_read(double& mean, double& sigma, std::istream& is)
 {
@@ -118,10 +114,10 @@ void uncertain_read(double& mean, double& sigma, std::istream& is)
 
 // \todo include skewing of distribution
 void gauss_loss(const double& uncertainty, const double& disc_dist,
-                       const discontinuity_type& disc_type,
-                       std::string id_string,
-                       std::string func_str,
-                       const double& disc_thresh)
+                const discontinuity_type& disc_type,
+                std::string id_string,
+                std::string func_str,
+                const double& disc_thresh)
 {
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
   if ((scaled_disc_dist < disc_thresh) && (disc_type != none))
@@ -145,4 +141,6 @@ void gauss_loss(const double& uncertainty, const double& disc_dist,
       std::cerr << " from unknown discontinuity " << disc_type << std::endl;
     std::cerr << std::setprecision(original_precision);
   }
+}
+
 }

@@ -52,6 +52,9 @@
 #include <sstream>
 #include <iomanip>
 
+namespace uncertain
+{
+
 // model uncertain number using only mean and sigma (pure Gaussian)
 // This is the simplest possible model of uncertainty.  It ignores
 // all second-order and higher-order effects, and when two
@@ -161,7 +164,7 @@ class UDoubleMS
     if (is_correlated)
       uncertainty += ud.uncertainty;
     else
-      uncertainty = hypot(uncertainty, ud.uncertainty);
+      uncertainty = std::hypot(uncertainty, ud.uncertainty);
     value += ud.value;
     return *this;
   }
@@ -177,7 +180,7 @@ class UDoubleMS
     if (is_correlated)
       uncertainty -= ud.uncertainty;
     else
-      uncertainty = hypot(uncertainty, ud.uncertainty);
+      uncertainty = std::hypot(uncertainty, ud.uncertainty);
     value -= ud.value;
     return *this;
   }
@@ -193,7 +196,7 @@ class UDoubleMS
     if (is_correlated)
       uncertainty = uncertainty * ud.value + ud.uncertainty * value;
     else
-      uncertainty = hypot(uncertainty * ud.value, ud.uncertainty * value);
+      uncertainty = std::hypot(uncertainty * ud.value, ud.uncertainty * value);
     value *= ud.value;
     return *this;
   }
@@ -211,7 +214,7 @@ class UDoubleMS
       uncertainty = uncertainty / ud.value
           - (ud.uncertainty * value) / (ud.value * ud.value);
     else
-      uncertainty = hypot(uncertainty / ud.value,
+      uncertainty = std::hypot(uncertainty / ud.value,
                           (ud.uncertainty * value) / (ud.value * ud.value));
     value /= ud.value;
     return *this;
@@ -303,7 +306,7 @@ class UDoubleMS
       retval.uncertainty = slope1 * arg1.uncertainty
           + slope2 * arg2.uncertainty;
     else
-      retval.uncertainty = hypot(slope1 * arg1.uncertainty,
+      retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
                                  slope2 * arg2.uncertainty);
     retval.value = fmod(arg1.value, arg2.value);
     return retval;
@@ -387,7 +390,7 @@ class UDoubleMS
       retval.uncertainty = slope1 * arg1.uncertainty
           + slope2 * arg2.uncertainty;
     else
-      retval.uncertainty = hypot(slope1 * arg1.uncertainty,
+      retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
                                  slope2 * arg2.uncertainty);
     retval.value = atan2(arg1.value, arg2.value);
     return retval;
@@ -477,7 +480,7 @@ class UDoubleMS
       retval.uncertainty = slope1 * arg1.uncertainty
           + slope2 * arg2.uncertainty;
     else
-      retval.uncertainty = hypot(slope1 * arg1.uncertainty,
+      retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
                                  slope2 * arg2.uncertainty);
     return retval;
   }
@@ -533,7 +536,7 @@ class UDoubleMS
                                     arg2.value + arg2.uncertainty);
       double down_val2 = certain_func(arg1.value,
                                       arg2.value - arg2.uncertainty);
-      retval.uncertainty = 0.5 * hypot(up_val1 - down_val1,
+      retval.uncertainty = 0.5 * std::hypot(up_val1 - down_val1,
                                        up_val2 - down_val2);
     }
     return retval;
@@ -544,3 +547,4 @@ class UDoubleMS
 typedef UDoubleMS<false> UDoubleMSUncorr;
 typedef UDoubleMS<true> UDoubleMSCorr;
 
+}

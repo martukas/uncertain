@@ -61,26 +61,16 @@
 
 // \todo add exceptions
 
-
-// \todo these functions should be static in implementation
-//                   file or hidden in a namespace
-
-
-// \todo restrict namespace
-// prints uncertainty to 2 digits and value to same precision
-void uncertain_print(double mean, double sigma, std::ostream& os = std::cout);
-
-// \todo restrict namespace
-// reads uncertainty as mean +/- sigma
-void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin);
+namespace uncertain
+{
 
 // This function takes the square root of the sum of the squares of
 // numbers, which is equal to the length of the hypotenuse of a right
 // triangle if the two arguments are the lengths of the legs.
 inline double hypot(const double& a, const double& b, const double& c) { return sqrt(a * a + b * b + c * c); }
-// hypot() could have problems with overflow.  A possible
+// std::hypot() could have problems with overflow.  A possible
 // reformulation of the 2-argument version is:
-// inline double hypot(const double &a, const double &b)
+// inline double std::hypot(const double &a, const double &b)
 // {
 //   double fa = fabs(a);
 //   double fb = fabs(b);
@@ -89,7 +79,7 @@ inline double hypot(const double& a, const double& b, const double& c) { return 
 //     fa /= fb;
 //     return fb * sqrt(1.0 + fa * fa);
 //   }
-//   else if (fb == fa) // making this a special case makes hypot(Inf,Inf) work
+//   else if (fb == fa) // making this a special case makes std::hypot(Inf,Inf) work
 //   {
 //     return fb;
 //   }
@@ -105,6 +95,9 @@ inline double hypot(const double& a, const double& b, const double& c) { return 
 // square: just a notational convenience
 inline double sqr(const double& a) { return a * a; }
 
+// This function translates floating point ratios to percentages
+inline int int_percent(const double& in) { return int(floor(in * 100.0 + 0.5)); }
+
 typedef enum
 {
   none,                // eg sin(x) is continuous everywhere
@@ -115,8 +108,18 @@ typedef enum
   undefined_beyond     // eg asin(x) x -> 1.0
 } discontinuity_type;
 
-// This function translates floating point ratios to percentages
-inline int int_percent(const double& in) { return int(floor(in * 100.0 + 0.5)); }
+// prints uncertainty to 2 digits and value to same precision
+void uncertain_print(double mean, double sigma, std::ostream& os = std::cout);
+
+// reads uncertainty as mean +/- sigma
+void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin);
+
+// \todo include skewing of distribution
+void gauss_loss(const double& uncertainty, const double& disc_dist,
+                const discontinuity_type& disc_type,
+                std::string id_string,
+                std::string func_str,
+                const double& disc_thresh);
 
 // This object tells all about the effects of an argument on a function
 // return value.
@@ -495,7 +498,6 @@ inline two_arg_ret pow_w_moments(const double& arg1, const double& arg2)
   return retval;
 }
 
-// \todo restrict namespace
 // This function returns an approximation of the inverse Gaussian denstity
 // function to within 4.5e-4.  From Abromowitz & Stegun's _Handbook_of_
 // _Mathematical_Functions_ formula 26.2.23
@@ -520,15 +522,7 @@ inline double inverse_gaussian_density(const double& p)
       / (1.0 + t * (d1 + t * (d2 + t * d3)));
 }
 
-// \todo include skewing of distribution
-void gauss_loss(const double& uncertainty, const double& disc_dist,
-                const discontinuity_type& disc_type,
-                std::string id_string,
-                std::string func_str,
-                const double& disc_thresh);
-
 // Compare function to sort by absolute value
-// \todo restrict namespace
 inline int abs_double_compare(const void* a, const void* b)
 {
   double fa = fabs(*(double*) a);
@@ -539,4 +533,6 @@ inline int abs_double_compare(const void* a, const void* b)
     return -1;
   else
     return 1;
+}
+
 }

@@ -133,7 +133,7 @@ void infix_check()
             << " (should be 0.667 +/- 0.028)" << std::endl << std::endl;
   std::cout << "a + a + b = " << (a + a + b) << std::endl
             << " (should be 2.00 +/- 0.20)" << std::endl;
-  UDoubleMSCorr tc = UDoubleMSCorr(1.0, 0.1) + UDoubleMSCorr(1.0, 0.1);
+  uncertain::UDoubleMSCorr tc = uncertain::UDoubleMSCorr(1.0, 0.1) + uncertain::UDoubleMSCorr(1.0, 0.1);
   std::cout << "But these classes can be coerced into giving the right uncertainty "
                "in this" << std::endl
             << "last case by separately performing the correlated and uncorrelated "
@@ -147,8 +147,8 @@ void infix_check()
             << "\"UDoubleUncorr(tc.mean(), tc.deviation()) + "
                "UDoubleUncorr(0.0, 0.02)\"," << std::endl
             << "giving the desired: "
-            << (UDoubleMSUncorr(tc.mean(), tc.deviation())
-                + UDoubleMSUncorr(0.0, 0.02))
+            << (uncertain::UDoubleMSUncorr(tc.mean(), tc.deviation())
+                + uncertain::UDoubleMSUncorr(0.0, 0.02))
             << std::endl;
 }
 
@@ -157,8 +157,8 @@ void io_check()
   std::string input = "3 +/- 4 1+/-2 2.+/-1 3+/-.3";
   std::stringstream ibuf;
   ibuf.str(input);
-  UDoubleMSUncorr a, b;
-  UDoubleMSCorr x, y;
+  uncertain::UDoubleMSUncorr a, b;
+  uncertain::UDoubleMSCorr x, y;
 
   std::cout << std::endl << std::endl << "EXTRACTOR" << std::endl;
   std::cout << "From \"" << input << "\" extracted: " << std::endl;

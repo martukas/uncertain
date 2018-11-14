@@ -66,8 +66,8 @@ double my_modf(double a) { return modf(a, &GlobalDouble); }
 class UDoubleTest
 {
  private:
-  UDoubleMSUncorr msu;
-  UDoubleMSCorr msc;
+  uncertain::UDoubleMSUncorr msu;
+  uncertain::UDoubleMSCorr msc;
 
  public:
   UDoubleTest(const double val = 0.0, const double unc = 0.0)
@@ -310,7 +310,7 @@ class UDoubleTest
       { \
          std::stringstream os, alt_os; \
          std::string str, slope_str; \
-         UDoubleMSUncorr alt_msu =PropagateUncertaintiesBySlope(func, arg.msu);\
+         uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(func, arg.msu);\
          arg.msu = func(arg.msu); \
          os << arg.msu; \
          alt_os << alt_msu; \
@@ -326,7 +326,7 @@ class UDoubleTest
          UDoubleTest retval; \
          std::stringstream os, alt_os; \
          std::string str, slope_str; \
-         UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(func, \
+         uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(func, \
                                                   arg1.msu, arg2.msu); \
          retval.msu = func(arg1.msu, arg2.msu); \
          os << retval.msu; \
@@ -381,7 +381,7 @@ class UDoubleTest
     std::stringstream os, alt_os;
     std::string str, slope_str;
     GlobalInt = intarg;
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_ldexp, arg.msu);
     arg.msu = ldexp(arg.msu, intarg);
     os << arg.msu;
     alt_os << alt_msu;
@@ -396,7 +396,7 @@ class UDoubleTest
   {
     std::stringstream os, alt_os;
     std::string str, slope_str;
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_frexp, arg.msu);
     arg.msu = frexp(arg.msu, intarg);
     os << arg.msu;
     alt_os << alt_msu;
@@ -411,7 +411,7 @@ class UDoubleTest
   {
     std::stringstream os, alt_os;
     std::string str, slope_str;
-    UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
+    uncertain::UDoubleMSUncorr alt_msu = PropagateUncertaintiesBySlope(my_modf, arg.msu);
     arg.msu = modf(arg.msu, dblarg);
     os << arg.msu;
     alt_os << alt_msu;

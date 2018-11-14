@@ -53,6 +53,9 @@
 #include <uncertain/UDoubleMS.hpp>
 #include <uncertain/SourceSet.hpp>
 
+namespace uncertain
+{
+
 // Ensemble uncertainty class.  Represents a distribution by a
 // set of n=esize possible values distributed at intervals of
 // uniform probability throughout the
@@ -751,3 +754,5 @@ class UDoubleEnsemble
       ensemble[i] /= sigma;
   }
 };
+
+}

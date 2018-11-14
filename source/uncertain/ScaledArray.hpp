@@ -57,6 +57,8 @@
 
 // \todo add exceptions
 
+namespace uncertain
+{
 
 // Specialized array class has only those members needed to be an array
 // of uncertainty elements used as the template parameter in UDoubleCT<>.
@@ -156,7 +158,7 @@ class ArrayWithScale
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
-                " Greater than " + std::to_string(size - 1));
+          " Greater than " + std::to_string(size - 1));
     }
     return element[subscript] * scale;
   }
@@ -170,7 +172,7 @@ class ArrayWithScale
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
-                " Greater than " + std::to_string(size - 1));
+          " Greater than " + std::to_string(size - 1));
     }
     if (scale != 0.0)
       element[subscript] = value / scale;
@@ -186,3 +188,5 @@ class ArrayWithScale
     return sqrt(tot * scale * scale);
   }
 };
+
+}
