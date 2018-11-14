@@ -123,7 +123,7 @@ void gauss_loss(double uncertainty, double disc_dist,
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
   if ((scaled_disc_dist < disc_thresh) && (disc_type != none))
   {
-    int original_precision = std::cerr.precision();
+    auto original_precision = std::cerr.precision();
     std::cerr << std::setprecision(2);
     std::cerr << func_str << "is " << scaled_disc_dist << " sigmas"
               << id_string;

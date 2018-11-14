@@ -363,6 +363,7 @@ class UDoubleEnsemble
 #define UDoubleEnsemblefunc1(func) \
       UDoubleEnsemble<esize> func(UDoubleEnsemble<esize> arg) \
       { \
+         using namespace std; \
          for (size_t i = 0; i < esize; i++) \
             arg.ensemble[i] = func(arg.ensemble[i]); \
          return arg; \
@@ -371,6 +372,7 @@ class UDoubleEnsemble
       UDoubleEnsemble<esize> func(const UDoubleEnsemble<esize>& arg1, \
                                   const UDoubleEnsemble<esize>& arg2) \
       { \
+         using namespace std; \
          UDoubleEnsemble<esize> retval(arg1); \
          for (size_t i = 0; i < esize; i++) \
             retval.ensemble[i] = func(arg1.ensemble[i], arg2.ensemble[i]); \
@@ -571,7 +573,7 @@ class UDoubleEnsemble
     for (i = 0; i < esize; i++)
     {
       double normval = (ensemble[i] - value) / sigma;
-      int intval = int(floor(2.0 * normval + 0.5) + 8.0);
+      int intval = int(std::floor(2.0 * normval + 0.5) + 8.0);
       if (intval < 0)
         bin[0]++;
       else if (intval > 16)

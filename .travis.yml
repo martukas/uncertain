@@ -18,7 +18,7 @@ install:
   - sudo apt-get -y install -qq cloc doxygen lcov libtool
   # Install conan
   - sudo -H pip2 install conan
-  - sudo -H pip2 install gcovr
+  - sudo -H pip2 install gcovr==3.4
   - conan profile new --detect default
   - conan profile update settings.compiler.libcxx=libstdc++11 default
   - conan remote add ess-dmsc https://api.bintray.com/conan/ess-dmsc/conan
