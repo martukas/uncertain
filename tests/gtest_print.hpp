@@ -1,36 +1,27 @@
-//
-// Authors: Martin Shetty <martin.shetty@esss.se>
-//          Morten Jagd Christensen <Morten.JagdChristensen@esss.se>
-//
-
-#pragma  once
-
+#pragma once
 #include <gtest/gtest.h>
 
-namespace testing
-{
-namespace internal
-{
-enum GTestColor {
-  COLOR_DEFAULT,
-  COLOR_RED,
-  COLOR_GREEN,
-  COLOR_YELLOW
-};
+namespace testing {
+namespace internal {
+enum GTestColor { COLOR_DEFAULT, COLOR_RED, COLOR_GREEN, COLOR_YELLOW };
 
 extern void ColoredPrintf(GTestColor color, const char* fmt, ...);
 }
 }
-#define PRINTF(...)  do { testing::internal::ColoredPrintf(testing::internal::COLOR_GREEN, "[          ] "); testing::internal::ColoredPrintf(testing::internal::COLOR_YELLOW, __VA_ARGS__); } while(0)
 
-// C++ stream interface
-class TestCout : public std::stringstream
+class TestBase : public ::testing::Test
 {
- public:
-  ~TestCout()
+ protected:
+  class Message : public std::stringstream
   {
-    PRINTF("%s\n",str().c_str());
-  }
+   public:
+    ~Message()
+    {
+      testing::internal::ColoredPrintf(testing::internal::COLOR_GREEN,
+                                       "[          ] ");
+      testing::internal::ColoredPrintf(testing::internal::COLOR_YELLOW, "%s",
+                                       str().c_str());
+    }
+  };
+#define MESSAGE Message
 };
-
-#define TEST_COUT  TestCout()

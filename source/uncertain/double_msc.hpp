@@ -48,6 +48,7 @@
 #pragma once
 
 #include <uncertain/functions.hpp>
+#include <sstream>
 
 namespace uncertain
 {
@@ -68,9 +69,10 @@ class UDoubleMSC
   double value;
   double uncertainty;
 
-  static double discontinuity_thresh;  // Warn whenever discontinuity is
+  // Warn whenever discontinuity is
   // closer than discontinuity_thresh
   // sigmas from value
+  static double discontinuity_thresh;
 
  public:
   static void set_disc_thresh(double new_thresh)
@@ -89,11 +91,20 @@ class UDoubleMSC
   }
 
   UDoubleMSC(const UDoubleMSC& ud)
-      : value(ud.value), uncertainty(ud.uncertainty) {}
+      : value(ud.value), uncertainty(ud.uncertainty)
+  {}
 
-  ~UDoubleMSC() {}
+  ~UDoubleMSC() = default;
 
-  UDoubleMSC<is_correlated> operator+() const { return *this; }
+  // read-only access to data members
+  double mean() const
+  { return value; }
+
+  double deviation() const
+  { return fabs(uncertainty); }
+
+  UDoubleMSC<is_correlated> operator+() const
+  { return *this; }
 
   UDoubleMSC<is_correlated> operator-() const
   {
@@ -104,14 +115,18 @@ class UDoubleMSC
   }
 
   friend UDoubleMSC<is_correlated> operator+(UDoubleMSC<is_correlated> a,
-                                             const UDoubleMSC<is_correlated>& b) { return a += b; }
+                                             const UDoubleMSC<is_correlated>& b)
+  { return a += b; }
 
   friend UDoubleMSC<is_correlated> operator-(UDoubleMSC<is_correlated> a,
-                                             const UDoubleMSC<is_correlated>& b) { return a -= b; }
+                                             const UDoubleMSC<is_correlated>& b)
+  { return a -= b; }
 
-  UDoubleMSC<is_correlated> operator++() { return (*this += 1.0); }
+  UDoubleMSC<is_correlated> operator++()
+  { return (*this += 1.0); }
 
-  UDoubleMSC<is_correlated> operator--() { return (*this -= 1.0); }
+  UDoubleMSC<is_correlated> operator--()
+  { return (*this -= 1.0); }
 
   UDoubleMSC<is_correlated> operator++(int)
   {
@@ -128,10 +143,12 @@ class UDoubleMSC
   }
 
   friend UDoubleMSC<is_correlated> operator*(UDoubleMSC<is_correlated> a,
-                                             const UDoubleMSC<is_correlated>& b) { return a *= b; }
+                                             const UDoubleMSC<is_correlated>& b)
+  { return a *= b; }
 
   friend UDoubleMSC<is_correlated> operator/(UDoubleMSC<is_correlated> a,
-                                             const UDoubleMSC<is_correlated>& b) { return a /= b; }
+                                             const UDoubleMSC<is_correlated>& b)
+  { return a /= b; }
 
   UDoubleMSC<is_correlated>& operator+=(const UDoubleMSC<is_correlated>& ud)
   {
@@ -402,11 +419,6 @@ class UDoubleMSC
     return arg;
   }
 
-  // read-only access to data members
-  double mean() const { return value; }
-
-  double deviation() const { return fabs(uncertainty); }
-
   friend UDoubleMSC<is_correlated> PropagateUncertaintiesBySlope(
       double (* certain_func)(double),
       const UDoubleMSC<is_correlated>& arg)
@@ -499,5 +511,10 @@ double UDoubleMSC<false>::discontinuity_thresh = 3.0;
 
 template<>
 double UDoubleMSC<true>::discontinuity_thresh = 0.0;
+
+
+// typedefs to hide the use of templates in the implementation
+using UDoubleMSCUncorr = UDoubleMSC<false>;
+using UDoubleMSCCorr = UDoubleMSC<true>;
 
 }

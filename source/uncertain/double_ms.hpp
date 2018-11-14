@@ -54,8 +54,7 @@ namespace uncertain
 // all second-order and higher-order effects, and when two
 // uncertain numbers interact this model assumes either that they
 // are 100% correlated or that they are 100% uncorrelated, depending
-// on the template parameter. (The template parameter is conceptual
-// a bool, but g++ 2.6.3 chokes on that.)
+// on the template parameter.
 template<bool is_correlated>
 class UDoubleMS
 {
@@ -75,11 +74,21 @@ class UDoubleMS
   }
 
   UDoubleMS(const UDoubleMS& ud)
-      : value(ud.value), uncertainty(ud.uncertainty) {}
+      : value(ud.value), uncertainty(ud.uncertainty)
+  {}
 
-  ~UDoubleMS() {}
+  ~UDoubleMS() = default;
 
-  UDoubleMS<is_correlated> operator+() const { return *this; }
+  // read-only access to data members
+  double mean() const
+  { return value; }
+
+  // \todo should this be fabs even when correlated?
+  double deviation() const
+  { return fabs(uncertainty); }
+
+  UDoubleMS<is_correlated> operator+() const
+  { return *this; }
 
   UDoubleMS<is_correlated> operator-() const
   {
@@ -90,19 +99,24 @@ class UDoubleMS
   }
 
   friend UDoubleMS<is_correlated> operator+(UDoubleMS<is_correlated> a,
-                                            const UDoubleMS<is_correlated>& b) { return a += b; }
+                                            const UDoubleMS<is_correlated>& b)
+  { return a += b; }
 
   friend UDoubleMS<is_correlated> operator+(UDoubleMS<is_correlated> a,
-                                            double b) { return a += b; }
+                                            double b)
+  { return a += b; }
 
   friend UDoubleMS<is_correlated> operator+(double b,
-                                            UDoubleMS<is_correlated> a) { return a += b; }
+                                            UDoubleMS<is_correlated> a)
+  { return a += b; }
 
   friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
-                                            const UDoubleMS<is_correlated>& b) { return a -= b; }
+                                            const UDoubleMS<is_correlated>& b)
+  { return a -= b; }
 
   friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
-                                            double b) { return a -= b; }
+                                            double b)
+  { return a -= b; }
 
   friend UDoubleMS<is_correlated> operator-(double b,
                                             UDoubleMS<is_correlated> a)
@@ -111,9 +125,11 @@ class UDoubleMS
     return -a;
   }
 
-  UDoubleMS<is_correlated> operator++() { return (*this += 1.0); }
+  UDoubleMS<is_correlated> operator++()
+  { return (*this += 1.0); }
 
-  UDoubleMS<is_correlated> operator--() { return (*this -= 1.0); }
+  UDoubleMS<is_correlated> operator--()
+  { return (*this -= 1.0); }
 
   UDoubleMS<is_correlated> operator++(int)
   {
@@ -130,19 +146,24 @@ class UDoubleMS
   }
 
   friend UDoubleMS<is_correlated> operator*(UDoubleMS<is_correlated> a,
-                                            const UDoubleMS<is_correlated>& b) { return a *= b; }
+                                            const UDoubleMS<is_correlated>& b)
+  { return a *= b; }
 
   friend UDoubleMS<is_correlated> operator*(UDoubleMS<is_correlated> a,
-                                            double b) { return a *= b; }
+                                            double b)
+  { return a *= b; }
 
   friend UDoubleMS<is_correlated> operator*(double b,
-                                            UDoubleMS<is_correlated> a) { return a *= b; }
+                                            UDoubleMS<is_correlated> a)
+  { return a *= b; }
 
   friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
-                                            const UDoubleMS<is_correlated>& b) { return a /= b; }
+                                            const UDoubleMS<is_correlated>& b)
+  { return a /= b; }
 
   friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
-                                            double b) { return a /= b; }
+                                            double b)
+  { return a /= b; }
 
   friend UDoubleMS<is_correlated> operator/(double b,
                                             UDoubleMS<is_correlated> a)
@@ -209,7 +230,7 @@ class UDoubleMS
           - (ud.uncertainty * value) / (ud.value * ud.value);
     else
       uncertainty = std::hypot(uncertainty / ud.value,
-                          (ud.uncertainty * value) / (ud.value * ud.value));
+                               (ud.uncertainty * value) / (ud.value * ud.value));
     value /= ud.value;
     return *this;
   }
@@ -301,7 +322,7 @@ class UDoubleMS
           + slope2 * arg2.uncertainty;
     else
       retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
-                                 slope2 * arg2.uncertainty);
+                                      slope2 * arg2.uncertainty);
     retval.value = fmod(arg1.value, arg2.value);
     return retval;
   }
@@ -385,7 +406,7 @@ class UDoubleMS
           + slope2 * arg2.uncertainty;
     else
       retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
-                                 slope2 * arg2.uncertainty);
+                                      slope2 * arg2.uncertainty);
     retval.value = atan2(arg1.value, arg2.value);
     return retval;
   }
@@ -475,14 +496,9 @@ class UDoubleMS
           + slope2 * arg2.uncertainty;
     else
       retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
-                                 slope2 * arg2.uncertainty);
+                                      slope2 * arg2.uncertainty);
     return retval;
   }
-
-  // read-only access to data members
-  double mean() const { return value; }
-
-  double deviation() const { return fabs(uncertainty); }
 
   // To propogate an uncertainty through a function for which the slope
   // is not known, we estimate the slope by comparing values for
@@ -531,7 +547,7 @@ class UDoubleMS
       double down_val2 = certain_func(arg1.value,
                                       arg2.value - arg2.uncertainty);
       retval.uncertainty = 0.5 * std::hypot(up_val1 - down_val1,
-                                       up_val2 - down_val2);
+                                            up_val2 - down_val2);
     }
     return retval;
   }
