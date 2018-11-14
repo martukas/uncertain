@@ -78,14 +78,14 @@ endif()
 #=============================================================================
 # create package file
 #=============================================================================
-#write_basic_package_version_file(
-#    ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
-#    VERSION ${PROJECT_VERSION}
-#    COMPATIBILITY AnyNewerVersion)
+write_basic_package_version_file(
+    ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion)
 
-#install(FILES ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
-#    DESTINATION ${CMAKE_INSTALL_PACKAGEDIR}
-#    COMPONENT development)
+install(FILES ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
+    DESTINATION ${CMAKE_INSTALL_PACKAGEDIR}
+    COMPONENT development)
 
 #
 # create and install the package file

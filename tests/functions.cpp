@@ -1,7 +1,18 @@
 #include <uncertain/functions.hpp>
 #include "gtest_print.hpp"
 
-TEST(Functions, HalfPi) {
-  EXPECT_EQ(HALF_PI, PI/2);
+TEST(Functions, HalfPi)
+{
+  EXPECT_EQ(HALF_PI, PI / 2);
 }
 
+TEST(Functions, hypot3)
+{
+  EXPECT_EQ(uncertain::hypot(1, 2, 2), 3);
+  EXPECT_EQ(uncertain::hypot(2, 3, 6), 7);
+}
+
+TEST(Functions, sqr)
+{
+  EXPECT_EQ(uncertain::sqr(2), 4);
+}

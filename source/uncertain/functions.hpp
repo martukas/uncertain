@@ -64,10 +64,13 @@
 namespace uncertain
 {
 
+// \todo may be unneeded since C++17
 // This function takes the square root of the sum of the squares of
 // numbers, which is equal to the length of the hypotenuse of a right
 // triangle if the two arguments are the lengths of the legs.
 inline double hypot(const double& a, const double& b, const double& c) { return sqrt(a * a + b * b + c * c); }
+
+// \todo this may be no longer true, since C++11
 // std::hypot() could have problems with overflow.  A possible
 // reformulation of the 2-argument version is:
 // inline double std::hypot(const double &a, const double &b)

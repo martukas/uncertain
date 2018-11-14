@@ -15,8 +15,10 @@ install:
   - sudo apt-get install -qq g++-4.9
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
   - sudo apt-get install -qq python-pip
+  - sudo apt-get -y install -qq cloc doxygen lcov libtool
   # Install conan
   - sudo -H pip2 install conan
+  - sudo -H pip2 install gcovr
   - conan profile new --detect default
   - conan profile update settings.compiler.libcxx=libstdc++11 default
   - conan remote add ess-dmsc https://api.bintray.com/conan/ess-dmsc/conan
@@ -28,7 +30,8 @@ before_script:
 
 script:
   - make
+  - ./bin/ms_demo > null
+  - ./bin/full_demo > null
   - make run_tests
-  - ./bin/ms_demo
-  - ./bin/full_demo
+
 

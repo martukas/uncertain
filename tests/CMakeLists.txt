@@ -40,5 +40,5 @@ create_coverage_targets(
   coverage
   run_tests
   ${PROJECT_BINARY_DIR}
-  ${PROJECT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/source/uncertain
   ${PROJECT_BINARY_DIR}/coverage)
