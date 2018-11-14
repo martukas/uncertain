@@ -47,7 +47,8 @@
 
 #pragma once
 
-#include <string.h>
+#include <stdexcept>
+#include <string>
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>

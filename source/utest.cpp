@@ -39,8 +39,7 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
-#include "UDouble.h"
-#include "UDoubleEnsemble.h"
+#include "UDoubleTest2.h"
 
 template<>
 double UDoubleEnsemble<128u>::src_ensemble[MAX_UNC_ELEMENTS][128u] = {};

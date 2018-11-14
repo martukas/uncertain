@@ -51,7 +51,6 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <stdexcept>
 
 // model uncertain number using only mean and sigma (pure Gaussian)
 // This is the simplest possible model of uncertainty.  It ignores
