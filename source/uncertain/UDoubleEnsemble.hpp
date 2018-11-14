@@ -418,18 +418,18 @@ class UDoubleEnsemble
                                       const int intarg)
   {
     for (size_t i = 0; i < esize; i++)
-      arg.ensemble[i] = ldexp(arg.ensemble[i], intarg);
+      arg.ensemble[i] = std::ldexp(arg.ensemble[i], intarg);
     return arg;
   }
 
   friend UDoubleEnsemble<esize> frexp(UDoubleEnsemble<esize> arg, int* intarg)
   {
     // use library frexp on mean to get value of return in second arg
-    frexp(arg.mean(), intarg);
+    std::frexp(arg.mean(), intarg);
     for (size_t i = 0; i < esize; i++)
     {
       int tempint;  // ignore return in second arg in loop
-      arg.ensemble[i] = frexp(arg.ensemble[i], &tempint);
+      arg.ensemble[i] = std::frexp(arg.ensemble[i], &tempint);
     }
     return arg;
   }
@@ -438,11 +438,11 @@ class UDoubleEnsemble
                                      double* dblarg)
   {
     // use library modf on mean to get value of return in second arg
-    modf(arg.mean(), dblarg);
+    std::modf(arg.mean(), dblarg);
     for (size_t i = 0; i < esize; i++)
     {
       double tempdbl;  // ignore return in second arg in loop
-      arg.ensemble[i] = modf(arg.ensemble[i], &tempdbl);
+      arg.ensemble[i] = std::modf(arg.ensemble[i], &tempdbl);
     }
     return arg;
   }
