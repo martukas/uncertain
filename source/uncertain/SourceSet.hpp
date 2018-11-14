@@ -48,14 +48,6 @@
 #pragma once
 
 #include <uncertain/functions.hpp>
-#include <stdlib.h>
-#include <cmath>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <time.h>
-
-
 
 // \todo make template variables or class consts
 #define MAX_UNC_ELEMENTS 5

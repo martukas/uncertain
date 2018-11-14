@@ -51,7 +51,9 @@
 #include <uncertain/UDoubleMSC.hpp>
 #include <uncertain/UDoubleCT.hpp>
 #include <uncertain/UDoubleEnsemble.hpp>
+#include <sstream>
 
+// \todo use constexpr
 // Gimpel lint doesn't like it with consts, so for lint use defines
 #define ens_a_size 128u
 #define ens_b_size 1024u

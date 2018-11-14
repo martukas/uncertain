@@ -52,8 +52,7 @@
 
 #include <uncertain/UDoubleMS.hpp>
 #include <uncertain/SourceSet.hpp>
-
-
+#include <iomanip>
 
 namespace uncertain
 {
@@ -363,19 +362,17 @@ class UDoubleEnsemble
 #define UDoubleEnsemblefunc1(func) \
       UDoubleEnsemble<esize> func(UDoubleEnsemble<esize> arg) \
       { \
-         using namespace std; \
          for (size_t i = 0; i < esize; i++) \
-            arg.ensemble[i] = func(arg.ensemble[i]); \
+            arg.ensemble[i] = std:: func(arg.ensemble[i]); \
          return arg; \
       }
 #define UDoubleEnsemblefunc2(func) \
       UDoubleEnsemble<esize> func(const UDoubleEnsemble<esize>& arg1, \
                                   const UDoubleEnsemble<esize>& arg2) \
       { \
-         using namespace std; \
          UDoubleEnsemble<esize> retval(arg1); \
          for (size_t i = 0; i < esize; i++) \
-            retval.ensemble[i] = func(arg1.ensemble[i], arg2.ensemble[i]); \
+            retval.ensemble[i] = std:: func(arg1.ensemble[i], arg2.ensemble[i]); \
          return retval; \
       }
 

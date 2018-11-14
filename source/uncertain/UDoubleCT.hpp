@@ -52,8 +52,6 @@
 #include <uncertain/SimpleArray.hpp>
 #include <uncertain/ScaledArray.hpp>
 
-
-
 namespace uncertain
 {
 

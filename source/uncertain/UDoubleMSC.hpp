@@ -48,12 +48,6 @@
 #pragma once
 
 #include <uncertain/functions.hpp>
-#include <stdlib.h>
-#include <cmath>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <time.h>
 
 namespace uncertain
 {

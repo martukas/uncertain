@@ -49,11 +49,6 @@
 
 #include <uncertain/functions.hpp>
 
-#include <stdlib.h>
-#include <cmath>
-
-
-
 namespace uncertain
 {
 
