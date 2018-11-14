@@ -49,6 +49,7 @@
 
 #include <uncertain/functions.hpp>
 #include <sstream>
+#include <functional>
 
 namespace uncertain
 {
@@ -177,7 +178,7 @@ class UDoubleMSC
       double second_order_correlated_adjust = uncertainty * ud.uncertainty;
       double unctemp = uncertainty * ud.value + ud.uncertainty * value;
       if (fabs(unctemp) <= fabs(uncertainty * ud.uncertainty) * 1e-10)
-        uncertainty *= ud.uncertainty * 1.4142135623;
+        uncertainty *= ud.uncertainty * kSqrt2;
       else
         uncertainty = unctemp * sqrt(1.0 + 2.0 * sqr(uncertainty
                                                          * ud.uncertainty
@@ -247,108 +248,168 @@ class UDoubleMSC
     return is;
   }
 
-#define UDoubleMSCfunc1(func) \
-      UDoubleMSC<is_correlated> func(UDoubleMSC<is_correlated> arg) \
-      { \
-         std::stringstream os; \
-         os << #func "(" << arg << ") "; \
-         one_arg_ret funcret = func ## _w_moments(arg.value); \
-         arg.value = funcret.value + sqr(arg.uncertainty) \
-                      * funcret.arg.curve / 2.0; \
-         gauss_loss(arg.uncertainty, funcret.arg.disc_dist, \
-                    funcret.arg.disc_type, "", os.str(), \
-                    UDoubleMSC<is_correlated>::discontinuity_thresh); \
-         if (funcret.arg.slope == 0.0) \
-            arg.uncertainty *= arg.uncertainty * funcret.arg.curve \
-                               * k1Sqrt2; \
-         else \
-         { \
-            arg.uncertainty *= funcret.arg.slope \
-                            * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve \
-                                                   * arg.uncertainty \
-                                                   / funcret.arg.slope)); \
-            if (!is_correlated) \
-               arg.uncertainty = fabs(arg.uncertainty); \
-         } \
-         return arg; \
-      }
-// \todo enhance the below to account for moments with terms of
-// each argument (e.g. for atan2(x,y), we now ignore d/dx(d/dy(atan2(x,y)))
-#define UDoubleMSCfunc2(func) \
-      UDoubleMSC<is_correlated> func(const UDoubleMSC<is_correlated>& arg1, \
-                                    const UDoubleMSC<is_correlated>& arg2) \
-      { \
-         UDoubleMSC<is_correlated> retval; \
-         double unc1, unc2; \
-         std::stringstream os; \
-         os << #func "(" << arg1 << ", " << arg2 << ") "; \
-         std::string str = os.str(); \
-         two_arg_ret funcret = func ## _w_moments(arg1.value, arg2.value); \
-         retval.value = funcret.value \
-                        + 0.5 * (funcret.arg1.curve * sqr(arg1.uncertainty) \
-                                 + funcret.arg2.curve * sqr(arg2.uncertainty));\
-         gauss_loss(arg1.uncertainty, funcret.arg1.disc_dist, \
-                    funcret.arg1.disc_type, " on 1st argument", \
-                    str, UDoubleMSC<is_correlated>::discontinuity_thresh); \
-         gauss_loss(arg2.uncertainty, funcret.arg2.disc_dist, \
-                    funcret.arg2.disc_type, " on 2nd argument", \
-                    str, UDoubleMSC<is_correlated>::discontinuity_thresh); \
-         if (funcret.arg1.slope == 0.0) \
-            unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * k1Sqrt2; \
-         else \
-            unc1 = arg1.uncertainty * funcret.arg1.slope \
-                   * sqrt(1.0 + 0.5 * sqr(funcret.arg1.curve * arg1.uncertainty \
-                                          / funcret.arg1.slope)); \
-         if (funcret.arg2.slope == 0.0) \
-            unc2 = sqr(arg2.uncertainty) * funcret.arg2.curve * k1Sqrt2; \
-         else \
-            unc2 = arg2.uncertainty * funcret.arg2.slope \
-                   * sqrt(1.0 + 0.5 * sqr(funcret.arg2.curve * arg2.uncertainty \
-                                          / funcret.arg2.slope)); \
-         if (is_correlated) \
-            retval.uncertainty = unc1 + unc2; \
-         else \
-            retval.uncertainty = std::hypot(unc1, unc2); \
-         return retval; \
-      }
+  static UDoubleMSC<is_correlated> func1(std::function<one_arg_ret(double)> func_w_moments,
+                                         UDoubleMSC<is_correlated> arg,
+                                         std::string funcname)
+  {
+    std::stringstream os;
+    os << funcname << "(" << arg << ") ";
+    one_arg_ret funcret = func_w_moments(arg.value);
+    arg.value = funcret.value + sqr(arg.uncertainty)
+        * funcret.arg.curve / 2.0;
+    gauss_loss(arg.uncertainty, funcret.arg.disc_dist,
+               funcret.arg.disc_type, "", os.str(),
+               UDoubleMSC<is_correlated>::discontinuity_thresh);
+    if (funcret.arg.slope == 0.0)
+      arg.uncertainty *= arg.uncertainty * funcret.arg.curve
+          * k1Sqrt2;
+    else
+    {
+      arg.uncertainty *= funcret.arg.slope
+          * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
+                                     * arg.uncertainty
+                                     / funcret.arg.slope));
+      if (!is_correlated)
+        arg.uncertainty = fabs(arg.uncertainty);
+    }
+    return arg;
+  }
 
-  friend UDoubleMSCfunc1(sqrt)
+  // \todo enhance the below to account for moments with terms of each
+  //  argument (e.g. for atan2(x,y), we now ignore d/dx(d/dy(atan2(x,y)))
+  static UDoubleMSC<is_correlated> func2(std::function<two_arg_ret(double, double)> func_w_moments,
+                                         UDoubleMSC<is_correlated> arg1,
+                                         UDoubleMSC<is_correlated> arg2,
+                                         std::string funcname)
+  {
+    UDoubleMSC<is_correlated> retval;
+    double unc1, unc2;
+    std::stringstream os;
+    os << funcname << "(" << arg1 << ", " << arg2 << ") ";
+    std::string str = os.str();
+    two_arg_ret funcret = func_w_moments(arg1.value, arg2.value);
+    retval.value = funcret.value
+        + 0.5 * (funcret.arg1.curve * sqr(arg1.uncertainty)
+            + funcret.arg2.curve * sqr(arg2.uncertainty));\
+         gauss_loss(arg1.uncertainty, funcret.arg1.disc_dist,
+                    funcret.arg1.disc_type, " on 1st argument",
+                    str, UDoubleMSC<is_correlated>::discontinuity_thresh);
+    gauss_loss(arg2.uncertainty, funcret.arg2.disc_dist,
+               funcret.arg2.disc_type, " on 2nd argument",
+               str, UDoubleMSC<is_correlated>::discontinuity_thresh);
+    if (funcret.arg1.slope == 0.0)
+      unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * k1Sqrt2;
+    else
+      unc1 = arg1.uncertainty * funcret.arg1.slope
+          * sqrt(1.0 + 0.5 * sqr(funcret.arg1.curve * arg1.uncertainty
+                                     / funcret.arg1.slope));
+    if (funcret.arg2.slope == 0.0)
+      unc2 = sqr(arg2.uncertainty) * funcret.arg2.curve * k1Sqrt2;
+    else
+      unc2 = arg2.uncertainty * funcret.arg2.slope
+          * sqrt(1.0 + 0.5 * sqr(funcret.arg2.curve * arg2.uncertainty
+                                     / funcret.arg2.slope));
+    if (is_correlated)
+      retval.uncertainty = unc1 + unc2;
+    else
+      retval.uncertainty = std::hypot(unc1, unc2);
+    return retval;
+  }
 
-  friend UDoubleMSCfunc1(sin)
+  friend UDoubleMSC<is_correlated> sqrt(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&sqrt_w_moments, arg, "sqrt");
+  }
 
-  friend UDoubleMSCfunc1(cos)
+  friend UDoubleMSC<is_correlated> sin(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&sin_w_moments, arg, "sin");
+  }
 
-  friend UDoubleMSCfunc1(tan)
+  friend UDoubleMSC<is_correlated> cos(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&cos_w_moments, arg, "cos");
+  }
 
-  friend UDoubleMSCfunc1(asin)
+  friend UDoubleMSC<is_correlated> tan(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&tan_w_moments, arg, "tan");
+  }
 
-  friend UDoubleMSCfunc1(acos)
+  friend UDoubleMSC<is_correlated> asin(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&asin_w_moments, arg, "asin");
+  }
 
-  friend UDoubleMSCfunc1(atan)
+  friend UDoubleMSC<is_correlated> acos(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&acos_w_moments, arg, "acos");
+  }
 
-  friend UDoubleMSCfunc1(ceil)
+  friend UDoubleMSC<is_correlated> atan(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&atan_w_moments, arg, "atan");
+  }
 
-  friend UDoubleMSCfunc1(floor)
+  friend UDoubleMSC<is_correlated> ceil(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&ceil_w_moments, arg, "ceil");
+  }
 
-  friend UDoubleMSCfunc1(fabs)
+  friend UDoubleMSC<is_correlated> floor(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&floor_w_moments, arg, "floor");
+  }
 
-  friend UDoubleMSCfunc2(fmod)
+  friend UDoubleMSC<is_correlated> fabs(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&fabs_w_moments, arg, "fabs");
+  }
 
-  friend UDoubleMSCfunc2(atan2)
+  friend UDoubleMSC<is_correlated> exp(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&exp_w_moments, arg, "exp");
+  }
 
-  friend UDoubleMSCfunc1(exp)
+  friend UDoubleMSC<is_correlated> log(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&log_w_moments, arg, "log");
+  }
 
-  friend UDoubleMSCfunc1(log)
+  friend UDoubleMSC<is_correlated> log10(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&log10_w_moments, arg, "sqrtlog10");
+  }
 
-  friend UDoubleMSCfunc1(log10)
+  friend UDoubleMSC<is_correlated> sinh(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&sinh_w_moments, arg, "sinh");
+  }
 
-  friend UDoubleMSCfunc1(sinh)
+  friend UDoubleMSC<is_correlated> cosh(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&cosh_w_moments, arg, "cosh");
+  }
 
-  friend UDoubleMSCfunc1(cosh)
+  friend UDoubleMSC<is_correlated> tanh(UDoubleMSC<is_correlated> arg)
+  {
+    return func1(&tanh_w_moments, arg, "tanh");
+  }
 
-  friend UDoubleMSCfunc1(tanh)
+  friend UDoubleMSC<is_correlated> fmod(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  {
+    return func2(&fmod_w_moments, arg1, arg2, "fmod");
+  }
 
-  friend UDoubleMSCfunc2(pow)
+  friend UDoubleMSC<is_correlated> atan2(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  {
+    return func2(&atan2_w_moments, arg1, arg2, "atan2");
+  }
+
+  friend UDoubleMSC<is_correlated> pow(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  {
+    return func2(&pow_w_moments, arg1, arg2, "pow");
+  }
 
   friend UDoubleMSC<is_correlated> ldexp(UDoubleMSC<is_correlated> arg,
                                          const int intarg)
