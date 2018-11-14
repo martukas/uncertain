@@ -191,3 +191,25 @@ TEST_F(UDoubleMSCTest, Ceiling)
   EXPECT_FLOAT_EQ(ud2.mean(), 3.0);
   EXPECT_FLOAT_EQ(ud2.deviation(), 0.0);
 }
+
+TEST_F(UDoubleMSCTest, SqrtCorr)
+{
+  uncertain::UDoubleMSCCorr ud(4.0, 2.0);
+
+  auto ud2 = sqrt(ud);
+  EXPECT_FLOAT_EQ(ud2.mean(), 1.9375);
+//  EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 0.50775242);
+//  EXPECT_FLOAT_EQ(ud2.deviation(), 0.5);
+}
+
+TEST_F(UDoubleMSCTest, SqrtUncorr)
+{
+  uncertain::UDoubleMSCUncorr ud(4.0, 2.0);
+
+  auto ud2 = sqrt(ud);
+  EXPECT_FLOAT_EQ(ud2.mean(), 1.9375);
+//  EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 0.50775242);
+//  EXPECT_FLOAT_EQ(ud2.deviation(), 0.5);
+}

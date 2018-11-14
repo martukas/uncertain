@@ -260,7 +260,7 @@ class UDoubleMSC
                     UDoubleMSC<is_correlated>::discontinuity_thresh); \
          if (funcret.arg.slope == 0.0) \
             arg.uncertainty *= arg.uncertainty * funcret.arg.curve \
-                               * 0.7071067781; \
+                               * k1Sqrt2; \
          else \
          { \
             arg.uncertainty *= funcret.arg.slope \
@@ -294,13 +294,13 @@ class UDoubleMSC
                     funcret.arg2.disc_type, " on 2nd argument", \
                     str, UDoubleMSC<is_correlated>::discontinuity_thresh); \
          if (funcret.arg1.slope == 0.0) \
-            unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * 0.7071067781; \
+            unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * k1Sqrt2; \
          else \
             unc1 = arg1.uncertainty * funcret.arg1.slope \
                    * sqrt(1.0 + 0.5 * sqr(funcret.arg1.curve * arg1.uncertainty \
                                           / funcret.arg1.slope)); \
          if (funcret.arg2.slope == 0.0) \
-            unc2 = sqr(arg2.uncertainty) * funcret.arg2.curve * 0.7071067781; \
+            unc2 = sqr(arg2.uncertainty) * funcret.arg2.curve * k1Sqrt2; \
          else \
             unc2 = arg2.uncertainty * funcret.arg2.slope \
                    * sqrt(1.0 + 0.5 * sqr(funcret.arg2.curve * arg2.uncertainty \
@@ -360,7 +360,7 @@ class UDoubleMSC
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
     if (funcret.arg.slope == 0.0)
-      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
+      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * k1Sqrt2;
     else
     {
       arg.uncertainty *= funcret.arg.slope
@@ -383,7 +383,7 @@ class UDoubleMSC
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
     if (funcret.arg.slope == 0.0)
-      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
+      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * k1Sqrt2;
     else
     {
       arg.uncertainty *= funcret.arg.slope
@@ -406,7 +406,7 @@ class UDoubleMSC
     gauss_loss(arg.uncertainty, funcret.arg.disc_dist, funcret.arg.disc_type,
                "", os.str(), UDoubleMSC<is_correlated>::discontinuity_thresh);
     if (funcret.arg.slope == 0.0)
-      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * 0.7071067781;
+      arg.uncertainty *= arg.uncertainty * funcret.arg.curve * k1Sqrt2;
     else
     {
       arg.uncertainty *= funcret.arg.slope
@@ -441,7 +441,7 @@ class UDoubleMSC
 
     retval.value = core_value + sqr(arg.uncertainty) * curve / 2.0;
     if (slope == 0.0)
-      retval.uncertainty = sqr(arg.uncertainty) * curve * 0.7071067781;
+      retval.uncertainty = sqr(arg.uncertainty) * curve * k1Sqrt2;
     else
     {
       retval.uncertainty = arg.uncertainty * slope
@@ -487,12 +487,12 @@ class UDoubleMSC
     retval.value = core_value + 0.5 * (sqr(arg1.uncertainty) * curve1
         + sqr(arg2.uncertainty) * curve2);
     if (slope1 == 0.0)
-      unc1 = sqr(arg1.uncertainty) * curve1 * 0.7071067781;
+      unc1 = sqr(arg1.uncertainty) * curve1 * k1Sqrt2;
     else
       unc1 = arg1.uncertainty * slope1 * sqrt(1.0 + 0.5 * sqr(curve1
                                                                   * arg1.uncertainty / slope1));
     if (slope2 == 0.0)
-      unc2 = sqr(arg2.uncertainty) * curve2 * 0.7071067781;
+      unc2 = sqr(arg2.uncertainty) * curve2 * k1Sqrt2;
     else
       unc2 = arg2.uncertainty * slope2 * sqrt(1.0 + 0.5 * sqr(curve2
                                                                   * arg2.uncertainty / slope2));

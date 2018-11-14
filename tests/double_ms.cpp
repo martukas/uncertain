@@ -179,3 +179,21 @@ TEST_F(UDoubleMSTest, Ceiling)
   EXPECT_FLOAT_EQ(ud2.mean(), 3.0);
   EXPECT_FLOAT_EQ(ud2.deviation(), 0.0);
 }
+
+TEST_F(UDoubleMSTest, SqrtCorr)
+{
+  uncertain::UDoubleMSCorr ud(4.0, 2.0);
+
+  auto ud2 = sqrt(ud);
+  EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 0.5);
+}
+
+TEST_F(UDoubleMSTest, SqrtUncorr)
+{
+  uncertain::UDoubleMSUncorr ud(4.0, 2.0);
+
+  auto ud2 = sqrt(ud);
+  EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 0.5);
+}

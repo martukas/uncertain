@@ -59,6 +59,7 @@ namespace uncertain
 constexpr double kPi = M_PI;
 constexpr double kHalfPi = M_PI_2;
 constexpr double kLog10e = M_LOG10E;
+constexpr double k1Sqrt2 = M_SQRT1_2;
 
 // square: just a notational convenience
 inline double sqr(double a)
