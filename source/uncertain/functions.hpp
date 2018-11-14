@@ -51,13 +51,13 @@
 #include <cmath>
 #include <iostream>
 
-#define PI 3.14159265358979323846
-#define HALF_PI (PI / 2.0)
-
 // \todo add exceptions
 
 namespace uncertain
 {
+
+constexpr double kPi = M_PI;
+constexpr double kHalfPi = M_PI_2;
 
 // square: just a notational convenience
 inline double sqr(double a) { return a * a; }
@@ -291,9 +291,9 @@ inline one_arg_ret tan_w_moments(double arg)
   retval.arg.slope = 1.0 / (costemp * costemp);
   retval.arg.curve = -2.0 * retval.arg.slope / costemp;
   retval.arg.disc_type = infinite_wrap;
-  retval.arg.disc_dist = fmod(arg - HALF_PI, PI);
-  if (retval.arg.disc_dist > HALF_PI)
-    retval.arg.disc_dist = PI - retval.arg.disc_dist;
+  retval.arg.disc_dist = fmod(arg - kHalfPi, kPi);
+  if (retval.arg.disc_dist > kHalfPi)
+    retval.arg.disc_dist = kPi - retval.arg.disc_dist;
   retval.value = tan(arg);
   return retval;
 }

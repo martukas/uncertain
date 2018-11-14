@@ -3,7 +3,7 @@
 
 TEST(Functions, HalfPi)
 {
-  EXPECT_EQ(HALF_PI, PI / 2);
+  EXPECT_EQ(uncertain::kHalfPi, uncertain::kPi / 2);
 }
 
 TEST(Functions, hypot3)

@@ -52,6 +52,8 @@
 
 #include <uncertain/UDoubleMS.hpp>
 #include <uncertain/SourceSet.hpp>
+#include <stdexcept>
+
 
 namespace uncertain
 {
