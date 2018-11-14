@@ -148,7 +148,7 @@ class SimpleArray
   {
     double tot = 0.0;
     for (size_t i = 0; i < size; i++)
-      tot += sqr(this->element[i]);
+      tot += sqr(element[i]);
     return std::sqrt(tot);
   }
 };

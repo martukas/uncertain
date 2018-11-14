@@ -47,14 +47,9 @@
 
 #pragma once
 
-#include <stdexcept>
 #include <string>
-#include <stdlib.h>
 #include <cmath>
 #include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <time.h>
 
 #define PI 3.14159265358979323846
 #define HALF_PI (PI / 2.0)
@@ -64,11 +59,14 @@
 namespace uncertain
 {
 
+// square: just a notational convenience
+inline double sqr(double a) { return a * a; }
+
 // \todo may be unneeded since C++17
 // This function takes the square root of the sum of the squares of
 // numbers, which is equal to the length of the hypotenuse of a right
 // triangle if the two arguments are the lengths of the legs.
-inline double hypot(double a, double b, double c) { return sqrt(a * a + b * b + c * c); }
+inline double hypot(double a, double b, double c) { return std::sqrt(sqr(a) + sqr(b) + sqr(c)); }
 
 // \todo this may be no longer true, since C++11
 // std::hypot() could have problems with overflow.  A possible
@@ -94,9 +92,6 @@ inline double hypot(double a, double b, double c) { return sqrt(a * a + b * b + 
 // }
 // but this would be less likely to be inlined and so might slow the
 // UDoubleMS class down unacceptably.
-
-// square: just a notational convenience
-inline double sqr(double a) { return a * a; }
 
 // This function translates floating point ratios to percentages
 inline int int_percent(double in) { return int(floor(in * 100.0 + 0.5)); }

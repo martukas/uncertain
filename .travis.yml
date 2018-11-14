@@ -32,6 +32,6 @@ script:
   - make
   - ./bin/ms_demo > null
   - ./bin/full_demo > null
-  - make run_tests
+  - make coverage
 
 

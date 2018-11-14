@@ -66,7 +66,7 @@ namespace uncertain
 // from very expensive computationally to unusably expensive.
 // But for small problems and big esizes it gives "perfect"
 // answers.
-template<unsigned int esize>
+template<size_t esize>
 class UDoubleEnsemble
 {
  public:
@@ -103,7 +103,7 @@ class UDoubleEnsemble
         gauss_ensemble_inited = 1;
         if (esize & 1) // odd ensemble size
         {
-          for (unsigned int i = 0; i < esize / 2; i++)
+          for (size_t i = 0; i < esize / 2; i++)
           {
             double deviate = inverse_gaussian_density(
                 (2.0 * (i + 1.0)) / (2.0 * esize));
@@ -114,7 +114,7 @@ class UDoubleEnsemble
         }
         else
         {
-          for (unsigned int i = 0; i < esize / 2; i++)
+          for (size_t i = 0; i < esize / 2; i++)
           {
             double deviate = 0.0;
             double k = (2.0 * i + 1.0) / (2.0 * esize);
@@ -130,7 +130,7 @@ class UDoubleEnsemble
         // exact values.
         PerfectEnsemble(gauss_ensemble, esize);
       }
-      for (unsigned int i = 0; i < esize; i++)
+      for (size_t i = 0; i < esize; i++)
         ensemble[i] = val + gauss_ensemble[i] * unc;
       std::string source_name;
       if (!name.empty())
@@ -161,7 +161,7 @@ class UDoubleEnsemble
   UDoubleEnsemble(const UDoubleEnsemble& ud)
       : epoch(ud.epoch)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] = ud.ensemble[i];
   }
 
@@ -171,7 +171,7 @@ class UDoubleEnsemble
                   std::string name = "")
       : epoch(sources.get_epoch())
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] = newensemble[i];
     std::string source_name;
     if (!name.empty())
@@ -268,14 +268,14 @@ class UDoubleEnsemble
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] += ud.ensemble[i];
     return *this;
   }
 
   UDoubleEnsemble<esize>& operator+=(double d)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] += d;
     return *this;
   }
@@ -285,14 +285,14 @@ class UDoubleEnsemble
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] -= ud.ensemble[i];
     return *this;
   }
 
   UDoubleEnsemble<esize>& operator-=(double d)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] -= d;
     return *this;
   }
@@ -302,14 +302,14 @@ class UDoubleEnsemble
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] *= ud.ensemble[i];
     return *this;
   }
 
   UDoubleEnsemble<esize>& operator*=(double d)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] *= d;
     return *this;
   }
@@ -319,14 +319,14 @@ class UDoubleEnsemble
     sources.check_epoch(epoch);
     sources.check_epoch(ud.epoch);
 
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] /= ud.ensemble[i];
     return *this;
   }
 
   UDoubleEnsemble<esize>& operator/=(double d)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       ensemble[i] /= d;
     return *this;
   }
@@ -361,7 +361,7 @@ class UDoubleEnsemble
 #define UDoubleEnsemblefunc1(func) \
       UDoubleEnsemble<esize> func(UDoubleEnsemble<esize> arg) \
       { \
-         for (unsigned int i = 0; i < esize; i++) \
+         for (size_t i = 0; i < esize; i++) \
             arg.ensemble[i] = func(arg.ensemble[i]); \
          return arg; \
       }
@@ -370,7 +370,7 @@ class UDoubleEnsemble
                                   const UDoubleEnsemble<esize>& arg2) \
       { \
          UDoubleEnsemble<esize> retval(arg1); \
-         for (unsigned int i = 0; i < esize; i++) \
+         for (size_t i = 0; i < esize; i++) \
             retval.ensemble[i] = func(arg1.ensemble[i], arg2.ensemble[i]); \
          return retval; \
       }
@@ -416,7 +416,7 @@ class UDoubleEnsemble
   friend UDoubleEnsemble<esize> ldexp(UDoubleEnsemble<esize> arg,
                                       const int intarg)
   {
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       arg.ensemble[i] = ldexp(arg.ensemble[i], intarg);
     return arg;
   }
@@ -425,7 +425,7 @@ class UDoubleEnsemble
   {
     // use library frexp on mean to get value of return in second arg
     frexp(arg.mean(), intarg);
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
     {
       int tempint;  // ignore return in second arg in loop
       arg.ensemble[i] = frexp(arg.ensemble[i], &tempint);
@@ -438,7 +438,7 @@ class UDoubleEnsemble
   {
     // use library modf on mean to get value of return in second arg
     modf(arg.mean(), dblarg);
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
     {
       double tempdbl;  // ignore return in second arg in loop
       arg.ensemble[i] = modf(arg.ensemble[i], &tempdbl);
@@ -450,23 +450,23 @@ class UDoubleEnsemble
   {
     double sum = 0.0;
 
-    for (unsigned int i = 0; i < esize; i++)
+    for (size_t i = 0; i < esize; i++)
       sum += ensemble[i];
     return sum / esize;
   }
 
   double deviation() const
   {
-    unsigned int i;
+    size_t i;
     double diff, sum_2_diff = 0.0; // watch overflow!
     double value = this->mean();
 
     for (i = 0; i < esize; i++)
     {
       diff = ensemble[i] - value;
-      sum_2_diff += diff * diff;
+      sum_2_diff += sqr(diff);
     }
-    return sqrt(sum_2_diff / esize);
+    return std::sqrt(sum_2_diff / esize);
   }
 
   static void new_epoch() { sources.new_epoch(); }
@@ -478,7 +478,7 @@ class UDoubleEnsemble
     else
     {
       double unaccounted_uncertainty = 1.0;
-      for (unsigned int i = 0; i < sources.get_num_sources(); i++)
+      for (size_t i = 0; i < sources.get_num_sources(); i++)
       {
         double unc_portion = this->correlation(src_ensemble[i]);
         unc_portion *= unc_portion;
@@ -492,9 +492,9 @@ class UDoubleEnsemble
   }
 
   double correlation(const UDoubleEnsemble<esize>& ud,
-                     const unsigned int offset = 0) const
+                     const size_t offset = 0) const
   {
-    unsigned int i;
+    size_t i;
     double diff, diff_ud;
     double value = this->mean();
     double ud_value = ud.mean();
@@ -505,7 +505,7 @@ class UDoubleEnsemble
     {
       diff = ensemble[i] - value;
       sum_2_diff += diff * diff;
-      int j = (i + offset) % esize;
+      size_t j = (i + offset) % esize;
       diff_ud = ud.ensemble[j] - ud_value;
       sum_2_diff_ud += diff_ud * diff_ud;
       sum_prod_diff += diff * diff_ud;
@@ -516,13 +516,13 @@ class UDoubleEnsemble
       return 0.0;
     if (!sum_prod_diff)
       return 0.0;
-    return sum_prod_diff / sqrt(sum_2_diff * sum_2_diff_ud);
+    return sum_prod_diff / std::sqrt(sum_2_diff * sum_2_diff_ud);
   }
 
   double correlation(const double ens[esize],
-                     const unsigned int offset = 0) const
+                     const size_t offset = 0) const
   {
-    unsigned int i;
+    size_t i;
     double diff, diff_ud;
     double value = this->mean();
     double ud_value = 0.0;
@@ -536,7 +536,7 @@ class UDoubleEnsemble
     {
       diff = ensemble[i] - value;
       sum_2_diff += diff * diff;
-      int j = (i + offset) % esize;
+      size_t j = (i + offset) % esize;
       diff_ud = ens[j] - ud_value;
       sum_2_diff_ud += diff_ud * diff_ud;
       sum_prod_diff += diff * diff_ud;
@@ -547,7 +547,7 @@ class UDoubleEnsemble
       return 0.0;
     if (!sum_prod_diff)
       return 0.0;
-    return sum_prod_diff / sqrt(sum_2_diff * sum_2_diff_ud);
+    return sum_prod_diff / std::sqrt(sum_2_diff * sum_2_diff_ud);
   }
 
   // \todo add function that gives a description
@@ -557,7 +557,7 @@ class UDoubleEnsemble
     // centered bins for each 0.5 sigmas from -4 sigmas to +4 sigmas
     // outliers go in the outer bins
     int bin[17] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    unsigned int i;
+    size_t i;
     double value = this->mean();
     double sigma = this->deviation();
 
@@ -595,7 +595,7 @@ class UDoubleEnsemble
     {
       bin_display[i] = int((bin[i] + 0.5) / scale_divisor);
     }
-    int first_display_bin = 0, last_display_bin = 16;
+    size_t first_display_bin = 0, last_display_bin = 16;
     while (bin_display[first_display_bin] == 0)
       first_display_bin++;
     while (bin_display[last_display_bin] == 0)
@@ -636,9 +636,9 @@ class UDoubleEnsemble
 
   void shuffle()
   {
-    for (unsigned i = 0; i < esize - 1; i++)
+    for (size_t i = 0; i < esize - 1; i++)
     {
-      unsigned j = i + (unsigned long) rand() % (esize - i);
+      size_t j = i + (size_t) rand() % (esize - i);
       if (j != i)
       {
         double temp = ensemble[i];
@@ -653,9 +653,9 @@ class UDoubleEnsemble
   static void moments_fixed_mean(double const* const ensemble,
                                  double mean, double& sigma, double& skew,
                                  double& kurtosis, double& m5,
-                                 const unsigned int ens_size)
+                                 const size_t ens_size)
   {
-    unsigned int i;
+    size_t i;
     double gddiff2 = 0.0, gddiff3 = 0.0, gddiff4 = 0.0, gddiff5 = 0.0;
     double* gddiff = new double[ens_size];
 
@@ -675,7 +675,7 @@ class UDoubleEnsemble
       gddiff5 += gddiff[i] * gddiff[i] * gddiff[i] * gddiff[i] * gddiff[i];
     }
     double var = gddiff2 / ens_size;
-    sigma = sqrt(var);
+    sigma = std::sqrt(var);
     skew = gddiff3 / (var * sigma * ens_size);
     kurtosis = gddiff4 / (var * var * ens_size) - 3;
     m5 = gddiff5 / (var * var * sigma * ens_size);
@@ -688,9 +688,9 @@ class UDoubleEnsemble
   // ensemble
   static void moments(double const* const ensemble,
                       double& mean, double& sigma, double& skew,
-                      double& kurtosis, double& m5, const unsigned int ens_size)
+                      double& kurtosis, double& m5, const size_t ens_size)
   {
-    unsigned int i;
+    size_t i;
     double gdsum = 0.0;
     double* gddiff = new double[ens_size];
 
@@ -713,7 +713,7 @@ class UDoubleEnsemble
 
   // This function moves points a little bit so the first 5 moments all
   // get measured at precisely the expected values.
-  static void PerfectEnsemble(double* ensemble, const unsigned int ens_size)
+  static void PerfectEnsemble(double* ensemble, const size_t ens_size)
   {
     unsigned long i;
     double value, sigma, skew, kurtosis, m5;
@@ -729,7 +729,7 @@ class UDoubleEnsemble
         ensemble[i] /= sigma;
       // future work: improve kurtosis correction
       double kurtfact = 0.045;
-      for (unsigned int k = 0; k < 5; k++)
+      for (size_t k = 0; k < 5; k++)
       {
         for (i = 0; i < ens_size; i++)
           test_ensemble[i] = ensemble[i]

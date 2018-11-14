@@ -45,6 +45,7 @@
 // than one source file.
 
 #include <uncertain/functions.hpp>
+#include <iomanip>
 
 // \todo add exceptions
 
