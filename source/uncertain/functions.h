@@ -68,66 +68,11 @@
 
 // \todo restrict namespace
 // prints uncertainty to 2 digits and value to same precision
-inline void uncertain_print(double mean, double sigma, std::ostream& os = std::cout)
-{
-  auto original_precision = os.precision();
-  auto original_format = os.flags(std::ios::showpoint);
-
-  // std::cerr << "<" << mean << " +/- " << sigma << "> " << std::endl;
-  int precision;
-  // special cases for zero, NaN, and Infinities (positive & negative)
-  if ((sigma == 0.0) || (sigma != sigma) || (1.0 / sigma == 0.0))
-  {
-    precision = 0;
-  }
-  else
-  {
-    // round sigma to 2 digits
-    int sigma_digits = 1 - int(floor(log10(fabs(sigma))));
-    double round_10_pow = pow(10.0, sigma_digits);
-    sigma = floor(sigma * round_10_pow + 0.5) / round_10_pow;
-
-    // round mean to same # of digits
-    mean = floor(mean * round_10_pow + 0.5) / round_10_pow;
-    if (mean == 0.0)
-    {
-      if (sigma_digits > 0)
-        precision = sigma_digits + 1;
-      else
-        precision = 1;
-    }
-    else
-    {
-      precision = int(floor(log10(fabs(mean)))) + sigma_digits + 1;
-      if (precision < 1)
-      {
-        mean = 0.0;
-        if (sigma_digits > 0)
-          precision = sigma_digits + 1;
-        else
-          precision = 1;
-      }
-    }
-  }
-  os << std::setprecision(precision)
-     << mean << " +/- "
-     << std::setprecision(2)
-     << sigma
-     << std::setprecision(original_precision);
-  os.flags(original_format);
-}
+void uncertain_print(double mean, double sigma, std::ostream& os = std::cout);
 
 // \todo restrict namespace
 // reads uncertainty as mean +/- sigma
-inline void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin)
-{
-  char plus, slash, minus;
-  is >> mean >> plus >> slash >> minus >> sigma;
-  if ((plus != '+') || (slash != '/') || (minus != '-'))
-  {
-    throw std::runtime_error("Error: illegal characters encountered in reading mean +/- sigma");
-  }
-}
+void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin);
 
 // This function takes the square root of the sum of the squares of
 // numbers, which is equal to the length of the hypotenuse of a right
@@ -576,35 +521,11 @@ inline double inverse_gaussian_density(const double& p)
 }
 
 // \todo include skewing of distribution
-inline void gauss_loss(const double& uncertainty, const double& disc_dist,
-                       const discontinuity_type& disc_type,
-                       std::string id_string,
-                       std::string func_str,
-                       const double& disc_thresh)
-{
-  double scaled_disc_dist = fabs(disc_dist / uncertainty);
-  if ((scaled_disc_dist < disc_thresh) && (disc_type != none))
-  {
-    int original_precision = std::cerr.precision();
-    std::cerr << std::setprecision(2);
-    std::cerr << func_str << "is " << scaled_disc_dist << " sigmas"
-              << id_string;
-    if (disc_type == step)
-      std::cerr << " from a step discontinuity" << std::endl;
-    else if (disc_type == infinite_wrap)
-      std::cerr << " from an infinite wrap discontinuity" << std::endl;
-    else if (disc_type == infinite_then_undef)
-      std::cerr << " from an infinite "
-                << "discontinuity beyond which it is undefined" << std::endl;
-    else if (disc_type == slope_only)
-      std::cerr << " from a discontinuity in slope" << std::endl;
-    else if (disc_type == undefined_beyond)
-      std::cerr << " from a point beyond which it is undefined" << std::endl;
-    else
-      std::cerr << " from unknown discontinuity " << disc_type << std::endl;
-    std::cerr << std::setprecision(original_precision);
-  }
-}
+void gauss_loss(const double& uncertainty, const double& disc_dist,
+                const discontinuity_type& disc_type,
+                std::string id_string,
+                std::string func_str,
+                const double& disc_thresh);
 
 // Compare function to sort by absolute value
 // \todo restrict namespace

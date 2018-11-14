@@ -47,10 +47,10 @@
 
 #pragma once
 
-#include "UDoubleMS.h"
-#include "UDoubleMSC.h"
-#include "UDoubleCT.h"
-#include "UDoubleEnsemble.h"
+#include <uncertain/UDoubleMS.h>
+#include <uncertain/UDoubleMSC.h>
+#include <uncertain/UDoubleCT.h>
+#include <uncertain/UDoubleEnsemble.h>
 
 // Gimpel lint doesn't like it with consts, so for lint use defines
 #define ens_a_size 128u

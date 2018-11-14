@@ -19,15 +19,15 @@ add_executable(unit_tests
   EXCLUDE_FROM_ALL
   ${test_sources}
   ${test_headers})
-#add_dependencies(unit_tests h5cpp)
+add_dependencies(unit_tests uncertain)
 target_include_directories(unit_tests
   PRIVATE ${GTEST_INCLUDE_DIRS}
-#  PRIVATE h5cpp
+  ${PROJECT_SOURCE_DIR}/source
   )
 target_link_libraries(unit_tests
-  ${GTEST_LIBRARIES}
-#  ${CMAKE_THREAD_LIBS_INIT}
-  ${COVERAGE_LIBRARIES}
+  PRIVATE uncertain
+  PRIVATE ${GTEST_LIBRARIES}
+  PRIVATE ${COVERAGE_LIBRARIES}
   )
 enable_coverage(unit_tests)
 

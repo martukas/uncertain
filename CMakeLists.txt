@@ -53,10 +53,10 @@ include(${EXTRA_MODULES_DIR}/BuildInfo.cmake)
 #=============================================================================
 include(${EXTRA_MODULES_DIR}/CompilerConfig.cmake)
 
-include_directories(. include)
 
-#add_custom_target(html)
+add_subdirectory(source)
 add_subdirectory(examples)
+#add_custom_target(html)
 #add_subdirectory(doc)
 
 #=============================================================================

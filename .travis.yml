@@ -24,7 +24,7 @@ install:
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCOV=1 ..
+  - cmake ..
 
 script:
   - make

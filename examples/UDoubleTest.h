@@ -45,10 +45,7 @@
 
 #pragma once
 
-#include "UDoubleMS.h"
-#include <cmath>
-#include <string>
-#include <iostream>
+#include <uncertain/UDoubleMS.h>
 
 // These global values are used to pass the extra argument to ldexp(),
 // modf(), and frexp() around the interface for my_ldexp(), etc. so
