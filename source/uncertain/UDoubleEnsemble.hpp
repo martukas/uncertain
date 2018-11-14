@@ -208,18 +208,18 @@ class UDoubleEnsemble
                                           const UDoubleEnsemble<esize>& b) { return a += b; }
 
   friend UDoubleEnsemble<esize> operator+(UDoubleEnsemble<esize> a,
-                                          const double& b) { return a += b; }
+                                          double b) { return a += b; }
 
-  friend UDoubleEnsemble<esize> operator+(const double& b,
+  friend UDoubleEnsemble<esize> operator+(double b,
                                           UDoubleEnsemble<esize> a) { return a += b; }
 
   friend UDoubleEnsemble<esize> operator-(UDoubleEnsemble<esize> a,
                                           const UDoubleEnsemble<esize>& b) { return a -= b; }
 
   friend UDoubleEnsemble<esize> operator-(UDoubleEnsemble<esize> a,
-                                          const double& b) { return a -= b; }
+                                          double b) { return a -= b; }
 
-  friend UDoubleEnsemble<esize> operator-(const double& b,
+  friend UDoubleEnsemble<esize> operator-(double b,
                                           UDoubleEnsemble<esize> a) { return -(a -= b); }
 
   UDoubleEnsemble<esize> operator++() { return (*this += 1.0); }
@@ -244,19 +244,19 @@ class UDoubleEnsemble
                                           const UDoubleEnsemble<esize>& b) { return a *= b; }
 
   friend UDoubleEnsemble<esize> operator*(UDoubleEnsemble<esize> a,
-                                          const double& b) { return a *= b; }
+                                          double b) { return a *= b; }
 
-  friend UDoubleEnsemble<esize> operator*(const double& b,
+  friend UDoubleEnsemble<esize> operator*(double b,
                                           UDoubleEnsemble<esize> a) { return a *= b; }
 
   friend UDoubleEnsemble<esize> operator/(UDoubleEnsemble<esize> a,
                                           const UDoubleEnsemble<esize>& b) { return a /= b; }
 
   friend UDoubleEnsemble<esize> operator/(UDoubleEnsemble<esize> a,
-                                          const double& b) { return a /= b; }
+                                          double b) { return a /= b; }
 
   // this one promotes a to UDoubleEnsemble
-  friend UDoubleEnsemble<esize> operator/(const double& a,
+  friend UDoubleEnsemble<esize> operator/(double a,
                                           const UDoubleEnsemble<esize>& b)
   {
     UDoubleEnsemble<esize> uda(a);
@@ -273,7 +273,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator+=(const double& d)
+  UDoubleEnsemble<esize>& operator+=(double d)
   {
     for (unsigned int i = 0; i < esize; i++)
       ensemble[i] += d;
@@ -290,7 +290,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator-=(const double& d)
+  UDoubleEnsemble<esize>& operator-=(double d)
   {
     for (unsigned int i = 0; i < esize; i++)
       ensemble[i] -= d;
@@ -307,7 +307,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator*=(const double& d)
+  UDoubleEnsemble<esize>& operator*=(double d)
   {
     for (unsigned int i = 0; i < esize; i++)
       ensemble[i] *= d;
@@ -324,7 +324,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-  UDoubleEnsemble<esize>& operator/=(const double& d)
+  UDoubleEnsemble<esize>& operator/=(double d)
   {
     for (unsigned int i = 0; i < esize; i++)
       ensemble[i] /= d;
@@ -651,7 +651,7 @@ class UDoubleEnsemble
   // figure the moments (sigma, skew, kurtosis, & 5th moment) from an
   // ensemble given the mean.
   static void moments_fixed_mean(double const* const ensemble,
-                                 const double& mean, double& sigma, double& skew,
+                                 double mean, double& sigma, double& skew,
                                  double& kurtosis, double& m5,
                                  const unsigned int ens_size)
   {

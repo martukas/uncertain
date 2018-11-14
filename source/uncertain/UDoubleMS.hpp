@@ -99,18 +99,18 @@ class UDoubleMS
                                             const UDoubleMS<is_correlated>& b) { return a += b; }
 
   friend UDoubleMS<is_correlated> operator+(UDoubleMS<is_correlated> a,
-                                            const double& b) { return a += b; }
+                                            double b) { return a += b; }
 
-  friend UDoubleMS<is_correlated> operator+(const double& b,
+  friend UDoubleMS<is_correlated> operator+(double b,
                                             UDoubleMS<is_correlated> a) { return a += b; }
 
   friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
                                             const UDoubleMS<is_correlated>& b) { return a -= b; }
 
   friend UDoubleMS<is_correlated> operator-(UDoubleMS<is_correlated> a,
-                                            const double& b) { return a -= b; }
+                                            double b) { return a -= b; }
 
-  friend UDoubleMS<is_correlated> operator-(const double& b,
+  friend UDoubleMS<is_correlated> operator-(double b,
                                             UDoubleMS<is_correlated> a)
   {
     a -= b;
@@ -139,18 +139,18 @@ class UDoubleMS
                                             const UDoubleMS<is_correlated>& b) { return a *= b; }
 
   friend UDoubleMS<is_correlated> operator*(UDoubleMS<is_correlated> a,
-                                            const double& b) { return a *= b; }
+                                            double b) { return a *= b; }
 
-  friend UDoubleMS<is_correlated> operator*(const double& b,
+  friend UDoubleMS<is_correlated> operator*(double b,
                                             UDoubleMS<is_correlated> a) { return a *= b; }
 
   friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
                                             const UDoubleMS<is_correlated>& b) { return a /= b; }
 
   friend UDoubleMS<is_correlated> operator/(UDoubleMS<is_correlated> a,
-                                            const double& b) { return a /= b; }
+                                            double b) { return a /= b; }
 
-  friend UDoubleMS<is_correlated> operator/(const double& b,
+  friend UDoubleMS<is_correlated> operator/(double b,
                                             UDoubleMS<is_correlated> a)
   {
     UDoubleMS<is_correlated> retval;
@@ -169,7 +169,7 @@ class UDoubleMS
     return *this;
   }
 
-  UDoubleMS<is_correlated>& operator+=(const double& a)
+  UDoubleMS<is_correlated>& operator+=(double a)
   {
     value += a;
     return *this;
@@ -185,7 +185,7 @@ class UDoubleMS
     return *this;
   }
 
-  UDoubleMS<is_correlated>& operator-=(const double& a)
+  UDoubleMS<is_correlated>& operator-=(double a)
   {
     value -= a;
     return *this;
@@ -201,7 +201,7 @@ class UDoubleMS
     return *this;
   }
 
-  UDoubleMS<is_correlated>& operator*=(const double& a)
+  UDoubleMS<is_correlated>& operator*=(double a)
   {
     value *= a;
     uncertainty *= a;
@@ -220,7 +220,7 @@ class UDoubleMS
     return *this;
   }
 
-  UDoubleMS<is_correlated>& operator/=(const double& a)
+  UDoubleMS<is_correlated>& operator/=(double a)
   {
     value /= a;
     uncertainty /= a;

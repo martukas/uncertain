@@ -36,7 +36,7 @@
 // By Evan Manning (manning@alumni.caltech.edu).
 
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include "UDoubleTest2.hpp"

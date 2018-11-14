@@ -160,7 +160,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator+(const double& a, const UDoubleTest& b)
+  friend UDoubleTest operator+(double a, const UDoubleTest& b)
   {
     UDoubleTest retval;
 
@@ -175,7 +175,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator+(const UDoubleTest& a, const double& b)
+  friend UDoubleTest operator+(const UDoubleTest& a, double b)
   {
     UDoubleTest retval;
 
@@ -205,7 +205,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator-(const double& a, const UDoubleTest& b)
+  friend UDoubleTest operator-(double a, const UDoubleTest& b)
   {
     UDoubleTest retval;
 
@@ -220,7 +220,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator-(const UDoubleTest& a, const double& b)
+  friend UDoubleTest operator-(const UDoubleTest& a, double b)
   {
     UDoubleTest retval;
 
@@ -250,7 +250,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator*(const double& a, const UDoubleTest& b)
+  friend UDoubleTest operator*(double a, const UDoubleTest& b)
   {
     UDoubleTest retval;
 
@@ -265,7 +265,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator*(const UDoubleTest& a, const double& b)
+  friend UDoubleTest operator*(const UDoubleTest& a, double b)
   {
     UDoubleTest retval;
 
@@ -295,7 +295,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator/(const double& a, const UDoubleTest& b)
+  friend UDoubleTest operator/(double a, const UDoubleTest& b)
   {
     UDoubleTest retval;
 
@@ -310,7 +310,7 @@ class UDoubleTest
     return retval;
   }
 
-  friend UDoubleTest operator/(const UDoubleTest& a, const double& b)
+  friend UDoubleTest operator/(const UDoubleTest& a, double b)
   {
     UDoubleTest retval;
 
@@ -435,7 +435,7 @@ class UDoubleTest
     return *this;
   }
 
-  UDoubleTest& operator+=(const double& d)
+  UDoubleTest& operator+=(double d)
   {
     msu += d;
     msc += d;
@@ -448,7 +448,7 @@ class UDoubleTest
     return *this;
   }
 
-  UDoubleTest& operator-=(const double& d)
+  UDoubleTest& operator-=(double d)
   {
     msu -= d;
     msc -= d;
@@ -461,7 +461,7 @@ class UDoubleTest
     return *this;
   }
 
-  UDoubleTest& operator*=(const double& d)
+  UDoubleTest& operator*=(double d)
   {
     msu *= d;
     msc *= d;
@@ -474,7 +474,7 @@ class UDoubleTest
     return *this;
   }
 
-  UDoubleTest& operator/=(const double& d)
+  UDoubleTest& operator/=(double d)
   {
     msu /= d;
     msc /= d;

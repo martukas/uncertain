@@ -146,7 +146,7 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT& operator+=(const double& b)
+  UDoubleCT& operator+=(double b)
   {
     value += b;
     return *this;
@@ -154,9 +154,9 @@ class UDoubleCT
 
   friend UDoubleCT operator+(UDoubleCT a, const UDoubleCT& b) { return a += b; }
 
-  friend UDoubleCT operator+(UDoubleCT a, const double& b) { return a += b; }
+  friend UDoubleCT operator+(UDoubleCT a, double b) { return a += b; }
 
-  friend UDoubleCT operator+(const double& b, UDoubleCT a) { return a += b; }
+  friend UDoubleCT operator+(double b, UDoubleCT a) { return a += b; }
 
   UDoubleCT& operator-=(const UDoubleCT& b)
   {
@@ -167,7 +167,7 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT& operator-=(const double& b)
+  UDoubleCT& operator-=(double b)
   {
     value -= b;
     return *this;
@@ -175,9 +175,9 @@ class UDoubleCT
 
   friend UDoubleCT operator-(UDoubleCT a, const UDoubleCT& b) { return a -= b; }
 
-  friend UDoubleCT operator-(UDoubleCT a, const double& b) { return a -= b; }
+  friend UDoubleCT operator-(UDoubleCT a, double b) { return a -= b; }
 
-  friend UDoubleCT operator-(const double& b, UDoubleCT a)
+  friend UDoubleCT operator-(double b, UDoubleCT a)
   {
     a -= b;
     return -a;
@@ -193,7 +193,7 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT& operator*=(const double& b)
+  UDoubleCT& operator*=(double b)
   {
     unc_components *= b;
     value *= b;
@@ -220,9 +220,9 @@ class UDoubleCT
 
   friend UDoubleCT operator*(UDoubleCT a, const UDoubleCT& b) { return a *= b; }
 
-  friend UDoubleCT operator*(UDoubleCT a, const double& b) { return a *= b; }
+  friend UDoubleCT operator*(UDoubleCT a, double b) { return a *= b; }
 
-  friend UDoubleCT operator*(const double& b, UDoubleCT a) { return a *= b; }
+  friend UDoubleCT operator*(double b, UDoubleCT a) { return a *= b; }
 
   UDoubleCT& operator/=(const UDoubleCT& b)
   {
@@ -234,7 +234,7 @@ class UDoubleCT
     return *this;
   }
 
-  UDoubleCT& operator/=(const double& b)
+  UDoubleCT& operator/=(double b)
   {
     unc_components /= b;
     value /= b;
@@ -243,7 +243,7 @@ class UDoubleCT
 
   friend UDoubleCT operator/(UDoubleCT a, const UDoubleCT& b) { return a /= b; }
 
-  friend UDoubleCT operator/(UDoubleCT a, const double& b) { return a /= b; }
+  friend UDoubleCT operator/(UDoubleCT a, double b) { return a /= b; }
 
   friend UDoubleCT operator/(const double a, const UDoubleCT& b)
   {

@@ -113,11 +113,11 @@ void uncertain_read(double& mean, double& sigma, std::istream& is)
 }
 
 // \todo include skewing of distribution
-void gauss_loss(const double& uncertainty, const double& disc_dist,
+void gauss_loss(double uncertainty, double disc_dist,
                 const discontinuity_type& disc_type,
                 std::string id_string,
                 std::string func_str,
-                const double& disc_thresh)
+                double disc_thresh)
 {
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
   if ((scaled_disc_dist < disc_thresh) && (disc_type != none))

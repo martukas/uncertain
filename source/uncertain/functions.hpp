@@ -50,7 +50,7 @@
 #include <stdexcept>
 #include <string>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -68,7 +68,7 @@ namespace uncertain
 // This function takes the square root of the sum of the squares of
 // numbers, which is equal to the length of the hypotenuse of a right
 // triangle if the two arguments are the lengths of the legs.
-inline double hypot(const double& a, const double& b, const double& c) { return sqrt(a * a + b * b + c * c); }
+inline double hypot(double a, double b, double c) { return sqrt(a * a + b * b + c * c); }
 
 // \todo this may be no longer true, since C++11
 // std::hypot() could have problems with overflow.  A possible
@@ -96,10 +96,10 @@ inline double hypot(const double& a, const double& b, const double& c) { return 
 // UDoubleMS class down unacceptably.
 
 // square: just a notational convenience
-inline double sqr(const double& a) { return a * a; }
+inline double sqr(double a) { return a * a; }
 
 // This function translates floating point ratios to percentages
-inline int int_percent(const double& in) { return int(floor(in * 100.0 + 0.5)); }
+inline int int_percent(double in) { return int(floor(in * 100.0 + 0.5)); }
 
 typedef enum
 {
@@ -118,11 +118,11 @@ void uncertain_print(double mean, double sigma, std::ostream& os = std::cout);
 void uncertain_read(double& mean, double& sigma, std::istream& is = std::cin);
 
 // \todo include skewing of distribution
-void gauss_loss(const double& uncertainty, const double& disc_dist,
+void gauss_loss(double uncertainty, double disc_dist,
                 const discontinuity_type& disc_type,
                 std::string id_string,
                 std::string func_str,
-                const double& disc_thresh);
+                double disc_thresh);
 
 // This object tells all about the effects of an argument on a function
 // return value.
@@ -152,7 +152,7 @@ typedef struct
 // The *_w_moments() functions correspond to math function in
 // the standard C library.  But these versions return the slope, curve,
 // and distance to the nearest discontinuity as well as the value.
-inline one_arg_ret ceil_w_moments(const double& arg)
+inline one_arg_ret ceil_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 0.0;
@@ -166,7 +166,7 @@ inline one_arg_ret ceil_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret floor_w_moments(const double& arg)
+inline one_arg_ret floor_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 0.0;
@@ -180,7 +180,7 @@ inline one_arg_ret floor_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret fabs_w_moments(const double& arg)
+inline one_arg_ret fabs_w_moments(double arg)
 {
   one_arg_ret retval;
   if (arg > 0.0)
@@ -194,7 +194,7 @@ inline one_arg_ret fabs_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret ldexp_w_moments(const double& arg, const int intarg)
+inline one_arg_ret ldexp_w_moments(double arg, const int intarg)
 {
   one_arg_ret retval;
   retval.value = ldexp(arg, intarg);
@@ -204,7 +204,7 @@ inline one_arg_ret ldexp_w_moments(const double& arg, const int intarg)
   return retval;
 }
 
-inline one_arg_ret modf_w_moments(const double& arg, double& intpart)
+inline one_arg_ret modf_w_moments(double arg, double& intpart)
 {
   one_arg_ret retval;
   retval.value = modf(arg, &intpart);
@@ -217,7 +217,7 @@ inline one_arg_ret modf_w_moments(const double& arg, double& intpart)
   return retval;
 }
 
-inline one_arg_ret frexp_w_moments(const double& arg, int& intexp)
+inline one_arg_ret frexp_w_moments(double arg, int& intexp)
 {
   one_arg_ret retval;
   retval.value = frexp(arg, &intexp);
@@ -232,7 +232,7 @@ inline one_arg_ret frexp_w_moments(const double& arg, int& intexp)
   return retval;
 }
 
-inline two_arg_ret fmod_w_moments(const double& arg1, const double& arg2)
+inline two_arg_ret fmod_w_moments(double arg1, double arg2)
 {
   two_arg_ret retval;
   retval.value = fmod(arg1, arg2);
@@ -258,7 +258,7 @@ inline two_arg_ret fmod_w_moments(const double& arg1, const double& arg2)
   return retval;
 }
 
-inline one_arg_ret sqrt_w_moments(const double& arg)
+inline one_arg_ret sqrt_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.value = sqrt(arg);
@@ -269,7 +269,7 @@ inline one_arg_ret sqrt_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret sin_w_moments(const double& arg)
+inline one_arg_ret sin_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.disc_type = none;
@@ -279,7 +279,7 @@ inline one_arg_ret sin_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret cos_w_moments(const double& arg)
+inline one_arg_ret cos_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.disc_type = none;
@@ -289,7 +289,7 @@ inline one_arg_ret cos_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret tan_w_moments(const double& arg)
+inline one_arg_ret tan_w_moments(double arg)
 {
   one_arg_ret retval;
   double costemp = cos(arg);
@@ -303,7 +303,7 @@ inline one_arg_ret tan_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret asin_w_moments(const double& arg)
+inline one_arg_ret asin_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 1.0 / sqrt(1.0 - arg * arg);
@@ -318,7 +318,7 @@ inline one_arg_ret asin_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret acos_w_moments(const double& arg)
+inline one_arg_ret acos_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = -1.0 / sqrt(1.0 - arg * arg);
@@ -333,7 +333,7 @@ inline one_arg_ret acos_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret atan_w_moments(const double& arg)
+inline one_arg_ret atan_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 1.0 / (1.0 + arg * arg);
@@ -343,7 +343,7 @@ inline one_arg_ret atan_w_moments(const double& arg)
   return retval;
 }
 
-inline two_arg_ret atan2_w_moments(const double& arg1, const double& arg2)
+inline two_arg_ret atan2_w_moments(double arg1, double arg2)
 {
   two_arg_ret retval;
   double sum2 = arg2 * arg2 + arg1 * arg1;
@@ -384,7 +384,7 @@ inline two_arg_ret atan2_w_moments(const double& arg1, const double& arg2)
   return retval;
 }
 
-inline one_arg_ret exp_w_moments(const double& arg)
+inline one_arg_ret exp_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.value = exp(arg);
@@ -394,7 +394,7 @@ inline one_arg_ret exp_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret log_w_moments(const double& arg)
+inline one_arg_ret log_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 1.0 / arg;
@@ -405,7 +405,7 @@ inline one_arg_ret log_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret log10_w_moments(const double& arg)
+inline one_arg_ret log10_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = 0.43429448189 / arg;
@@ -416,7 +416,7 @@ inline one_arg_ret log10_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret sinh_w_moments(const double& arg)
+inline one_arg_ret sinh_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = cosh(arg);
@@ -426,7 +426,7 @@ inline one_arg_ret sinh_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret cosh_w_moments(const double& arg)
+inline one_arg_ret cosh_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.slope = sinh(arg);
@@ -436,7 +436,7 @@ inline one_arg_ret cosh_w_moments(const double& arg)
   return retval;
 }
 
-inline one_arg_ret tanh_w_moments(const double& arg)
+inline one_arg_ret tanh_w_moments(double arg)
 {
   one_arg_ret retval;
   double coshtemp = cosh(arg);
@@ -447,7 +447,7 @@ inline one_arg_ret tanh_w_moments(const double& arg)
   return retval;
 }
 
-inline two_arg_ret pow_w_moments(const double& arg1, const double& arg2)
+inline two_arg_ret pow_w_moments(double arg1, double arg2)
 {
   two_arg_ret retval;
   retval.value = pow(arg1, arg2);
@@ -504,7 +504,7 @@ inline two_arg_ret pow_w_moments(const double& arg1, const double& arg2)
 // This function returns an approximation of the inverse Gaussian denstity
 // function to within 4.5e-4.  From Abromowitz & Stegun's _Handbook_of_
 // _Mathematical_Functions_ formula 26.2.23
-inline double inverse_gaussian_density(const double& p)
+inline double inverse_gaussian_density(double p)
 {
   if (p <= 0.0)
   {

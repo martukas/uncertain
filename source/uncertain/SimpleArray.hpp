@@ -49,11 +49,8 @@
 
 #include <uncertain/functions.hpp>
 #include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <time.h>
+#include <cmath>
+
 
 // \todo add exceptions
 
@@ -63,7 +60,7 @@ namespace uncertain
 // Specialized array class has only those members needed to be an array
 // of uncertainty elements used as the template parameter in UDoubleCT<>.
 // This is the simplest possible implementation.
-template<int size>
+template<size_t size>
 class SimpleArray
 {
  private:
@@ -72,13 +69,13 @@ class SimpleArray
  public:
   SimpleArray(double initval = 0.0)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] = initval;
   }
 
   SimpleArray(const SimpleArray& a)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] = a.element[i];
   }
 
@@ -88,14 +85,14 @@ class SimpleArray
   {
     SimpleArray retval;
 
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       retval.element[i] = -element[i];
     return retval;
   }
 
   SimpleArray& operator+=(const SimpleArray& b)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] += b.element[i];
     return *this;
   }
@@ -104,34 +101,29 @@ class SimpleArray
 
   SimpleArray& operator-=(const SimpleArray& b)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] -= b.element[i];
     return *this;
   }
 
-  SimpleArray& operator*=(const double& b)
+  SimpleArray& operator*=(double b)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] *= b;
     return *this;
   }
 
-  friend SimpleArray operator*(SimpleArray a, const double& b) { return a *= b; }
+  friend SimpleArray operator*(SimpleArray a, double b) { return a *= b; }
 
-  SimpleArray& operator/=(const double& b)
+  SimpleArray& operator/=(double b)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] /= b;
     return *this;
   }
 
-  double operator[](int subscript)
+  double operator[](size_t subscript)
   {
-    if (subscript < 0)
-    {
-      throw std::runtime_error("Error: negative subscript: "
-                                   + std::to_string(subscript));
-    }
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: "
@@ -141,13 +133,8 @@ class SimpleArray
     return element[subscript];
   }
 
-  void setelement(int subscript, double value)
+  void setelement(size_t subscript, double value)
   {
-    if (subscript < 0)
-    {
-      throw std::runtime_error("Error: negative subscript: "
-                                   + std::to_string(subscript));
-    }
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: "
@@ -160,9 +147,9 @@ class SimpleArray
   double norm() const
   {
     double tot = 0.0;
-    for (int i = 0; i < size; i++)
-      tot += element[i] * element[i];
-    return sqrt(tot);
+    for (size_t i = 0; i < size; i++)
+      tot += sqr(this->element[i]);
+    return std::sqrt(tot);
   }
 };
 

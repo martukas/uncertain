@@ -49,11 +49,7 @@
 
 #include <uncertain/functions.hpp>
 #include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <time.h>
+#include <cmath>
 
 // \todo add exceptions
 
@@ -65,7 +61,7 @@ namespace uncertain
 // This class is like SimpleArray but adds an undistributed factor for
 // greater efficiency in the common case when all members of an array
 // are to be multiplied by some factor.
-template<int size>
+template<size_t size>
 class ArrayWithScale
 {
  private:
@@ -75,14 +71,14 @@ class ArrayWithScale
  public:
   ArrayWithScale(double initval = 0.0)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] = initval;
     scale = 1.0;
   }
 
   ArrayWithScale(const ArrayWithScale& a)
   {
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       element[i] = a.element[i];
     scale = a.scale;
   }
@@ -93,7 +89,7 @@ class ArrayWithScale
   {
     ArrayWithScale retval;
 
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
       retval.element[i] = element[i];
     retval.scale = -scale;
     return retval;
@@ -104,13 +100,13 @@ class ArrayWithScale
     if (scale)
     {
       double scale_factor = b.scale / scale;
-      for (int i = 0; i < size; i++)
+      for (size_t i = 0; i < size; i++)
         element[i] += b.element[i] * scale_factor;
     }
     else
     {
       scale = b.scale;
-      for (int i = 0; i < size; i++)
+      for (size_t i = 0; i < size; i++)
         element[i] = b.element[i];
     }
     return *this;
@@ -123,38 +119,34 @@ class ArrayWithScale
     if (scale)
     {
       double scale_factor = b.scale / scale;
-      for (int i = 0; i < size; i++)
+      for (size_t i = 0; i < size; i++)
         element[i] -= b.element[i] * scale_factor;
     }
     else
     {
       scale = -b.scale;
-      for (int i = 0; i < size; i++)
+      for (size_t i = 0; i < size; i++)
         element[i] = b.element[i];
     }
     return *this;
   }
 
-  ArrayWithScale& operator*=(const double& b)
+  ArrayWithScale& operator*=(double b)
   {
     scale *= b;
     return *this;
   }
 
-  friend ArrayWithScale operator*(ArrayWithScale a, const double& b) { return a *= b; }
+  friend ArrayWithScale operator*(ArrayWithScale a, double b) { return a *= b; }
 
-  ArrayWithScale& operator/=(const double& b)
+  ArrayWithScale& operator/=(double b)
   {
     scale /= b;
     return *this;
   }
 
-  double operator[](int subscript)
+  double operator[](size_t subscript)
   {
-    if (subscript < 0)
-    {
-      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
-    }
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
@@ -163,12 +155,8 @@ class ArrayWithScale
     return element[subscript] * scale;
   }
 
-  void setelement(int subscript, double value)
+  void setelement(size_t subscript, double value)
   {
-    if (subscript < 0)
-    {
-      throw std::runtime_error("Error: negative subscript: " + std::to_string(subscript));
-    }
     if (subscript >= size)
     {
       throw std::runtime_error("Error: oversize subscript: " + std::to_string(subscript) +
@@ -183,9 +171,9 @@ class ArrayWithScale
     if (scale == 0.0)
       return 0.0;
     double tot = 0.0;
-    for (int i = 0; i < size; i++)
-      tot += element[i] * element[i];
-    return sqrt(tot * scale * scale);
+    for (size_t i = 0; i < size; i++)
+      tot += sqr(element[i]);
+    return std::sqrt(tot * sqr(scale));
   }
 };
 

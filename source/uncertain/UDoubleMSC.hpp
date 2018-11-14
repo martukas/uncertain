@@ -49,7 +49,7 @@
 
 #include <uncertain/functions.hpp>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -81,7 +81,7 @@ class UDoubleMSC
   // sigmas from value
 
  public:
-  static void set_disc_thresh(const double& new_thresh)
+  static void set_disc_thresh(double new_thresh)
   {
     discontinuity_thresh = new_thresh;
   }
