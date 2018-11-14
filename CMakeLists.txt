@@ -68,12 +68,12 @@ add_subdirectory(examples)
 #=============================================================================
 # unit tests if GTest if present
 #=============================================================================
-#include(${EXTRA_MODULES_DIR}/FindGTestFix.cmake)
-#if(GTest_FOUND)
-#  add_subdirectory(test)
-#else()
-#  message(WARNING "GTest not found. No tests will be built.")
-#endif()
+include(${EXTRA_MODULES_DIR}/FindGTestFix.cmake)
+if(GTest_FOUND)
+  add_subdirectory(tests)
+else()
+  message(WARNING "GTest not found. No tests will be built.")
+endif()
 
 #=============================================================================
 # create package file

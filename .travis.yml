@@ -24,9 +24,10 @@ install:
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake -DCOV=1 ..
 
 script:
   - make
+  - make run_tests
   - ./bin/udmstest
   - ./bin/utest
