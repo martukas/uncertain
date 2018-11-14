@@ -50,10 +50,10 @@
 #include <uncertain/functions.hpp>
 #include <stdlib.h>
 #include <cmath>
-#include <stdexcept>
 
 
-// \todo add exceptions
+
+
 
 namespace uncertain
 {

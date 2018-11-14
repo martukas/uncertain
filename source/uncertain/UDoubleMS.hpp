@@ -51,7 +51,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <stdexcept>
+
 
 namespace uncertain
 {
@@ -420,9 +420,9 @@ class UDoubleMS
   friend UDoubleMS<is_correlated> log10(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
-      arg.uncertainty *= 0.43429448189 / arg.value;
+      arg.uncertainty *= kLog10e / arg.value;
     else
-      arg.uncertainty *= 0.43429448189 / fabs(arg.value);
+      arg.uncertainty *= kLog10e / fabs(arg.value);
     arg.value = log10(arg.value);
     return arg;
   }

@@ -58,7 +58,7 @@
 namespace uncertain
 {
 
-// \todo add exceptions
+
 
 // model uncertain number using only mean and sigma, like UDoubleMS,
 // but also use some knowledge of curve & skew & discontinuities.

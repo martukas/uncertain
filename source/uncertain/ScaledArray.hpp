@@ -48,11 +48,11 @@
 #pragma once
 
 #include <uncertain/functions.hpp>
-#include <stdexcept>
+
 #include <stdlib.h>
 #include <cmath>
 
-// \todo add exceptions
+
 
 namespace uncertain
 {

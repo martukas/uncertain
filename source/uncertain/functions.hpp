@@ -50,14 +50,17 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 
-// \todo add exceptions
+
 
 namespace uncertain
 {
 
+// \todo could be different if you use (IEEE 128-bit) long double
 constexpr double kPi = M_PI;
 constexpr double kHalfPi = M_PI_2;
+constexpr double kLog10e = M_LOG10E;
 
 // square: just a notational convenience
 inline double sqr(double a) { return a * a; }
@@ -403,7 +406,7 @@ inline one_arg_ret log_w_moments(double arg)
 inline one_arg_ret log10_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.arg.slope = 0.43429448189 / arg;
+  retval.arg.slope = kLog10e / arg;
   retval.arg.curve = -retval.arg.slope / arg;
   retval.arg.disc_dist = arg;
   retval.arg.disc_type = undefined_beyond;

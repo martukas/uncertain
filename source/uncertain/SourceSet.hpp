@@ -55,7 +55,7 @@
 #include <iomanip>
 #include <time.h>
 
-// \todo add exceptions
+
 
 // \todo make template variables or class consts
 #define MAX_UNC_ELEMENTS 5

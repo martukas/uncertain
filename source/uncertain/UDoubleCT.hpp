@@ -52,7 +52,7 @@
 #include <uncertain/SimpleArray.hpp>
 #include <uncertain/ScaledArray.hpp>
 
-// \todo add exceptions
+
 
 namespace uncertain
 {

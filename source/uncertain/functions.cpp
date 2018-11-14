@@ -46,9 +46,8 @@
 
 #include <uncertain/functions.hpp>
 #include <iomanip>
-#include <stdexcept>
 
-// \todo add exceptions
+
 
 namespace uncertain
 {
