@@ -48,6 +48,7 @@
 #pragma once
 
 #include <uncertain/source_set.hpp>
+#include <functional>
 #include <iomanip>
 
 // \todo get rid of this include
@@ -73,8 +74,11 @@ class UDoubleEnsemble
 
  private:
   double ensemble[ensemble_size];
-  static SourceSet <num_elements> sources;
+  static SourceSet<num_elements> sources;
   size_t epoch;
+
+  typedef double (* fun1type)(double);
+  typedef double (* fun2type)(double, double);
 
  public:
   // The main constructor initializes a new source of uncertainty
@@ -371,60 +375,141 @@ class UDoubleEnsemble
     return is;
   }
 
-#define UDoubleEnsemblefunc1(func) \
-      UDoubleEnsemble<num_elements, ensemble_size> func(UDoubleEnsemble<num_elements, ensemble_size> arg) \
-      { \
-         for (size_t i = 0; i < ensemble_size; i++) \
-            arg.ensemble[i] = std:: func(arg.ensemble[i]); \
-         return arg; \
-      }
-#define UDoubleEnsemblefunc2(func) \
-      UDoubleEnsemble<num_elements, ensemble_size> func(const UDoubleEnsemble<num_elements, ensemble_size>& arg1, \
-                                  const UDoubleEnsemble<num_elements, ensemble_size>& arg2) \
-      { \
-         UDoubleEnsemble<num_elements, ensemble_size> retval(arg1); \
-         for (size_t i = 0; i < ensemble_size; i++) \
-            retval.ensemble[i] = std:: func(arg1.ensemble[i], arg2.ensemble[i]); \
-         return retval; \
-      }
+  static UDoubleEnsemble<num_elements, ensemble_size>
+  func1(std::function<double(double)> func, UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    for (size_t i = 0; i < ensemble_size; i++)
+      arg.ensemble[i] = func(arg.ensemble[i]);
+    return arg;
+  }
 
-  friend UDoubleEnsemblefunc1(sqrt)
+  static UDoubleEnsemble<num_elements, ensemble_size>
+  func2(std::function<double(double, double)> func,
+        const UDoubleEnsemble<num_elements, ensemble_size>& arg1,
+        const UDoubleEnsemble<num_elements, ensemble_size>& arg2)
+  {
+    UDoubleEnsemble<num_elements, ensemble_size> retval(arg1);
+    for (size_t i = 0; i < ensemble_size; i++)
+      retval.ensemble[i] = func(arg1.ensemble[i], arg2.ensemble[i]);
+    return retval;
+  }
 
-  friend UDoubleEnsemblefunc1(sin)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  sqrt(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::sqrt), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(cos)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  sin(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::sin), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(tan)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  cos(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::cos), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(asin)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  tan(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::tan), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(acos)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  asin(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::asin), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(atan)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  acos(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::acos), arg);
+  }
 
-  friend UDoubleEnsemblefunc2(atan2)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  atan(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::atan), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(ceil)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  ceil(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::ceil), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(floor)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  floor(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::floor), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(fabs)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  fabs(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::fabs), arg);
+  }
 
-  friend UDoubleEnsemblefunc2(fmod)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  exp(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::exp), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(exp)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  log(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::log), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(log)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  log10(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::log10), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(log10)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  sinh(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::sinh), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(sinh)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  cosh(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::cosh), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(cosh)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  tanh(UDoubleEnsemble<num_elements, ensemble_size> arg)
+  {
+    return func1(static_cast<fun1type>(&std::tanh), arg);
+  }
 
-  friend UDoubleEnsemblefunc1(tanh)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  fmod(const UDoubleEnsemble<num_elements, ensemble_size>& arg1,
+       const UDoubleEnsemble<num_elements, ensemble_size>& arg2)
+  {
+    return func2(static_cast<fun2type>(&std::fmod), arg1, arg2);
+  }
 
-  friend UDoubleEnsemblefunc2(pow)
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  atan2(const UDoubleEnsemble<num_elements, ensemble_size>& arg1,
+        const UDoubleEnsemble<num_elements, ensemble_size>& arg2)
+  {
+    return func2(static_cast<fun2type>(&std::atan2), arg1, arg2);
+  }
+
+  friend UDoubleEnsemble<num_elements, ensemble_size>
+  pow(const UDoubleEnsemble<num_elements, ensemble_size>& arg1,
+      const UDoubleEnsemble<num_elements, ensemble_size>& arg2)
+  {
+    return func2(static_cast<fun2type>(&std::pow), arg1, arg2);
+  }
 
   friend UDoubleEnsemble<num_elements, ensemble_size> ldexp(UDoubleEnsemble<num_elements, ensemble_size> arg,
                                                             const int intarg)

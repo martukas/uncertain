@@ -76,13 +76,14 @@ uncertain::SourceSet<max_elements>
     uncertain::UDoubleEnsemble<max_elements, ens_a_size>::sources("Small Ensemble");
 
 template<>
-double uncertain::UDoubleEnsemble<max_elements, ens_a_size>::src_ensemble[max_elements][ens_a_size];
+double uncertain::UDoubleEnsemble<max_elements, ens_a_size>::src_ensemble[max_elements][ens_a_size] = {};
 
 template<>
-uncertain::SourceSet<max_elements> uncertain::UDoubleEnsemble<max_elements, ens_b_size>::sources("Large Ensemble");
+uncertain::SourceSet<max_elements>
+    uncertain::UDoubleEnsemble<max_elements, ens_b_size>::sources("Large Ensemble");
 
 template<>
-double uncertain::UDoubleEnsemble<max_elements, ens_b_size>::src_ensemble[max_elements][ens_b_size];
+double uncertain::UDoubleEnsemble<max_elements, ens_b_size>::src_ensemble[max_elements][ens_b_size] = {};
 
 // These global values are used to pass the extra argument to ldexp(),
 // modf(), and frexp() around the interface for my_ldexp(), etc. so

@@ -13,6 +13,7 @@ set(test_sources
   ${dir}/double_ms.cpp
   ${dir}/double_msc.cpp
   ${dir}/double_ct.cpp
+  ${dir}/double_ensemble.cpp
   )
 
 set(test_headers
