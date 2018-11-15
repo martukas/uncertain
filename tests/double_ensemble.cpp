@@ -2,27 +2,32 @@
 
 #include "gtest_print.hpp"
 
+static constexpr size_t ens_a_size = 128u;
+static constexpr size_t ens_b_size = 1024u;
+
 namespace uncertain
 {
 
-static constexpr size_t ens_a_size = 128u;
-static constexpr size_t ens_b_size = 1024u;
-static constexpr size_t max_elements_ens = 5;
-
-using EnsembleSmall = UDoubleEnsemble<max_elements_ens, ens_a_size>;
-using EnsembleLarge = UDoubleEnsemble<max_elements_ens, ens_b_size>;
+using EnsembleSmall = UDoubleEnsemble<ens_a_size>;
+using EnsembleLarge = UDoubleEnsemble<ens_b_size>;
 
 template<>
 SourceSet EnsembleSmall::sources("Small Ensemble");
 
 template<>
-double EnsembleSmall::src_ensemble[max_elements_ens][ens_a_size] = {};
-
-template<>
 SourceSet EnsembleLarge::sources("Large Ensemble");
 
 template<>
-double EnsembleLarge::src_ensemble[max_elements_ens][ens_b_size] = {};
+std::vector<std::vector<double>> EnsembleSmall::src_ensemble = {};
+
+template<>
+std::vector<double> EnsembleSmall::gauss_ensemble = {};
+
+template<>
+std::vector<std::vector<double>> EnsembleLarge::src_ensemble = {};
+
+template<>
+std::vector<double> EnsembleLarge::gauss_ensemble = {};
 
 }
 
@@ -67,6 +72,9 @@ TEST_F(UDoubleEnsembleTest, LargeNegativeThrows)
 TEST_F(UDoubleEnsembleTest, Copy)
 {
   uncertain::EnsembleSmall ud(2.0, 1.0);
+  EXPECT_FLOAT_EQ(ud.mean(), 2.0);
+  EXPECT_FLOAT_EQ(ud.deviation(), 1.0);
+
   uncertain::EnsembleSmall ud2(ud);
   EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
   EXPECT_FLOAT_EQ(ud2.deviation(), 1.0);

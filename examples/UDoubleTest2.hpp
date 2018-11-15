@@ -48,7 +48,6 @@
 
 static constexpr size_t ens_a_size = 128u;
 static constexpr size_t ens_b_size = 1024u;
-static constexpr size_t max_elements = 5;
 
 using UDoubleCTSA = uncertain::UDoubleCT<uncertain::SimpleArray>;
 using UDoubleCTAA = uncertain::UDoubleCT<uncertain::ScaledArray>;
@@ -60,17 +59,31 @@ template<>
 uncertain::SourceSet UDoubleCTAA::sources("Scaled Array");
 
 
-template<>
-uncertain::SourceSet uncertain::UDoubleEnsemble<max_elements, ens_a_size>::sources("Small Ensemble");
+namespace uncertain
+{
+
+using EnsembleSmall = UDoubleEnsemble<ens_a_size>;
+using EnsembleLarge = UDoubleEnsemble<ens_b_size>;
 
 template<>
-double uncertain::UDoubleEnsemble<max_elements, ens_a_size>::src_ensemble[max_elements][ens_a_size] = {};
+SourceSet EnsembleSmall::sources("Small Ensemble");
 
 template<>
-uncertain::SourceSet uncertain::UDoubleEnsemble<max_elements, ens_b_size>::sources("Large Ensemble");
+SourceSet EnsembleLarge::sources("Large Ensemble");
 
 template<>
-double uncertain::UDoubleEnsemble<max_elements, ens_b_size>::src_ensemble[max_elements][ens_b_size] = {};
+std::vector<std::vector<double>> EnsembleSmall::src_ensemble = {};
+
+template<>
+std::vector<double> EnsembleSmall::gauss_ensemble = {};
+
+template<>
+std::vector<std::vector<double>> EnsembleLarge::src_ensemble = {};
+
+template<>
+std::vector<double> EnsembleLarge::gauss_ensemble = {};
+
+}
 
 // These global values are used to pass the extra argument to ldexp(),
 // modf(), and frexp() around the interface for my_ldexp(), etc. so
@@ -109,8 +122,8 @@ class UDoubleTest
   uncertain::UDoubleMSC<true> mscc;
   UDoubleCTSA ctsa;
   UDoubleCTAA ctaa;
-  uncertain::UDoubleEnsemble<max_elements, ens_a_size> ens_a;
-  uncertain::UDoubleEnsemble<max_elements, ens_b_size> ens_b;
+  uncertain::EnsembleSmall ens_a;
+  uncertain::EnsembleLarge ens_b;
 
  public:
   UDoubleTest(const double val = 0.0, const double unc = 0.0,
@@ -712,7 +725,7 @@ class UDoubleTest
          \
          arg.ctsa = func(arg.ctsa); \
          arg.ctaa = func(arg.ctaa); \
-         uncertain::UDoubleEnsemble<max_elements, ens_a_size> alt_ens_a = Invoke(func, arg.ens_a); \
+         uncertain::UDoubleEnsemble<ens_a_size> alt_ens_a = Invoke(func, arg.ens_a); \
          arg.ens_a = func(arg.ens_a); \
          osa << arg.ens_a; \
          alt_osa << alt_ens_a; \
@@ -893,8 +906,8 @@ class UDoubleTest
   {
     UDoubleCTSA::new_epoch();
     UDoubleCTAA::new_epoch();
-    uncertain::UDoubleEnsemble<max_elements, ens_a_size>::new_epoch();
-    uncertain::UDoubleEnsemble<max_elements, ens_b_size>::new_epoch();
+    uncertain::UDoubleEnsemble<ens_a_size>::new_epoch();
+    uncertain::UDoubleEnsemble<ens_b_size>::new_epoch();
   }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
