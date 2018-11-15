@@ -35,15 +35,6 @@
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
 
-// Warning: this file contains an object (UDoubleInit) to insure that
-// srand() gets called exactly once to seed the random number
-// generator.  But this may cause problems if used with source
-// code that already calls srand() and/or uses that family of
-// random number generators in any files that don't #include this file.
-
-// Warning: This header has not yet been corrected to work with more
-// than one source file.
-
 
 #pragma once
 
@@ -58,8 +49,8 @@ template<size_t size>
 class SourceSet
 {
  private:
-  size_t num_sources {0};
-  size_t source_epoch {0};
+  size_t num_sources{0};
+  size_t source_epoch{0};
   std::string source_name[size];
   std::string class_name;
  public:
@@ -68,14 +59,18 @@ class SourceSet
     class_name = cname;
   }
 
-  size_t get_epoch() const { return source_epoch; }
+  size_t get_epoch() const
+  {
+    return source_epoch;
+  }
 
   void check_epoch(size_t epoch) const
   {
     if (epoch != source_epoch)
     {
       throw std::runtime_error("Bad epoch: "
-                                   + std::to_string(epoch) + " expected: " + std::to_string(source_epoch)
+                                   + std::to_string(epoch) + " expected: "
+                                   + std::to_string(source_epoch)
                                    + " in class " + class_name);
     }
   }
@@ -95,7 +90,8 @@ class SourceSet
 
   size_t get_new_source(std::string name)
   {
-    if (!can_get_new_source()) {
+    if (!can_get_new_source())
+    {
       {
         std::stringstream ss;
         ss << "Already at maximum number of permissible uncertainty elements: "

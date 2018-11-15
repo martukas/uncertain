@@ -41,9 +41,6 @@
 // code that already calls srand() and/or uses that family of
 // random number generators in any files that don't #include this file.
 
-// Warning: This header has not yet been corrected to work with more
-// than one source file.
-
 
 #pragma once
 
@@ -83,8 +80,7 @@ class UDoubleEnsemble
  public:
   // The main constructor initializes a new source of uncertainty
   // (if there is uncertainty).
-  UDoubleEnsemble(const double val = 0.0, const double unc = 0.0,
-                  std::string name = "")
+  UDoubleEnsemble(double val = 0.0, double unc = 0.0, const std::string& name = {})
       : epoch(sources.get_epoch())
   {
     if (unc < 0.0)
@@ -170,8 +166,7 @@ class UDoubleEnsemble
 
   // constructor from an ensemble.
   // \todo add similar function that shuffles its input
-  UDoubleEnsemble(const double* const newensemble,
-                  std::string name = "")
+  UDoubleEnsemble(const double* const newensemble, const std::string& name = {})
       : epoch(sources.get_epoch())
   {
     for (size_t i = 0; i < ensemble_size; i++)
@@ -191,8 +186,30 @@ class UDoubleEnsemble
   }
 // \todo add constructors with other distributions.
 
-  ~UDoubleEnsemble()
-  {}
+  ~UDoubleEnsemble() = default;
+
+  double mean() const
+  {
+    double sum = 0.0;
+
+    for (size_t i = 0; i < ensemble_size; i++)
+      sum += ensemble[i];
+    return sum / ensemble_size;
+  }
+
+  double deviation() const
+  {
+    size_t i;
+    double diff, sum_2_diff = 0.0; // watch overflow!
+    double value = this->mean();
+
+    for (i = 0; i < ensemble_size; i++)
+    {
+      diff = ensemble[i] - value;
+      sum_2_diff += sqr(diff);
+    }
+    return std::sqrt(sum_2_diff / ensemble_size);
+  }
 
   UDoubleEnsemble<num_elements, ensemble_size> operator+() const
   {
@@ -543,29 +560,6 @@ class UDoubleEnsemble
       arg.ensemble[i] = std::modf(arg.ensemble[i], &tempdbl);
     }
     return arg;
-  }
-
-  double mean() const
-  {
-    double sum = 0.0;
-
-    for (size_t i = 0; i < ensemble_size; i++)
-      sum += ensemble[i];
-    return sum / ensemble_size;
-  }
-
-  double deviation() const
-  {
-    size_t i;
-    double diff, sum_2_diff = 0.0; // watch overflow!
-    double value = this->mean();
-
-    for (i = 0; i < ensemble_size; i++)
-    {
-      diff = ensemble[i] - value;
-      sum_2_diff += sqr(diff);
-    }
-    return std::sqrt(sum_2_diff / ensemble_size);
   }
 
   static void new_epoch()

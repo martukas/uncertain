@@ -35,15 +35,6 @@
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
 
-// Warning: this file contains an object (UDoubleInit) to insure that
-// srand() gets called exactly once to seed the random number
-// generator.  But this may cause problems if used with source
-// code that already calls srand() and/or uses that family of
-// random number generators in any files that don't #include this file.
-
-// Warning: This header has not yet been corrected to work with more
-// than one source file.
-
 
 #pragma once
 
@@ -82,7 +73,7 @@ class UDoubleMSC
   }
 
   // This is the default conversion from type double
-  UDoubleMSC(const double val = 0.0, const double unc = 0.0)
+  UDoubleMSC(double val = 0.0, double unc = 0.0)
       : value(val), uncertainty(unc)
   {
     if ((unc < 0.0) && !is_correlated)

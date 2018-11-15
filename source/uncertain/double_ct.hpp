@@ -35,15 +35,6 @@
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
 
-// Warning: this file contains an object (UDoubleInit) to insure that
-// srand() gets called exactly once to seed the random number
-// generator.  But this may cause problems if used with source
-// code that already calls srand() and/or uses that family of
-// random number generators in any files that don't #include this file.
-
-// Warning: This header has not yet been corrected to work with more
-// than one source file.
-
 
 #pragma once
 
@@ -67,8 +58,7 @@ class UDoubleCT
 
  public:
   // default constructor creates a new independent uncertainty element
-  UDoubleCT(const double val = 0.0, const double unc = 0.0,
-            std::string name = "")
+  UDoubleCT(double val = 0.0, double unc = 0.0, const std::string& name = {})
       : value(val), unc_components(0.0)
   {
     epoch = sources.get_epoch();
@@ -102,11 +92,22 @@ class UDoubleCT
   }
   // operator= ?
 
-  ~UDoubleCT()
-  {}
+  ~UDoubleCT() = default;
+
+  double mean() const
+  {
+    return value;
+  }
+
+  double deviation() const
+  {
+    return unc_components.norm();
+  }
 
   static void new_epoch()
-  { sources.new_epoch(); }
+  {
+    sources.new_epoch();
+  }
 
   void print_uncertain_sources(std::ostream& os = std::cout)
   {
@@ -125,7 +126,9 @@ class UDoubleCT
   }
 
   UDoubleCT operator+() const
-  { return *this; }
+  {
+    return *this;
+  }
 
   UDoubleCT operator-() const
   {
@@ -176,10 +179,14 @@ class UDoubleCT
   }
 
   friend UDoubleCT operator-(UDoubleCT a, const UDoubleCT& b)
-  { return a -= b; }
+  {
+    return a -= b;
+  }
 
   friend UDoubleCT operator-(UDoubleCT a, double b)
-  { return a -= b; }
+  {
+    return a -= b;
+  }
 
   friend UDoubleCT operator-(double b, UDoubleCT a)
   {
@@ -225,13 +232,19 @@ class UDoubleCT
   }
 
   friend UDoubleCT operator*(UDoubleCT a, const UDoubleCT& b)
-  { return a *= b; }
+  {
+    return a *= b;
+  }
 
   friend UDoubleCT operator*(UDoubleCT a, double b)
-  { return a *= b; }
+  {
+    return a *= b;
+  }
 
   friend UDoubleCT operator*(double b, UDoubleCT a)
-  { return a *= b; }
+  {
+    return a *= b;
+  }
 
   UDoubleCT& operator/=(const UDoubleCT& b)
   {
@@ -251,10 +264,14 @@ class UDoubleCT
   }
 
   friend UDoubleCT operator/(UDoubleCT a, const UDoubleCT& b)
-  { return a /= b; }
+  {
+    return a /= b;
+  }
 
   friend UDoubleCT operator/(UDoubleCT a, double b)
-  { return a /= b; }
+  {
+    return a /= b;
+  }
 
   friend UDoubleCT operator/(const double a, const UDoubleCT& b)
   {
@@ -423,16 +440,6 @@ class UDoubleCT
     arg.value = funcret.value;
     arg.unc_components *= funcret.arg.slope;
     return arg;
-  }
-
-  double mean() const
-  {
-    return value;
-  }
-
-  double deviation() const
-  {
-    return unc_components.norm();
   }
 };
 

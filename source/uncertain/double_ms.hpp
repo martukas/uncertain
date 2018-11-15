@@ -64,7 +64,7 @@ class UDoubleMS
 
  public:
   // This is the default conversion from type double
-  UDoubleMS(const double val = 0.0, const double unc = 0.0)
+  UDoubleMS(double val = 0.0, double unc = 0.0)
       : value(val), uncertainty(unc)
   {
     if ((unc < 0.0) && !is_correlated)
