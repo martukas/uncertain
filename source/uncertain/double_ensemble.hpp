@@ -71,7 +71,7 @@ class UDoubleEnsemble
 
  private:
   double ensemble[ensemble_size];
-  static SourceSet<num_elements> sources;
+  static SourceSet sources;
   size_t epoch;
 
   typedef double (* fun1type)(double);

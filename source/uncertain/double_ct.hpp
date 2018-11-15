@@ -54,7 +54,7 @@ class UDoubleCT
   double value;
   T unc_components;
   size_t epoch;
-  static SourceSet<size> sources;
+  static SourceSet sources;
 
  public:
   // default constructor creates a new independent uncertainty element
@@ -90,7 +90,8 @@ class UDoubleCT
   {
     unc_components = ud.unc_components;
   }
-  // operator= ?
+
+  // \todo operator= ?
 
   ~UDoubleCT() = default;
 
@@ -212,10 +213,14 @@ class UDoubleCT
   }
 
   UDoubleCT operator++()
-  { return (*this += 1.0); }
+  {
+    return (*this += 1.0);
+  }
 
   UDoubleCT operator--()
-  { return (*this -= 1.0); }
+  {
+    return (*this -= 1.0);
+  }
 
   UDoubleCT operator++(int)
   {

@@ -54,24 +54,22 @@ using SizedSimpleArray = uncertain::SimpleArray<max_elements>;
 using SizedArrayWithScale = uncertain::ArrayWithScale<max_elements>;
 
 template<>
-uncertain::SourceSet<max_elements> uncertain::UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
+uncertain::SourceSet uncertain::UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
 
 template<>
-uncertain::SourceSet<max_elements> uncertain::UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
+uncertain::SourceSet uncertain::UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
 
 using UDoubleCTSA = uncertain::UDoubleCT<SizedSimpleArray, max_elements>;
 using UDoubleCTAA = uncertain::UDoubleCT<SizedArrayWithScale, max_elements>;
 
 template<>
-uncertain::SourceSet<max_elements>
-    uncertain::UDoubleEnsemble<max_elements, ens_a_size>::sources("Small Ensemble");
+uncertain::SourceSet uncertain::UDoubleEnsemble<max_elements, ens_a_size>::sources("Small Ensemble");
 
 template<>
 double uncertain::UDoubleEnsemble<max_elements, ens_a_size>::src_ensemble[max_elements][ens_a_size] = {};
 
 template<>
-uncertain::SourceSet<max_elements>
-    uncertain::UDoubleEnsemble<max_elements, ens_b_size>::sources("Large Ensemble");
+uncertain::SourceSet uncertain::UDoubleEnsemble<max_elements, ens_b_size>::sources("Large Ensemble");
 
 template<>
 double uncertain::UDoubleEnsemble<max_elements, ens_b_size>::src_ensemble[max_elements][ens_b_size] = {};

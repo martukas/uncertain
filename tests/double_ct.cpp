@@ -13,10 +13,10 @@ using SizedSimpleArray = uncertain::SimpleArray<max_elements>;
 using SizedArrayWithScale = uncertain::ArrayWithScale<max_elements>;
 
 template<>
-SourceSet<max_elements> UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
+SourceSet UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
 
 template<>
-SourceSet<max_elements> UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
+SourceSet UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
 
 using UDoubleCTSA = UDoubleCT<SizedSimpleArray, max_elements>;
 using UDoubleCTAA = UDoubleCT<SizedArrayWithScale, max_elements>;

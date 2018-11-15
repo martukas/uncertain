@@ -40,24 +40,24 @@
 
 #include <uncertain/functions.hpp>
 #include <sstream>
+#include <vector>
 
 namespace uncertain
 {
 
 // A class for sources of uncertainties.
-template<size_t size>
 class SourceSet
 {
  private:
-  size_t num_sources{0};
   size_t source_epoch{0};
-  std::string source_name[size];
+  std::vector<std::string> source_names;
   std::string class_name;
  public:
-  SourceSet(std::string cname = {})
-  {
-    class_name = cname;
-  }
+  SourceSet(const std::string& cname = {})
+      : class_name(cname)
+  {}
+
+  // \todo reserve
 
   size_t get_epoch() const
   {
@@ -68,7 +68,7 @@ class SourceSet
   {
     if (epoch != source_epoch)
     {
-      throw std::runtime_error("Bad epoch: "
+      throw std::runtime_error("Wrong epoch: "
                                    + std::to_string(epoch) + " expected: "
                                    + std::to_string(source_epoch)
                                    + " in class " + class_name);
@@ -77,47 +77,34 @@ class SourceSet
 
   void new_epoch()
   {
-    for (size_t i = 0; i < num_sources; i++)
-      source_name[i].clear();
+    source_names.clear();
     source_epoch++;
-    num_sources = 0;
   }
 
   bool can_get_new_source() const
   {
-    return (num_sources < size);
+    return true;
   }
 
   size_t get_new_source(std::string name)
   {
-    if (!can_get_new_source())
-    {
-      {
-        std::stringstream ss;
-        ss << "Already at maximum number of permissible uncertainty elements: "
-           << size << "(" << num_sources << ")" << "in class "
-           << class_name << ".Change the value of size and recompile"
-           << " or use new_epoch().";
-        throw std::runtime_error(ss.str());
-      }
-    }
-    source_name[num_sources] = name;
-    return num_sources++;
+    source_names.push_back(name);
+    return source_names.size() - 1;
   }
 
   size_t get_num_sources() const
   {
-    return num_sources;
+    return source_names.size();
   }
 
   std::string get_source_name(size_t i) const
   {
-    if (i >= num_sources)
+    if (i >= source_names.size())
     {
       throw std::runtime_error("get_source_name called with illegal source number: "
                                    + std::to_string(i));
     }
-    return source_name[i];
+    return source_names[i];
   }
 };
 

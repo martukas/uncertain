@@ -13,15 +13,13 @@ using EnsembleSmall = UDoubleEnsemble<max_elements_ens, ens_a_size>;
 using EnsembleLarge = UDoubleEnsemble<max_elements_ens, ens_b_size>;
 
 template<>
-SourceSet<max_elements_ens>
-    EnsembleSmall::sources("Small Ensemble");
+SourceSet EnsembleSmall::sources("Small Ensemble");
 
 template<>
 double EnsembleSmall::src_ensemble[max_elements_ens][ens_a_size] = {};
 
 template<>
-SourceSet<max_elements_ens>
-    EnsembleLarge::sources("Large Ensemble");
+SourceSet EnsembleLarge::sources("Large Ensemble");
 
 template<>
 double EnsembleLarge::src_ensemble[max_elements_ens][ens_b_size] = {};
