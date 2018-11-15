@@ -50,6 +50,8 @@
 #include <uncertain/double_ms.hpp>
 #include <uncertain/double_msc.hpp>
 #include <uncertain/double_ct.hpp>
+#include <uncertain/simple_array.hpp>
+#include <uncertain/scaled_array.hpp>
 #include <uncertain/double_ensemble.hpp>
 #include <sstream>
 

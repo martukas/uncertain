@@ -12,6 +12,7 @@ set(test_sources
   ${dir}/functions.cpp
   ${dir}/double_ms.cpp
   ${dir}/double_msc.cpp
+  ${dir}/double_ct.cpp
   )
 
 set(test_headers

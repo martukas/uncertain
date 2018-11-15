@@ -197,3 +197,23 @@ TEST_F(UDoubleMSTest, SqrtUncorr)
   EXPECT_FLOAT_EQ(ud2.mean(), 2.0);
   EXPECT_FLOAT_EQ(ud2.deviation(), 0.5);
 }
+
+TEST_F(UDoubleMSTest, PowCorr)
+{
+  uncertain::UDoubleMSCorr ud(4.0, 2.0);
+  uncertain::UDoubleMSCorr ud2(2.0, 0.1);
+
+  auto ud3 = pow(ud, ud2);
+  EXPECT_FLOAT_EQ(ud3.mean(), 16.0);
+  EXPECT_FLOAT_EQ(ud3.deviation(), 18.218071);
+}
+
+TEST_F(UDoubleMSTest, PowUncorr)
+{
+  uncertain::UDoubleMSUncorr ud(4.0, 2.0);
+  uncertain::UDoubleMSUncorr ud2(2.0, 0.1);
+
+  auto ud3 = pow(ud, ud2);
+  EXPECT_FLOAT_EQ(ud3.mean(), 16.0);
+  EXPECT_FLOAT_EQ(ud3.deviation(), 16.153013);
+}

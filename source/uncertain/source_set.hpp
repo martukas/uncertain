@@ -48,6 +48,7 @@
 #pragma once
 
 #include <uncertain/functions.hpp>
+#include <sstream>
 
 namespace uncertain
 {

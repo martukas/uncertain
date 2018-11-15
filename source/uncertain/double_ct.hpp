@@ -48,8 +48,7 @@
 #pragma once
 
 #include <uncertain/source_set.hpp>
-#include <uncertain/simple_array.hpp>
-#include <uncertain/scaled_array.hpp>
+#include <functional>
 
 namespace uncertain
 {
