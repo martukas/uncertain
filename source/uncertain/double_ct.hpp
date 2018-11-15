@@ -285,64 +285,121 @@ class UDoubleCT
     return is;
   }
 
-#define UDoubleCTfunc1(func) \
-   UDoubleCT func(UDoubleCT arg) \
-   { \
-      one_arg_ret funcret = func ## _w_moments(arg.value); \
-      arg.value = funcret.value; \
-      arg.unc_components *= funcret.arg.slope; \
-      return arg; \
-   }
-#define UDoubleCTfunc2(func) \
-   UDoubleCT func(const UDoubleCT& arg1, const UDoubleCT& arg2) \
-   { \
-      UDoubleCT<T, size>::sources.check_epoch(arg1.epoch); \
-      UDoubleCT<T, size>::sources.check_epoch(arg2.epoch); \
-      UDoubleCT retval(arg1); \
-      two_arg_ret funcret = func ## _w_moments(arg1.value, arg2.value); \
-      retval.value = funcret.value; \
-      retval.unc_components = arg1.unc_components * funcret.arg1.slope \
-                              + arg2.unc_components * funcret.arg2.slope; \
-      return retval; \
-   }
+  static UDoubleCT func1(std::function<one_arg_ret(double)> func_w_moments, UDoubleCT arg)
+  {
+    one_arg_ret funcret = func_w_moments(arg.value);
+    arg.value = funcret.value;
+    arg.unc_components *= funcret.arg.slope;
+    return arg;
+  }
 
-  friend UDoubleCTfunc1(sqrt)
+  static UDoubleCT func2(std::function<two_arg_ret(double, double)> func_w_moments,
+                         const UDoubleCT& arg1, const UDoubleCT& arg2)
+  {
+    UDoubleCT<T, size>::sources.check_epoch(arg1.epoch);
+    UDoubleCT<T, size>::sources.check_epoch(arg2.epoch);
+    UDoubleCT retval(arg1);
+    two_arg_ret funcret = func_w_moments(arg1.value, arg2.value);
+    retval.value = funcret.value;
+    retval.unc_components = arg1.unc_components * funcret.arg1.slope
+        + arg2.unc_components * funcret.arg2.slope;
+    return retval;
+  }
 
-  friend UDoubleCTfunc1(sin)
+  friend UDoubleCT sqrt(UDoubleCT arg)
+  {
+    return func1(&sqrt_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(cos)
+  friend UDoubleCT sin(UDoubleCT arg)
+  {
+    return func1(&sin_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(tan)
+  friend UDoubleCT cos(UDoubleCT arg)
+  {
+    return func1(&cos_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(asin)
+  friend UDoubleCT tan(UDoubleCT arg)
+  {
+    return func1(&tan_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(acos)
+  friend UDoubleCT asin(UDoubleCT arg)
+  {
+    return func1(&asin_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(atan)
+  friend UDoubleCT acos(UDoubleCT arg)
+  {
+    return func1(&acos_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc2(atan2)
+  friend UDoubleCT atan(UDoubleCT arg)
+  {
+    return func1(&atan_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(ceil)
+  friend UDoubleCT ceil(UDoubleCT arg)
+  {
+    return func1(&ceil_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(floor)
+  friend UDoubleCT floor(UDoubleCT arg)
+  {
+    return func1(&floor_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(fabs)
+  friend UDoubleCT fabs(UDoubleCT arg)
+  {
+    return func1(&fabs_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc2(fmod)
+  friend UDoubleCT exp(UDoubleCT arg)
+  {
+    return func1(&exp_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(exp)
+  friend UDoubleCT log(UDoubleCT arg)
+  {
+    return func1(&log_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(log)
+  friend UDoubleCT log10(UDoubleCT arg)
+  {
+    return func1(&log10_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(log10)
+  friend UDoubleCT sinh(UDoubleCT arg)
+  {
+    return func1(&sinh_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(sinh)
+  friend UDoubleCT cosh(UDoubleCT arg)
+  {
+    return func1(&cosh_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(cosh)
+  friend UDoubleCT tanh(UDoubleCT arg)
+  {
+    return func1(&tanh_w_moments, arg);
+  }
 
-  friend UDoubleCTfunc1(tanh)
+  friend UDoubleCT fmod(const UDoubleCT& arg1, const UDoubleCT& arg2)
+  {
+    return func2(&fmod_w_moments, arg1, arg2);
+  }
 
-  friend UDoubleCTfunc2(pow)
+  friend UDoubleCT atan2(const UDoubleCT& arg1, const UDoubleCT& arg2)
+  {
+    return func2(&atan2_w_moments, arg1, arg2);
+  }
+
+  friend UDoubleCT pow(const UDoubleCT& arg1, const UDoubleCT& arg2)
+  {
+    return func2(&pow_w_moments, arg1, arg2);
+  }
 
   friend UDoubleCT ldexp(UDoubleCT arg, const int intarg)
   {

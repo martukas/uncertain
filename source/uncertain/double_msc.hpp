@@ -278,8 +278,8 @@ class UDoubleMSC
   // \todo enhance the below to account for moments with terms of each
   //  argument (e.g. for atan2(x,y), we now ignore d/dx(d/dy(atan2(x,y)))
   static UDoubleMSC<is_correlated> func2(std::function<two_arg_ret(double, double)> func_w_moments,
-                                         UDoubleMSC<is_correlated> arg1,
-                                         UDoubleMSC<is_correlated> arg2,
+                                         const UDoubleMSC<is_correlated> arg1,
+                                         const UDoubleMSC<is_correlated> arg2,
                                          std::string funcname)
   {
     UDoubleMSC<is_correlated> retval;
@@ -396,17 +396,17 @@ class UDoubleMSC
     return func1(&tanh_w_moments, arg, "tanh");
   }
 
-  friend UDoubleMSC<is_correlated> fmod(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  friend UDoubleMSC<is_correlated> fmod(const UDoubleMSC<is_correlated> arg1, const UDoubleMSC<is_correlated> arg2)
   {
     return func2(&fmod_w_moments, arg1, arg2, "fmod");
   }
 
-  friend UDoubleMSC<is_correlated> atan2(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  friend UDoubleMSC<is_correlated> atan2(const UDoubleMSC<is_correlated> arg1, const UDoubleMSC<is_correlated> arg2)
   {
     return func2(&atan2_w_moments, arg1, arg2, "atan2");
   }
 
-  friend UDoubleMSC<is_correlated> pow(UDoubleMSC<is_correlated> arg1, UDoubleMSC<is_correlated> arg2)
+  friend UDoubleMSC<is_correlated> pow(const UDoubleMSC<is_correlated> arg1, const UDoubleMSC<is_correlated> arg2)
   {
     return func2(&pow_w_moments, arg1, arg2, "pow");
   }
