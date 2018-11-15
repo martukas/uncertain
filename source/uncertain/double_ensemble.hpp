@@ -143,13 +143,9 @@ class UDoubleEnsemble
         uncertain_print(val, unc, os);
         source_name = os.str();
       }
-      size_t source_num = sources.get_num_sources();
       this->shuffle();
-      if (true)
-      {
-        memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
-        source_num = sources.get_new_source(source_name);
-      }
+      auto source_num = sources.get_new_source(source_name);
+      memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
     }
     else  // uncertainty is zero
       for (size_t i = 0; i < ensemble_size; i++)
@@ -180,11 +176,11 @@ class UDoubleEnsemble
     {
       source_name = "anon from ensemble: " + std::to_string(ensemble[0]);
     }
-    size_t source_num = sources.get_num_sources();
+    size_t source_num = sources.get_new_source(source_name);
     memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
-    source_num = sources.get_new_source(source_name);
   }
-// \todo add constructors with other distributions.
+
+  // \todo add constructors with other distributions.
 
   ~UDoubleEnsemble() = default;
 
@@ -365,7 +361,7 @@ class UDoubleEnsemble
     return *this;
   }
 
-// \todo add procedures to make persistant
+// \todo add procedures to make persistent
   friend std::ostream& operator<<(std::ostream& os, const UDoubleEnsemble<num_elements, ensemble_size>& ud)
   {
     double mean, sigma, skew, kurtosis, m5;
