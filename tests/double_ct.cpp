@@ -7,19 +7,15 @@
 namespace uncertain
 {
 
-static constexpr size_t max_elements = 5;
-
-using SizedSimpleArray = uncertain::SimpleArray<max_elements>;
-using SizedArrayWithScale = uncertain::ArrayWithScale<max_elements>;
+using UDoubleCTSA = UDoubleCT<SimpleArray>;
+using UDoubleCTAA = UDoubleCT<ScaledArray>;
 
 template<>
-SourceSet UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
+SourceSet UDoubleCTSA::sources("Simple Array");
 
 template<>
-SourceSet UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
+SourceSet UDoubleCTAA::sources("Scaled Array");
 
-using UDoubleCTSA = UDoubleCT<SizedSimpleArray, max_elements>;
-using UDoubleCTAA = UDoubleCT<SizedArrayWithScale, max_elements>;
 
 }
 
@@ -168,7 +164,7 @@ TEST_F(UDoubleCTTest, DivEqualsScaledReciprocal)
   EXPECT_FLOAT_EQ(ud.deviation(), 0.5);
 }
 
-TEST_F(UDoubleCTTest, TimesEquals)
+TEST_F(UDoubleCTTest, TimesEqualsSimple)
 {
   uncertain::UDoubleCTSA ud(1.0, 0.0);
 
@@ -176,25 +172,24 @@ TEST_F(UDoubleCTTest, TimesEquals)
   EXPECT_FLOAT_EQ(ud.mean(), 0.5);
   EXPECT_FLOAT_EQ(ud.deviation(), 0.25);
 
-  auto ud2 = uncertain::UDoubleCTSA(2.0, 0.0);
+  auto ud2 = uncertain::UDoubleCTSA(4.0, 1.0);
   ud2 /= ud;
-  EXPECT_FLOAT_EQ(ud2.mean(), 4.0);
-  EXPECT_FLOAT_EQ(ud2.deviation(), 2.0);
+  EXPECT_FLOAT_EQ(ud2.mean(), 8.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 4.472136);
 }
 
 TEST_F(UDoubleCTTest, TimesEqualsScaled)
 {
   uncertain::UDoubleCTAA ud(1.0, 0.0);
 
-  ud /= uncertain::UDoubleCTAA(2.0, 2.0);
+  ud /= uncertain::UDoubleCTAA(2.0, 1.0);
   EXPECT_FLOAT_EQ(ud.mean(), 0.5);
-  EXPECT_FLOAT_EQ(ud.deviation(), 0.5);
+  EXPECT_FLOAT_EQ(ud.deviation(), 0.25);
 
-  auto ud2 = uncertain::UDoubleCTAA(4.0, 5.0);
+  auto ud2 = uncertain::UDoubleCTAA(4.0, 1.0);
   ud2 /= ud;
   EXPECT_FLOAT_EQ(ud2.mean(), 8.0);
-  EXPECT_FLOAT_EQ(ud2.deviation(), 12.806249);
-//  EXPECT_FLOAT_EQ(ud2.deviation(), 6.0);
+  EXPECT_FLOAT_EQ(ud2.deviation(), 4.472136);
 }
 
 TEST_F(UDoubleCTTest, Ceiling)

@@ -81,11 +81,6 @@ class SourceSet
     source_epoch++;
   }
 
-  bool can_get_new_source() const
-  {
-    return true;
-  }
-
   size_t get_new_source(std::string name)
   {
     source_names.push_back(name);

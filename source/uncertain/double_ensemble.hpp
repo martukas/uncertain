@@ -145,7 +145,7 @@ class UDoubleEnsemble
       }
       size_t source_num = sources.get_num_sources();
       this->shuffle();
-      if (sources.can_get_new_source())
+      if (true)
       {
         memcpy(src_ensemble[source_num], ensemble, sizeof(ensemble));
         source_num = sources.get_new_source(source_name);

@@ -50,17 +50,15 @@ static constexpr size_t ens_a_size = 128u;
 static constexpr size_t ens_b_size = 1024u;
 static constexpr size_t max_elements = 5;
 
-using SizedSimpleArray = uncertain::SimpleArray<max_elements>;
-using SizedArrayWithScale = uncertain::ArrayWithScale<max_elements>;
+using UDoubleCTSA = uncertain::UDoubleCT<uncertain::SimpleArray>;
+using UDoubleCTAA = uncertain::UDoubleCT<uncertain::ScaledArray>;
 
 template<>
-uncertain::SourceSet uncertain::UDoubleCT<SizedSimpleArray, max_elements>::sources("Simple Array");
+uncertain::SourceSet UDoubleCTSA::sources("Simple Array");
 
 template<>
-uncertain::SourceSet uncertain::UDoubleCT<SizedArrayWithScale, max_elements>::sources("Array with Scale");
+uncertain::SourceSet UDoubleCTAA::sources("Scaled Array");
 
-using UDoubleCTSA = uncertain::UDoubleCT<SizedSimpleArray, max_elements>;
-using UDoubleCTAA = uncertain::UDoubleCT<SizedArrayWithScale, max_elements>;
 
 template<>
 uncertain::SourceSet uncertain::UDoubleEnsemble<max_elements, ens_a_size>::sources("Small Ensemble");

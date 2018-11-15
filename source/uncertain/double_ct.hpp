@@ -47,7 +47,7 @@ namespace uncertain
 // Correlation tracking class keeps an array of uncertainty
 // components from various sources.  (Array implementation
 // is specified by template parameter.)
-template<class T, size_t size>
+template<class T>
 class UDoubleCT
 {
  private:
@@ -59,7 +59,7 @@ class UDoubleCT
  public:
   // default constructor creates a new independent uncertainty element
   UDoubleCT(double val = 0.0, double unc = 0.0, const std::string& name = {})
-      : value(val), unc_components(0.0)
+      : value(val)
   {
     epoch = sources.get_epoch();
     if (unc < 0.0)
@@ -81,15 +81,12 @@ class UDoubleCT
         source_name = os.str();
       }
       size_t new_source_num = sources.get_new_source(source_name);
-      unc_components.setelement(new_source_num, unc);
+      unc_components.set_element(new_source_num, unc);
     }
   }
 
   // copy constructor does not create a new independent uncertainty element
-  UDoubleCT(const UDoubleCT& ud) : value(ud.value), epoch(ud.epoch)
-  {
-    unc_components = ud.unc_components;
-  }
+  UDoubleCT(const UDoubleCT& ud) = default;
 
   // \todo operator= ?
 
@@ -110,7 +107,7 @@ class UDoubleCT
     sources.new_epoch();
   }
 
-  void print_uncertain_sources(std::ostream& os = std::cout)
+  void print_uncertain_sources(std::ostream& os = std::cout) const
   {
     double total_uncertainty = this->deviation();
     if (total_uncertainty == 0.0)
@@ -120,8 +117,9 @@ class UDoubleCT
       {
         double unc_portion = this->unc_components[i] / total_uncertainty;
         unc_portion *= unc_portion;
-        os << sources.get_source_name(i) << ": "
-           << int_percent(unc_portion) << "%" << std::endl;
+        os << "[" << i << "] " << sources.get_source_name(i) << ": "
+           << int_percent(unc_portion) << "% (" << this->unc_components[i]
+           << ")\n";
       }
     os << std::endl;
   }
@@ -156,13 +154,19 @@ class UDoubleCT
   }
 
   friend UDoubleCT operator+(UDoubleCT a, const UDoubleCT& b)
-  { return a += b; }
+  {
+    return a += b;
+  }
 
   friend UDoubleCT operator+(UDoubleCT a, double b)
-  { return a += b; }
+  {
+    return a += b;
+  }
 
   friend UDoubleCT operator+(double b, UDoubleCT a)
-  { return a += b; }
+  {
+    return a += b;
+  }
 
   UDoubleCT& operator-=(const UDoubleCT& b)
   {
@@ -303,7 +307,7 @@ class UDoubleCT
     os << "input: ";
     uncertain_print(mean, sigma, os);
     source_name = os.str();
-    ud = UDoubleCT<T, size>(mean, sigma, source_name);
+    ud = UDoubleCT<T>(mean, sigma, source_name);
     return is;
   }
 
@@ -318,8 +322,8 @@ class UDoubleCT
   static UDoubleCT func2(std::function<two_arg_ret(double, double)> func_w_moments,
                          const UDoubleCT& arg1, const UDoubleCT& arg2)
   {
-    UDoubleCT<T, size>::sources.check_epoch(arg1.epoch);
-    UDoubleCT<T, size>::sources.check_epoch(arg2.epoch);
+    UDoubleCT<T>::sources.check_epoch(arg1.epoch);
+    UDoubleCT<T>::sources.check_epoch(arg2.epoch);
     UDoubleCT retval(arg1);
     two_arg_ret funcret = func_w_moments(arg1.value, arg2.value);
     retval.value = funcret.value;
