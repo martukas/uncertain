@@ -1,0 +1,18 @@
+[requires]
+gtest/3121b20-dm3@ess-dmsc/stable
+
+[generators]
+cmake
+virtualbuildenv
+virtualrunenv
+
+[options]
+gtest:shared=True
+
+[imports]
+bin, cmake -> ./bin
+bin, *.dll -> ./bin
+lib, *.dll -> ./bin
+lib, *.so.* -> ./lib
+lib, *.so -> ./lib
+share, * -> ./share

@@ -1,0 +1,13 @@
+/build
+/install
+*.app
+*.desktop
+*.user
+*.log
+!.gitignore
+
+#IDE
+CMakeLists.txt.user
+cmake-build-*/
+.idea/
+.idea
