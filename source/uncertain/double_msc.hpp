@@ -93,7 +93,7 @@ class UDoubleMSC
   { return value; }
 
   double deviation() const
-  { return fabs(uncertainty); }
+  { return std::fabs(uncertainty); }
 
   UDoubleMSC<is_correlated> operator+() const
   { return *this; }
@@ -168,10 +168,10 @@ class UDoubleMSC
     {
       double second_order_correlated_adjust = uncertainty * ud.uncertainty;
       double unctemp = uncertainty * ud.value + ud.uncertainty * value;
-      if (fabs(unctemp) <= fabs(uncertainty * ud.uncertainty) * 1e-10)
+      if (std::fabs(unctemp) <= std::fabs(uncertainty * ud.uncertainty) * 1e-10)
         uncertainty *= ud.uncertainty * kSqrt2;
       else
-        uncertainty = unctemp * sqrt(1.0 + 2.0 * sqr(uncertainty
+        uncertainty = unctemp * std::sqrt(1.0 + 2.0 * sqr(uncertainty
                                                          * ud.uncertainty
                                                          / unctemp));
 
@@ -196,11 +196,11 @@ class UDoubleMSC
           * (value * ud.uncertainty / ud.value - uncertainty);
       uncertainty = (uncertainty / ud.value
           - (ud.uncertainty * value) / (ud.value * ud.value))
-          * sqrt(1.0 + 2.0 * sqr(ud.uncertainty / ud.value));
+          * std::sqrt(1.0 + 2.0 * sqr(ud.uncertainty / ud.value));
 
       if (ud.uncertainty != 0.0)
       {
-        double disc_dist = fabs(ud.value / ud.uncertainty);
+        double disc_dist = std::fabs(ud.value / ud.uncertainty);
         if (disc_dist < discontinuity_thresh)
         {
           std::cerr << "correlated division by " << ud << " is ";
@@ -215,7 +215,7 @@ class UDoubleMSC
           * value
           / (ud.value * ud.value * ud.value);
       double inverted_sigma = -(ud.uncertainty / sqr(ud.value))
-          * sqrt(1.0 + 2.0 * sqr(ud.uncertainty
+          * std::sqrt(1.0 + 2.0 * sqr(ud.uncertainty
                                      / ud.value));
       uncertainty = hypot(uncertainty / ud.value, inverted_sigma * value,
                           uncertainty * inverted_sigma);
@@ -257,11 +257,11 @@ class UDoubleMSC
     else
     {
       arg.uncertainty *= funcret.arg.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
                                      * arg.uncertainty
                                      / funcret.arg.slope));
       if (!is_correlated)
-        arg.uncertainty = fabs(arg.uncertainty);
+        arg.uncertainty = std::fabs(arg.uncertainty);
     }
     return arg;
   }
@@ -292,13 +292,13 @@ class UDoubleMSC
       unc1 = sqr(arg1.uncertainty) * funcret.arg1.curve * k1Sqrt2;
     else
       unc1 = arg1.uncertainty * funcret.arg1.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg1.curve * arg1.uncertainty
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg1.curve * arg1.uncertainty
                                      / funcret.arg1.slope));
     if (funcret.arg2.slope == 0.0)
       unc2 = sqr(arg2.uncertainty) * funcret.arg2.curve * k1Sqrt2;
     else
       unc2 = arg2.uncertainty * funcret.arg2.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg2.curve * arg2.uncertainty
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg2.curve * arg2.uncertainty
                                      / funcret.arg2.slope));
     if (is_correlated)
       retval.uncertainty = unc1 + unc2;
@@ -416,11 +416,11 @@ class UDoubleMSC
     else
     {
       arg.uncertainty *= funcret.arg.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
                                      * arg.uncertainty
                                      / funcret.arg.slope));
       if (!is_correlated)
-        arg.uncertainty = fabs(arg.uncertainty);
+        arg.uncertainty = std::fabs(arg.uncertainty);
     }
     return arg;
   }
@@ -439,11 +439,11 @@ class UDoubleMSC
     else
     {
       arg.uncertainty *= funcret.arg.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
                                      * arg.uncertainty
                                      / funcret.arg.slope));
       if (!is_correlated)
-        arg.uncertainty = fabs(arg.uncertainty);
+        arg.uncertainty = std::fabs(arg.uncertainty);
     }
     return arg;
   }
@@ -462,11 +462,11 @@ class UDoubleMSC
     else
     {
       arg.uncertainty *= funcret.arg.slope
-          * sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
+          * std::sqrt(1.0 + 0.5 * sqr(funcret.arg.curve
                                      * arg.uncertainty
                                      / funcret.arg.slope));
       if (!is_correlated)
-        arg.uncertainty = fabs(arg.uncertainty);
+        arg.uncertainty = std::fabs(arg.uncertainty);
     }
     return arg;
   }
@@ -497,10 +497,10 @@ class UDoubleMSC
     else
     {
       retval.uncertainty = arg.uncertainty * slope
-          * sqrt(1.0 + 0.5 * sqr(curve * arg.uncertainty
+          * std::sqrt(1.0 + 0.5 * sqr(curve * arg.uncertainty
                                      / slope));
       if (!is_correlated)
-        retval.uncertainty = fabs(retval.uncertainty);
+        retval.uncertainty = std::fabs(retval.uncertainty);
     }
     return retval;
   }
@@ -541,12 +541,12 @@ class UDoubleMSC
     if (slope1 == 0.0)
       unc1 = sqr(arg1.uncertainty) * curve1 * k1Sqrt2;
     else
-      unc1 = arg1.uncertainty * slope1 * sqrt(1.0 + 0.5 * sqr(curve1
+      unc1 = arg1.uncertainty * slope1 * std::sqrt(1.0 + 0.5 * sqr(curve1
                                                                   * arg1.uncertainty / slope1));
     if (slope2 == 0.0)
       unc2 = sqr(arg2.uncertainty) * curve2 * k1Sqrt2;
     else
-      unc2 = arg2.uncertainty * slope2 * sqrt(1.0 + 0.5 * sqr(curve2
+      unc2 = arg2.uncertainty * slope2 * std::sqrt(1.0 + 0.5 * sqr(curve2
                                                                   * arg2.uncertainty / slope2));
     if (is_correlated)
       retval.uncertainty = unc1 + unc2;

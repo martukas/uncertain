@@ -7,7 +7,9 @@
 !.gitignore
 
 #IDE
+CMakeSettings.json
 CMakeLists.txt.user
 cmake-build-*/
 .idea/
 .idea
+.vs/

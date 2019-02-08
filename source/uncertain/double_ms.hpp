@@ -85,7 +85,7 @@ class UDoubleMS
 
   // \todo should this be fabs even when correlated?
   double deviation() const
-  { return fabs(uncertainty); }
+  { return std::fabs(uncertainty); }
 
   UDoubleMS<is_correlated> operator+() const
   { return *this; }
@@ -260,14 +260,14 @@ class UDoubleMS
   // by the derivative of the function at this value.
   friend UDoubleMS<is_correlated> ceil(UDoubleMS<is_correlated> arg)
   {
-    arg.value = ceil(arg.value);
+    arg.value = std::ceil(arg.value);
     arg.uncertainty = 0.0;
     return arg;
   }
 
   friend UDoubleMS<is_correlated> floor(UDoubleMS<is_correlated> arg)
   {
-    arg.value = floor(arg.value);
+    arg.value = std::floor(arg.value);
     arg.uncertainty = 0.0;
     return arg;
   }
@@ -276,7 +276,7 @@ class UDoubleMS
   {
     if (is_correlated && (arg.value < 0.0))
       arg.uncertainty *= -1.0;
-    arg.value = fabs(arg.value);
+    arg.value = std::fabs(arg.value);
     return arg;
   }
 
@@ -284,25 +284,25 @@ class UDoubleMS
                                         int intarg)
   {
     if (is_correlated)
-      arg.uncertainty *= ldexp(1.0, intarg);
+      arg.uncertainty *= std::ldexp(1.0, intarg);
     else
-      arg.uncertainty *= fabs(ldexp(1.0, intarg));
-    arg.value = ldexp(arg.value, intarg);
+      arg.uncertainty *= std::fabs(std::ldexp(1.0, intarg));
+    arg.value = std::ldexp(arg.value, intarg);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> modf(UDoubleMS<is_correlated> arg,
                                        double* intpart)
   {
-    arg.value = modf(arg.value, intpart);
+    arg.value = std::modf(arg.value, intpart);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> frexp(UDoubleMS<is_correlated> arg,
                                         int* intarg)
   {
-    arg.uncertainty *= pow(2.0, double(-*intarg));
-    arg.value = frexp(arg.value, intarg);
+    arg.uncertainty *= std::pow(2.0, double(-*intarg));
+    arg.value = std::frexp(arg.value, intarg);
     return arg;
   }
 
@@ -314,78 +314,78 @@ class UDoubleMS
 
     slope1 = 1.0 / arg2.value;
     if ((arg1.value / arg2.value) > 0.0)
-      slope2 = -floor(arg1.value / arg2.value);
+      slope2 = -std::floor(arg1.value / arg2.value);
     else
-      slope2 = floor(-arg1.value / arg2.value);
+      slope2 = std::floor(-arg1.value / arg2.value);
     if (is_correlated)
       retval.uncertainty = slope1 * arg1.uncertainty
           + slope2 * arg2.uncertainty;
     else
       retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
                                       slope2 * arg2.uncertainty);
-    retval.value = fmod(arg1.value, arg2.value);
+    retval.value = std::fmod(arg1.value, arg2.value);
     return retval;
   }
 
   friend UDoubleMS<is_correlated> sqrt(UDoubleMS<is_correlated> arg)
   {
-    arg.value = sqrt(arg.value);
+    arg.value = std::sqrt(arg.value);
     if (is_correlated)
       arg.uncertainty /= 2.0 * arg.value;
     else
-      arg.uncertainty /= fabs(2.0 * arg.value);
+      arg.uncertainty /= std::fabs(2.0 * arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> sin(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
-      arg.uncertainty *= cos(arg.value);
+      arg.uncertainty *= std::cos(arg.value);
     else
-      arg.uncertainty *= fabs(cos(arg.value));
-    arg.value = sin(arg.value);
+      arg.uncertainty *= std::fabs(std::cos(arg.value));
+    arg.value = std::sin(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> cos(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
-      arg.uncertainty *= -sin(arg.value);
+      arg.uncertainty *= -std::sin(arg.value);
     else
-      arg.uncertainty *= fabs(sin(arg.value));
-    arg.value = cos(arg.value);
+      arg.uncertainty *= std::fabs(std::sin(arg.value));
+    arg.value = std::cos(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> tan(UDoubleMS<is_correlated> arg)
   {
-    double costemp = cos(arg.value);
+    double costemp = std::cos(arg.value);
     arg.uncertainty /= costemp * costemp;
-    arg.value = tan(arg.value);
+    arg.value = std::tan(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> asin(UDoubleMS<is_correlated> arg)
   {
-    arg.uncertainty /= sqrt(1.0 - arg.value * arg.value);
-    arg.value = asin(arg.value);
+    arg.uncertainty /= std::sqrt(1.0 - arg.value * arg.value);
+    arg.value = std::asin(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> acos(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
-      arg.uncertainty /= -sqrt(1.0 - arg.value * arg.value);
+      arg.uncertainty /= -std::sqrt(1.0 - arg.value * arg.value);
     else
-      arg.uncertainty /= sqrt(1.0 - arg.value * arg.value);
-    arg.value = acos(arg.value);
+      arg.uncertainty /= std::sqrt(1.0 - arg.value * arg.value);
+    arg.value = std::acos(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> atan(UDoubleMS<is_correlated> arg)
   {
     arg.uncertainty /= 1.0 + arg.value * arg.value;
-    arg.value = atan(arg.value);
+    arg.value = std::atan(arg.value);
     return arg;
   }
 
@@ -407,17 +407,17 @@ class UDoubleMS
     else
       retval.uncertainty = std::hypot(slope1 * arg1.uncertainty,
                                       slope2 * arg2.uncertainty);
-    retval.value = atan2(arg1.value, arg2.value);
+    retval.value = std::atan2(arg1.value, arg2.value);
     return retval;
   }
 
   friend UDoubleMS<is_correlated> exp(UDoubleMS<is_correlated> arg)
   {
-    arg.value = exp(arg.value);
+    arg.value = std::exp(arg.value);
     if (is_correlated)
       arg.uncertainty *= arg.value;
     else
-      arg.uncertainty *= fabs(arg.value);
+      arg.uncertainty *= std::fabs(arg.value);
     return arg;
   }
 
@@ -426,8 +426,8 @@ class UDoubleMS
     if (is_correlated)
       arg.uncertainty /= arg.value;
     else
-      arg.uncertainty /= fabs(arg.value);
-    arg.value = log(arg.value);
+      arg.uncertainty /= std::fabs(arg.value);
+    arg.value = std::log(arg.value);
     return arg;
   }
 
@@ -436,33 +436,33 @@ class UDoubleMS
     if (is_correlated)
       arg.uncertainty *= kLog10e / arg.value;
     else
-      arg.uncertainty *= kLog10e / fabs(arg.value);
-    arg.value = log10(arg.value);
+      arg.uncertainty *= kLog10e / std::fabs(arg.value);
+    arg.value = std::log10(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> sinh(UDoubleMS<is_correlated> arg)
   {
-    arg.uncertainty *= cosh(arg.value);
-    arg.value = sinh(arg.value);
+    arg.uncertainty *= std::cosh(arg.value);
+    arg.value = std::sinh(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> cosh(UDoubleMS<is_correlated> arg)
   {
     if (is_correlated)
-      arg.uncertainty *= sinh(arg.value);
+      arg.uncertainty *= std::sinh(arg.value);
     else
-      arg.uncertainty *= fabs(sinh(arg.value));
-    arg.value = cosh(arg.value);
+      arg.uncertainty *= std::fabs(std::sinh(arg.value));
+    arg.value = std::cosh(arg.value);
     return arg;
   }
 
   friend UDoubleMS<is_correlated> tanh(UDoubleMS<is_correlated> arg)
   {
-    double coshtemp = cosh(arg.value);
+    double coshtemp = std::cosh(arg.value);
     arg.uncertainty /= coshtemp * coshtemp;
-    arg.value = tanh(arg.value);
+    arg.value = std::tanh(arg.value);
     return arg;
   }
 
@@ -472,7 +472,7 @@ class UDoubleMS
     UDoubleMS<is_correlated> retval;
     double slope1, slope2;
 
-    retval.value = pow(arg1.value, arg2.value);
+    retval.value = std::pow(arg1.value, arg2.value);
     if (arg1.value == 0.0)
     {
       slope2 = 0.0;
@@ -489,7 +489,7 @@ class UDoubleMS
     else
     {
       slope1 = arg2.value * retval.value / arg1.value;
-      slope2 = log(arg1.value) * retval.value;
+      slope2 = std::log(arg1.value) * retval.value;
     }
     if (is_correlated)
       retval.uncertainty = slope1 * arg1.uncertainty
@@ -515,7 +515,7 @@ class UDoubleMS
     sigma_down_value = certain_func(arg.value - arg.uncertainty);
     retval.uncertainty = (sigma_up_value - sigma_down_value) * 0.5;
     if (!is_correlated)
-      retval.uncertainty = fabs(retval.uncertainty);
+      retval.uncertainty = std::fabs(retval.uncertainty);
 
     return retval;
   }

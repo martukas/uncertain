@@ -38,20 +38,29 @@
 
 #pragma once
 
-#include <string>
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include <string>
 #include <iostream>
 #include <stdexcept>
 
 namespace uncertain
 {
 
+#ifndef M_PI
+constexpr double kPi = 3.14159265358979323846;
+constexpr double kHalfPi = 1.57079632679489661923;
+constexpr double kLog10e = 0.434294481903251827651;
+constexpr double kSqrt2 = 1.41421356237309504880;
+constexpr double k1Sqrt2 = 0.707106781186547524401;
+#else
 // \todo could be different if you use (IEEE 128-bit) long double
 constexpr double kPi = M_PI;
 constexpr double kHalfPi = M_PI_2;
 constexpr double kLog10e = M_LOG10E;
 constexpr double kSqrt2 = M_SQRT2;
 constexpr double k1Sqrt2 = M_SQRT1_2;
+#endif
 
 // square: just a notational convenience
 inline double sqr(double a)
@@ -96,7 +105,7 @@ inline double hypot(double a, double b, double c)
 // This function translates floating point ratios to percentages
 inline int int_percent(double in)
 {
-  return int(floor(in * 100.0 + 0.5));
+  return int(std::floor(in * 100.0 + 0.5));
 }
 
 enum class discontinuity_type
@@ -157,10 +166,10 @@ inline one_arg_ret ceil_w_moments(double arg)
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::step; // discontinuity at each integer
   double temp;
-  retval.arg.disc_dist = modf(arg, &temp);
+  retval.arg.disc_dist = std::modf(arg, &temp);
   if (retval.arg.disc_dist > 0.5)
     retval.arg.disc_dist = 1.0 - retval.arg.disc_dist;
-  retval.value = ceil(arg);
+  retval.value = std::ceil(arg);
   return retval;
 }
 
@@ -171,10 +180,10 @@ inline one_arg_ret floor_w_moments(double arg)
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::step; // discontinuity at each integer
   double temp;
-  retval.arg.disc_dist = modf(arg, &temp);
+  retval.arg.disc_dist = std::modf(arg, &temp);
   if (retval.arg.disc_dist > 0.5)
     retval.arg.disc_dist = 1.0 - retval.arg.disc_dist;
-  retval.value = floor(arg);
+  retval.value = std::floor(arg);
   return retval;
 }
 
@@ -185,7 +194,7 @@ inline one_arg_ret fabs_w_moments(double arg)
     retval.arg.slope = 1.0;
   else
     retval.arg.slope = -1.0;
-  retval.value = fabs(arg);
+  retval.value = std::fabs(arg);
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::slope_only;
   retval.arg.disc_dist = retval.value; // discontinuity at 0.0
@@ -195,8 +204,8 @@ inline one_arg_ret fabs_w_moments(double arg)
 inline one_arg_ret ldexp_w_moments(double arg, const int intarg)
 {
   one_arg_ret retval;
-  retval.value = ldexp(arg, intarg);
-  retval.arg.slope = ldexp(1.0, intarg);
+  retval.value = std::ldexp(arg, intarg);
+  retval.arg.slope = std::ldexp(1.0, intarg);
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::none;
   return retval;
@@ -205,11 +214,11 @@ inline one_arg_ret ldexp_w_moments(double arg, const int intarg)
 inline one_arg_ret modf_w_moments(double arg, double& intpart)
 {
   one_arg_ret retval;
-  retval.value = modf(arg, &intpart);
+  retval.value = std::modf(arg, &intpart);
   retval.arg.slope = 1.0;
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::step;
-  retval.arg.disc_dist = fabs(retval.value);
+  retval.arg.disc_dist = std::fabs(retval.value);
   if (retval.arg.disc_dist > 0.5)
     retval.arg.disc_dist = 1.0 - retval.arg.disc_dist;
   return retval;
@@ -218,13 +227,13 @@ inline one_arg_ret modf_w_moments(double arg, double& intpart)
 inline one_arg_ret frexp_w_moments(double arg, int& intexp)
 {
   one_arg_ret retval;
-  retval.value = frexp(arg, &intexp);
-  retval.arg.slope = pow(2.0, double(-intexp));
+  retval.value = std::frexp(arg, &intexp);
+  retval.arg.slope = std::pow(2.0, double(-intexp));
   retval.arg.curve = 0.0;
   retval.arg.disc_type = discontinuity_type::step;
-  double disc_loc = pow(2.0, double(intexp));
-  retval.arg.disc_dist = fabs(disc_loc - fabs(arg));
-  double alt_dist = fabs(0.5 * disc_loc - fabs(arg));
+  double disc_loc = std::pow(2.0, double(intexp));
+  retval.arg.disc_dist = std::fabs(disc_loc - std::fabs(arg));
+  double alt_dist = std::fabs(0.5 * disc_loc - std::fabs(arg));
   if (retval.arg.disc_dist > alt_dist)
     retval.arg.disc_dist = alt_dist;
   return retval;
@@ -233,33 +242,33 @@ inline one_arg_ret frexp_w_moments(double arg, int& intexp)
 inline two_arg_ret fmod_w_moments(double arg1, double arg2)
 {
   two_arg_ret retval;
-  retval.value = fmod(arg1, arg2);
+  retval.value = std::fmod(arg1, arg2);
   retval.arg1.slope = 1.0 / arg2;
   if ((arg1 / arg2) > 0.0)
-    retval.arg2.slope = -floor(arg1 / arg2);
+    retval.arg2.slope = -std::floor(arg1 / arg2);
   else
-    retval.arg2.slope = floor(-arg1 / arg2);
+    retval.arg2.slope = std::floor(-arg1 / arg2);
   retval.arg1.curve = 0.0;
   retval.arg2.curve = 0.0;
   retval.arg1.disc_type = discontinuity_type::step;
-  retval.arg1.disc_dist = fabs(retval.value);
-  if (retval.arg1.disc_dist > fabs(arg2) * 0.5)
-    retval.arg1.disc_dist = fabs(arg2) - retval.arg1.disc_dist;
+  retval.arg1.disc_dist = std::fabs(retval.value);
+  if (retval.arg1.disc_dist > std::fabs(arg2) * 0.5)
+    retval.arg1.disc_dist = std::fabs(arg2) - retval.arg1.disc_dist;
   retval.arg2.disc_type = discontinuity_type::step;
-  double rat = fabs(arg1 / arg2);
-  double a2floortarg = fabs(arg1) / floor(rat);
-  double a2ceiltarg = fabs(arg1) / ceil(rat);
-  if (fabs(a2floortarg - fabs(arg2)) < fabs(a2ceiltarg - fabs(arg2)))
-    retval.arg2.disc_dist = fabs(a2floortarg - fabs(arg2));
+  double rat = std::fabs(arg1 / arg2);
+  double a2floortarg = std::fabs(arg1) / std::floor(rat);
+  double a2ceiltarg = std::fabs(arg1) / std::ceil(rat);
+  if (std::fabs(a2floortarg - std::fabs(arg2)) < std::fabs(a2ceiltarg - std::fabs(arg2)))
+    retval.arg2.disc_dist = std::fabs(a2floortarg - std::fabs(arg2));
   else
-    retval.arg2.disc_dist = fabs(a2ceiltarg - fabs(arg2));
+    retval.arg2.disc_dist = std::fabs(a2ceiltarg - std::fabs(arg2));
   return retval;
 }
 
 inline one_arg_ret sqrt_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.value = sqrt(arg);
+  retval.value = std::sqrt(arg);
   retval.arg.slope = 1.0 / (2.0 * retval.value);
   retval.arg.curve = -0.25 / (retval.value * retval.value * retval.value);
   retval.arg.disc_dist = arg; // discontinuity at 0.0
@@ -271,8 +280,8 @@ inline one_arg_ret sin_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.disc_type = discontinuity_type::none;
-  retval.arg.slope = cos(arg);
-  retval.arg.curve = -sin(arg);
+  retval.arg.slope = std::cos(arg);
+  retval.arg.curve = -std::sin(arg);
   retval.value = -retval.arg.curve;
   return retval;
 }
@@ -281,8 +290,8 @@ inline one_arg_ret cos_w_moments(double arg)
 {
   one_arg_ret retval;
   retval.arg.disc_type = discontinuity_type::none;
-  retval.arg.slope = -sin(arg);
-  retval.arg.curve = -cos(arg);
+  retval.arg.slope = -std::sin(arg);
+  retval.arg.curve = -std::cos(arg);
   retval.value = -retval.arg.curve;
   return retval;
 }
@@ -290,21 +299,21 @@ inline one_arg_ret cos_w_moments(double arg)
 inline one_arg_ret tan_w_moments(double arg)
 {
   one_arg_ret retval;
-  double costemp = cos(arg);
+  double costemp = std::cos(arg);
   retval.arg.slope = 1.0 / (costemp * costemp);
   retval.arg.curve = -2.0 * retval.arg.slope / costemp;
   retval.arg.disc_type = discontinuity_type::infinite_wrap;
-  retval.arg.disc_dist = fmod(arg - kHalfPi, kPi);
+  retval.arg.disc_dist = std::fmod(arg - kHalfPi, kPi);
   if (retval.arg.disc_dist > kHalfPi)
     retval.arg.disc_dist = kPi - retval.arg.disc_dist;
-  retval.value = tan(arg);
+  retval.value = std::tan(arg);
   return retval;
 }
 
 inline one_arg_ret asin_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.arg.slope = 1.0 / sqrt(1.0 - arg * arg);
+  retval.arg.slope = 1.0 / std::sqrt(1.0 - arg * arg);
   retval.arg.curve = arg * retval.arg.slope * retval.arg.slope
       * retval.arg.slope;
   retval.arg.disc_type = discontinuity_type::undefined_beyond;
@@ -312,14 +321,14 @@ inline one_arg_ret asin_w_moments(double arg)
     retval.arg.disc_dist = 1.0 - arg;
   else
     retval.arg.disc_dist = arg + 1.0;
-  retval.value = asin(arg);
+  retval.value = std::asin(arg);
   return retval;
 }
 
 inline one_arg_ret acos_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.arg.slope = -1.0 / sqrt(1.0 - arg * arg);
+  retval.arg.slope = -1.0 / std::sqrt(1.0 - arg * arg);
   retval.arg.curve = arg * retval.arg.slope * retval.arg.slope
       * retval.arg.slope;
   retval.arg.disc_type = discontinuity_type::undefined_beyond;
@@ -327,7 +336,7 @@ inline one_arg_ret acos_w_moments(double arg)
     retval.arg.disc_dist = 1.0 - arg;
   else
     retval.arg.disc_dist = arg + 1.0;
-  retval.value = acos(arg);
+  retval.value = std::acos(arg);
   return retval;
 }
 
@@ -337,7 +346,7 @@ inline one_arg_ret atan_w_moments(double arg)
   retval.arg.slope = 1.0 / (1.0 + arg * arg);
   retval.arg.curve = 2.0 * arg * retval.arg.slope * retval.arg.slope;
   retval.arg.disc_type = discontinuity_type::none;
-  retval.value = atan(arg);
+  retval.value = std::atan(arg);
   return retval;
 }
 
@@ -365,7 +374,7 @@ inline two_arg_ret atan2_w_moments(double arg1, double arg2)
     if (arg1 == 0.0)
     {
       retval.arg2.disc_type = discontinuity_type::step;
-      retval.arg2.disc_dist = fabs(arg2);
+      retval.arg2.disc_dist = std::fabs(arg2);
     }
     else
       retval.arg2.disc_type = discontinuity_type::none;
@@ -375,17 +384,17 @@ inline two_arg_ret atan2_w_moments(double arg1, double arg2)
     else
     {
       retval.arg1.disc_type = discontinuity_type::step;
-      retval.arg1.disc_dist = fabs(arg1);
+      retval.arg1.disc_dist = std::fabs(arg1);
     }
   }
-  retval.value = atan2(arg1, arg2);
+  retval.value = std::atan2(arg1, arg2);
   return retval;
 }
 
 inline one_arg_ret exp_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.value = exp(arg);
+  retval.value = std::exp(arg);
   retval.arg.slope = retval.value;
   retval.arg.curve = retval.arg.slope;
   retval.arg.disc_type = discontinuity_type::none;
@@ -399,7 +408,7 @@ inline one_arg_ret log_w_moments(double arg)
   retval.arg.curve = -retval.arg.slope * retval.arg.slope;
   retval.arg.disc_dist = arg;
   retval.arg.disc_type = discontinuity_type::undefined_beyond;
-  retval.value = log(arg);
+  retval.value = std::log(arg);
   return retval;
 }
 
@@ -410,15 +419,15 @@ inline one_arg_ret log10_w_moments(double arg)
   retval.arg.curve = -retval.arg.slope / arg;
   retval.arg.disc_dist = arg;
   retval.arg.disc_type = discontinuity_type::undefined_beyond;
-  retval.value = log10(arg);
+  retval.value = std::log10(arg);
   return retval;
 }
 
 inline one_arg_ret sinh_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.arg.slope = cosh(arg);
-  retval.value = sinh(arg);
+  retval.arg.slope = std::cosh(arg);
+  retval.value = std::sinh(arg);
   retval.arg.curve = retval.value;
   retval.arg.disc_type = discontinuity_type::none;
   return retval;
@@ -427,8 +436,8 @@ inline one_arg_ret sinh_w_moments(double arg)
 inline one_arg_ret cosh_w_moments(double arg)
 {
   one_arg_ret retval;
-  retval.arg.slope = sinh(arg);
-  retval.value = cosh(arg);
+  retval.arg.slope = std::sinh(arg);
+  retval.value = std::cosh(arg);
   retval.arg.curve = retval.value;
   retval.arg.disc_type = discontinuity_type::none;
   return retval;
@@ -437,18 +446,18 @@ inline one_arg_ret cosh_w_moments(double arg)
 inline one_arg_ret tanh_w_moments(double arg)
 {
   one_arg_ret retval;
-  double coshtemp = cosh(arg);
+  double coshtemp = std::cosh(arg);
   retval.arg.slope = 1.0 / (coshtemp * coshtemp);
-  retval.arg.curve = -2.0 * sinh(arg) / (coshtemp * coshtemp * coshtemp);
+  retval.arg.curve = -2.0 * std::sinh(arg) / (coshtemp * coshtemp * coshtemp);
   retval.arg.disc_type = discontinuity_type::none;
-  retval.value = tanh(arg);
+  retval.value = std::tanh(arg);
   return retval;
 }
 
 inline two_arg_ret pow_w_moments(double arg1, double arg2)
 {
   two_arg_ret retval;
-  retval.value = pow(arg1, arg2);
+  retval.value = std::pow(arg1, arg2);
   if (arg1 == 0.0)
   {
     retval.arg1.slope = 0.0;
@@ -483,7 +492,7 @@ inline two_arg_ret pow_w_moments(double arg1, double arg2)
   {
     retval.arg1.slope = arg2 * retval.value / arg1;
     retval.arg1.curve = arg2 * (arg2 - 1.0) * retval.value / (arg1 * arg1);
-    if (arg2 == floor(arg2)) // if arg2 is an integer
+    if (arg2 == std::floor(arg2)) // if arg2 is an integer
     {
       retval.arg1.disc_type = discontinuity_type::none;
     }
@@ -492,8 +501,8 @@ inline two_arg_ret pow_w_moments(double arg1, double arg2)
       retval.arg1.disc_type = discontinuity_type::undefined_beyond;
       retval.arg1.disc_dist = arg1;
     }
-    retval.arg2.slope = log(arg1) * retval.value;
-    retval.arg2.curve = log(arg1) * retval.arg2.slope;
+    retval.arg2.slope = std::log(arg1) * retval.value;
+    retval.arg2.curve = std::log(arg1) * retval.arg2.slope;
     retval.arg2.disc_type = discontinuity_type::none;
   }
   return retval;
@@ -517,7 +526,7 @@ inline double inverse_gaussian_density(double p)
 
   const double c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
   const double d1 = 1.432788, d2 = 0.189269, d3 = 0.001308;
-  double t = sqrt(log(1.0 / (p * p)));
+  double t = std::sqrt(std::log(1.0 / (p * p)));
 
   return t - (c0 + t * (c1 + c2 * t))
       / (1.0 + t * (d1 + t * (d2 + t * d3)));
@@ -526,8 +535,8 @@ inline double inverse_gaussian_density(double p)
 // Compare function to sort by absolute value
 inline int abs_double_compare(const void* a, const void* b)
 {
-  double fa = fabs(*(double*) a);
-  double fb = fabs(*(double*) b);
+  double fa = std::fabs(*(double*) a);
+  double fb = std::fabs(*(double*) b);
   if (fa == fb)
     return 0;
   else if (fa < fb)
