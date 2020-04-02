@@ -61,7 +61,3 @@ install(TARGETS uncertain
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT runtime
   )
-
-install(EXPORT uncertain_targets
-  DESTINATION ${CMAKE_INSTALL_PACKAGEDIR}
-  COMPONENT development)
