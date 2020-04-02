@@ -39,13 +39,9 @@ endif()
 #=============================================================================
 
 include(${EXTRA_MODULES_DIR}/CoverageReports.cmake)
-include(${EXTRA_MODULES_DIR}/InstallConfig.cmake)
 include(${EXTRA_MODULES_DIR}/OutputDirConfig.cmake)
-include(${EXTRA_MODULES_DIR}/WindowsUtils.cmake)
 include(${EXTRA_MODULES_DIR}/PackageConfig.cmake)
 include(${EXTRA_MODULES_DIR}/BuildInfo.cmake)
-#include(Sphinx)
-#include(utilities)
 #include(DoxygenUtilities)
 
 #=============================================================================
@@ -56,8 +52,6 @@ include(${EXTRA_MODULES_DIR}/CompilerConfig.cmake)
 
 add_subdirectory(source)
 add_subdirectory(examples)
-#add_custom_target(html)
-#add_subdirectory(doc)
 
 #=============================================================================
 # install the examples directory to the documentation directory
@@ -70,23 +64,3 @@ add_subdirectory(examples)
 #=============================================================================
 find_package(GTest REQUIRED)
 add_subdirectory(tests)
-
-#=============================================================================
-# create package file
-#=============================================================================
-write_basic_package_version_file(
-    ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion)
-
-install(FILES ${PROJECT_BINARY_DIR}/${PACKAGE_VERSION_FILE_NAME}
-    DESTINATION ${CMAKE_INSTALL_PACKAGEDIR}
-    COMPONENT development)
-
-#
-# create and install the package file
-#
-#configure_file("${PACKAGE_CONFIG_FILE_NAME}.in" ${PACKAGE_CONFIG_FILE_NAME} @ONLY)
-#install(FILES ${PROJECT_BINARY_DIR}/${PACKAGE_CONFIG_FILE_NAME}
-#    DESTINATION ${CMAKE_INSTALL_PACKAGEDIR}
-#    COMPONENT development)
