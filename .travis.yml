@@ -1,37 +1,37 @@
+language: cpp
+compiler: gcc
+
 sudo: required
 
-# Enable C++ support
-language: cpp
-
-# Compiler selection
-compiler:
-  - gcc
+dist: bionic
+services:
+  - xvfb
+addons:
+  apt:
+    packages:
+#      - cloc
+#      - doxygen
+#      - lcov
+#      - libtool
+      - python3-pip
 
 install:
-  # Upgrade GCC
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get -y install binutils zlib1g-dev
-  - sudo apt-get install -qq g++-4.9
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-  - sudo apt-get install -qq python-pip
-  - sudo apt-get -y install -qq cloc doxygen lcov libtool
   # Install conan
   - sudo -H pip2 install conan
-  - sudo -H pip2 install gcovr==3.4
+#  - sudo -H pip2 install gcovr==3.4
   - conan profile new --detect default
   - conan profile update settings.compiler.libcxx=libstdc++11 default
-  - conan remote add ess-dmsc https://api.bintray.com/conan/ess-dmsc/conan
 
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCOV=1 ..
+#  - cmake -DCOV=1 ..
+  - cmake ..
 
 script:
   - make
   - ./bin/ms_demo > null
   - ./bin/full_demo > null
-  - make coverage
+#  - make coverage
 
 
