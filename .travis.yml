@@ -4,8 +4,6 @@ compiler: gcc
 sudo: required
 
 dist: bionic
-services:
-  - xvfb
 addons:
   apt:
     packages:
@@ -17,10 +15,9 @@ addons:
       - python3-setuptools
 
 before_install:
-  - pip install --user cpp-coveralls
+  - pip3 install --user cpp-coveralls
 
 install:
-  # Install conan
   - sudo -H pip3 install conan
   - sudo -H pip3 install gcovr==3.4
   - conan profile new --detect default
@@ -39,4 +36,8 @@ script:
   - make coverage
 
 after_success:
-  - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
+  - ce ..
+  - coveralls --build-root build --gcov-options '\-lp' \
+    -e build/lib \
+    -e build/bin/ms_demo \
+    -e build/bin/full_demo
