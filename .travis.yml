@@ -11,15 +11,15 @@ addons:
 #      - doxygen
 #      - lcov
 #      - libtool
-      - python3-pip
-      - python3-setuptools
+      - python-pip
+      - python-setuptools
 
 before_install:
-  - pip3 install --user cpp-coveralls
+  - pip install --user cpp-coveralls
 
 install:
-  - sudo -H pip3 install conan
-  - sudo -H pip3 install gcovr==3.4
+  - sudo -H pip install conan
+  - sudo -H pip install gcovr==3.4
   - conan profile new --detect default
   - conan profile update settings.compiler.libcxx=libstdc++11 default
 
