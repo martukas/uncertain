@@ -1,4 +1,6 @@
 # Uncertainty propagation in C++
+[![Build Status](https://travis-ci.com/martukas/uncertain.svg?branch=master)](https://travis-ci.com/martukas/uncertain)
+[![Coverage Status](https://coveralls.io/repos/github/martukas/nuclei/badge.svg)](https://coveralls.io/github/martukas/nuclei)
 
 A set of drop-in classes that keep track of uncertainties along with calculations.
 Most math functions are reimplemented, allowing one to use these classes in place of the

@@ -37,4 +37,4 @@ script:
 
 after_success:
   - cd ..
-  - coveralls --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib
+  - coveralls --root . --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib
