@@ -11,9 +11,9 @@ set(test_sources
   ${dir}/main.cpp
   ${dir}/functions.cpp
   ${dir}/double_ms.cpp
-  ${dir}/double_msc.cpp
-  ${dir}/double_ct.cpp
-  ${dir}/double_ensemble.cpp
+#  ${dir}/double_msc.cpp
+#  ${dir}/double_ct.cpp
+#  ${dir}/double_ensemble.cpp
   )
 
 set(test_headers
