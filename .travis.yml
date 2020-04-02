@@ -36,8 +36,5 @@ script:
   - make coverage
 
 after_success:
-  - ce ..
-  - coveralls --build-root build --gcov-options '\-lp' \
-    -e build/lib \
-    -e build/bin/ms_demo \
-    -e build/bin/full_demo
+  - cd ..
+  - coveralls --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib
