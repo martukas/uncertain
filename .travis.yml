@@ -17,16 +17,16 @@ addons:
 
 install:
   # Install conan
-  - sudo -H pip2 install conan
-#  - sudo -H pip2 install gcovr==3.4
+  - sudo -H pip3 install conan
+  - sudo -H pip3 install gcovr==3.4
   - conan profile new --detect default
   - conan profile update settings.compiler.libcxx=libstdc++11 default
 
 before_script:
   - mkdir build
   - cd build
-#  - cmake -DCOV=1 ..
-  - cmake ..
+  - cmake -DCOV=1 ..
+#  - cmake ..
 
 script:
   - make
