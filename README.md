@@ -1,7 +1,7 @@
 # Uncertainty propagation in C++
-[![Build Status](https://travis-ci.com/martukas/uncertain.svg?branch=master)](https://travis-ci.com/martukas/uncertain)
-[![Coverage Status](https://coveralls.io/repos/github/martukas/uncertain/badge.svg?branch=master)](https://coveralls.io/github/martukas/uncertain?branch=master)
-[![codecov](https://codecov.io/gh/martukas/uncertain/branch/master/graph/badge.svg)](https://codecov.io/gh/martukas/uncertain)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/martukas/uncertain/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/martukas/uncertain/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/martukas/uncertain/badge.svg)](https://coveralls.io/github/martukas/uncertain)
+[![codecov](https://codecov.io/gh/martukas/uncertain/branch/master/graph/badge.svg?token=0FGFZJ7QEF)](https://codecov.io/gh/martukas/uncertain)
 
 A set of drop-in classes that keep track of uncertainties along with calculations.
 Most math functions are reimplemented, allowing one to use these classes in place of the
