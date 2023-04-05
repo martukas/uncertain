@@ -61,3 +61,6 @@ install(TARGETS uncertain
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT runtime
   )
+
+enable_tidy(uncertain)
+

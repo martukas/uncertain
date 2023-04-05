@@ -49,6 +49,9 @@ include(${EXTRA_MODULES_DIR}/BuildInfo.cmake)
 #=============================================================================
 include(${EXTRA_MODULES_DIR}/CompilerConfig.cmake)
 
+include(${EXTRA_MODULES_DIR}/ClangTidy.cmake)
+
+#include(${EXTRA_MODULES_DIR}/Checks.cmake)
 
 add_subdirectory(source)
 add_subdirectory(examples)
