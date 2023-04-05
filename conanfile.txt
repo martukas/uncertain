@@ -1,8 +1,9 @@
 [requires]
-gtest/1.8.1@bincrafters/stable
+gtest/1.12.1
 
 [generators]
 cmake
+cmake_find_package
 virtualbuildenv
 virtualrunenv
 
