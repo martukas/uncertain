@@ -7,9 +7,9 @@ A set of drop-in classes that keep track of uncertainties along with calculation
 Most math functions are reimplemented, allowing one to use these classes in place of the
 primitive arithmetic `double` type without extensive rewriting of code.
 
-## Examples
+## Word of warning
 
-Add some examples here...
+:warning: Reported code coverage is optimistic. No proper unit tests have been implemented. :warning:
 
 ## Background
 This code is an adaptation of code produced by Evan Manning for NASA/JPL. The original project was described in an article
