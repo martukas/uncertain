@@ -35,9 +35,12 @@ jobs:
             ./bin/full_demo > null
             make coverage
       - run:
-          name: Upload coverage
+          name: Upload codecov
           command: |
             bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+      - run:
+          name: Upload coveralls
+          command: |
             coveralls --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples
 
 workflows:
