@@ -41,7 +41,7 @@ jobs:
       - run:
           name: Upload coveralls
           command: |
-            coveralls --root $(pwd) --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples --verbose
+            coveralls --root $(pwd) --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples -e tests
 
 workflows:
   commit:
