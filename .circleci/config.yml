@@ -38,10 +38,12 @@ jobs:
           name: Upload codecov
           command: |
             bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+
       - run:
           name: Upload coveralls
           command: |
-            coveralls -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples -e tests
+            echo -e "service_name: circle-ci\n" > .coveralls.yml \
+            && TRAVIS_JOB_ID="#${CIRCLE_BUILD_NUM}" coveralls -r . -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples -e tests
 
 workflows:
   commit:
