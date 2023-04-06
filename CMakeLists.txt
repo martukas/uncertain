@@ -61,7 +61,6 @@ include(BuildInfo)
 #=============================================================================
 # compiler and library configuration
 #=============================================================================
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(CompilerConfig)
 
 add_subdirectory(source)
