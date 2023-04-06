@@ -93,7 +93,7 @@ install_linux() {
 }
 
 install_pip() {
-#  pip3 install -U pip
+  pip3 install -U pip
   pip3 install install conan==$CONAN_VERSION
   pip3 install install gcovr==$GCOVR_VERSION
   pip3 install install codecov cpp-coveralls clang-html
