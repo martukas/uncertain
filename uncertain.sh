@@ -90,10 +90,10 @@ create_clean_directory() {
 install_linux() {
   sudo apt-get update
   sudo apt-get install -y cmake python3-pip python3-setuptools clang-tidy cppcheck lcov
-  sudo pip3 install -U pip
 }
 
 install_pip() {
+  pip3 install -U pip
   pip3 install install conan==$CONAN_VERSION
   pip3 install install gcovr==$GCOVR_VERSION
   pip3 install install codecov cpp-coveralls clang-html
@@ -200,7 +200,7 @@ upload_codecov() {
 upload_coveralls() {
   echo "Uploading coverage reports to Coveralls"
 
-  coveralls -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' \
+  cpp-coveralls -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' \
     -r . \
     -E ".*gtest.*" -E ".*CMakeFiles.*" \
     -e build/lib -e build/tests -e build/examples -e tests -e examples
@@ -316,6 +316,7 @@ elif [ "$1" == "cov" ]; then
   ensure_not_root
   generate_coverage_reports
   if [ "$2" == "--upload" ]; then
+    source "${HOME}/.profile"
     upload_coveralls
     upload_codecov
   else
