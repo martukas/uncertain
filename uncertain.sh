@@ -236,7 +236,7 @@ upload_coveralls() {
 
 upload_codacy() {
   echo "Uploading coverage reports to Codacy"
-  bash <(curl -Ls https://coverage.codacy.com/get.sh)
+  bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r ./coverage-reports/coverage.info
 }
 
 ########
