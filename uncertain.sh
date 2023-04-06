@@ -2,7 +2,7 @@
 
 # \todo: keep CONAN_VERSION updated, test thoroughly whenever you do, leave this "todo" here
 CONAN_VERSION=1.59
-GCOVR_VERSION=3.4
+GCOVR_VERSION=6.0
 COVERAGE_INPUT_DIR=build
 COVERAGE_OUTPUT_DIR=coverage-reports
 STATIC_CHECKS_DIR=static-checks
@@ -110,6 +110,8 @@ configure_conan() {
 }
 
 run_cppcheck() {
+  echo "Running cppcheck..."
+
   if [ "$1" == "html" ]; then
     CPPCHECK_OUTPUT_DIR=${STATIC_CHECKS_DIR}/cppcheck
     create_clean_directory ${CPPCHECK_OUTPUT_DIR}
@@ -135,6 +137,7 @@ run_cppcheck() {
 }
 
 run_clang_tidy() {
+  echo "Running clang-tidy..."
   j_opt=$2
 
   CLANG_TIDY_EXEC="run-clang-tidy"
@@ -150,7 +153,7 @@ run_clang_tidy() {
 
   files=$(find . -regextype posix-extended -regex '.*\.(cpp|hpp|h|tpp)' -not -path "*build*")
 
-  echo "Will run $CLANG_TIDY_EXEC $j_opt with version=${CLANG_TIDY_VERSION}"
+  echo "Using $CLANG_TIDY_EXEC $j_opt with version=${CLANG_TIDY_VERSION}"
   echo -e "Will analyze the following files:\n${files}"
 
   $CLANG_TIDY_EXEC -quiet ${j_opt} -p build ${files} \
