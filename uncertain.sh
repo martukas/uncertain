@@ -89,7 +89,7 @@ create_clean_directory() {
 
 install_linux() {
   sudo apt-get update
-  sudo apt-get install -y cmake python3-pip python3-setuptools clang-tidy cppcheck
+  sudo apt-get install -y cmake python3-pip python3-setuptools clang-tidy cppcheck lcov
   sudo pip3 install -U pip
 }
 
