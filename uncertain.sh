@@ -345,22 +345,31 @@ elif [ "$1" == "cov" ]; then
 ############
 # COVERITY #
 ############
-
 elif [ "$1" == "coverity" ]; then
   ensure_not_root
   create_clean_directory build
   pushd build
   cmake ..
+
   # assumes cov-build has been downloaded and installed to system (or to path) from
   # https://scan.coverity.com/download?tab=cxx
   cov-build --dir cov-int make everything
   tar caf myproject.bz2 cov-int
-  curl --form token=${COVERITY_TOKEN} \
-    --form email=${COVERITY_EMAIL} \
-    --form file=@./myproject.bz2 \
-    --form version="issue_6_test" \
-    --form description="Uncertain lib first test" \
-    https://scan.coverity.com/builds?project=martukas%2Funcertain
+
+  GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+  GIT_SHORT_SHA="$(git rev-parse --short HEAD)"
+  VERSION_NAME="${GIT_BRANCH}-${GIT_SHORT_SHA}"
+
+  if [ "$2" == "--yes" ]; then
+    echo "Actually uploading coverity scan data. Watch that quota!"
+    curl \
+      --form token=${COVERITY_TOKEN} --form email=${COVERITY_EMAIL} --form file=@./myproject.bz2 \
+      --form version="${VERSION_NAME}" --form description="Uncertain lib" \
+      https://scan.coverity.com/builds?project=martukas%2Funcertain
+  else
+    echo "Dry run only. Would upload to: ${VERSION_NAME}"
+  fi
+
   popd
   exit $SUCCESS
 
