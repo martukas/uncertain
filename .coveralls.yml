@@ -1,5 +1,1 @@
 service_name: circle-ci
-service_job_id: $CIRCLE_BUILD_NUM
-service_build_url: $CIRCLE_BUILD_URL
-service_branch: $CIRCLE_BRANCH
-service_pull_request: $CIRCLE_PULL_REQUEST
