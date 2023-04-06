@@ -47,7 +47,8 @@ EOF
 }
 
 ensure_not_root() {
-  if [ "$EUID" -eq 0 ] && [ -z "$FORCED_ROOT" ]; then
+  echo "FORCED_ROOT = ${FORCED_ROOT}"
+  if [ "$EUID" -eq 0 ] && [ -z "${FORCED_ROOT}" ]; then
     echo "Please do not run with root privileges!"
     exit $FAILURE
   fi
