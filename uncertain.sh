@@ -317,8 +317,8 @@ elif [ "$1" == "cov" ]; then
   generate_coverage_reports
   if [ "$2" == "--upload" ]; then
     source "${HOME}/.profile"
-    upload_coveralls
     upload_codecov
+#    upload_coveralls
   else
     view_coverage
   fi
