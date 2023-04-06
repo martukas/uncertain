@@ -197,16 +197,11 @@ view_coverage() {
 
 upload_codecov() {
   echo "Uploading coverage reports to Codecov"
-
-  curl -Os https://uploader.codecov.io/latest/linux/codecov
-  chmod +x codecov
-  ./codecov
-  rm codecov
+  bash <(curl -s https://uploader.codecov.io/latest/linux/codecov)
 }
 
 upload_coveralls() {
   echo "Uploading coverage reports to Coveralls"
-
   cpp-coveralls -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' \
     -r . \
     -E ".*gtest.*" -E ".*CMakeFiles.*" \
