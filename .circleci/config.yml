@@ -10,7 +10,8 @@ jobs:
           name: Install dependencies
           command: |
             sudo rm -rf /var/lib/apt/lists/*
-            FORCED_ROOT=1 sudo -H ./uncertain.sh install
+            sudo export FORCED_ROOT=1
+            sudo -H ./uncertain.sh install
       - run:
           name: CMake
           command: |
