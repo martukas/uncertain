@@ -234,6 +234,11 @@ upload_coveralls() {
     -e build/lib -e build/tests -e build/examples -e tests -e examples
 }
 
+upload_codacy() {
+  echo "Uploading coverage reports to Codacy"
+  bash <(curl -Ls https://coverage.codacy.com/get.sh)
+}
+
 ########
 # HELP #
 ########
@@ -351,6 +356,7 @@ elif [ "$1" == "cov" ]; then
   generate_coverage_reports
   if [ "$2" == "--upload" ]; then
     source "${HOME}/.profile"
+    upload_codacy
     upload_codecov
     upload_coveralls
   else
