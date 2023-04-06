@@ -34,6 +34,12 @@ case "$OSTYPE" in
     ;;
 esac
 
+# For private tokens stored locally
+if [ -f .env ]; then
+    source .env
+fi
+
+
 ####################
 # HELPER FUNCTIONS #
 ####################
@@ -298,8 +304,6 @@ elif [ "$1" == "check" ]; then
     run_cppcheck
   fi
 
-
-
 ########
 # TEST #
 ########
@@ -323,7 +327,7 @@ elif [ "$1" == "test" ]; then
   exit $SUCCESS
 
 ############
-# Coverage #
+# COVERAGE #
 ############
 
 elif [ "$1" == "cov" ]; then
@@ -336,6 +340,28 @@ elif [ "$1" == "cov" ]; then
   else
     view_coverage
   fi
+  exit $SUCCESS
+
+############
+# COVERITY #
+############
+
+elif [ "$1" == "coverity" ]; then
+  ensure_not_root
+  create_clean_directory build
+  pushd build
+  cmake ..
+  # assumes cov-build has been downloaded and installed to system (or to path) from
+  # https://scan.coverity.com/download?tab=cxx
+  cov-build --dir cov-int make everything
+  tar caf myproject.bz2 cov-int
+  curl --form token=${COVERITY_TOKEN} \
+    --form email=${COVERITY_EMAIL} \
+    --form file=@./myproject.bz2 \
+    --form version="issue_6_test" \
+    --form description="Uncertain lib first test" \
+    https://scan.coverity.com/builds?project=martukas%2Funcertain
+  popd
   exit $SUCCESS
 
 ################

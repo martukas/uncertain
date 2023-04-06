@@ -8,6 +8,7 @@ codecov
 *.user
 *.log
 !.gitignore
+.env
 
 #IDE
 CMakeSettings.json
