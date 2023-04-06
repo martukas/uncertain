@@ -88,12 +88,12 @@ create_clean_directory() {
 }
 
 install_linux() {
-#  sudo apt-get update
+  sudo apt-get update
   sudo apt-get install -y cmake python3-pip python3-setuptools clang-tidy cppcheck lcov
 }
 
 install_pip() {
-  pip3 install -U pip
+#  pip3 install -U pip
   pip3 install install conan==$CONAN_VERSION
   pip3 install install gcovr==$GCOVR_VERSION
   pip3 install install codecov cpp-coveralls clang-html

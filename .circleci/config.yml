@@ -35,8 +35,7 @@ jobs:
           name: Upload coveralls
           command: |
             echo -e "service_name: circle-ci\n" > .coveralls.yml
-            TRAVIS_JOB_ID="#${CIRCLE_BUILD_NUM}"
-            coveralls -r . -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples -e tests -e examples
+            TRAVIS_JOB_ID="#${CIRCLE_BUILD_NUM}" cpp-coveralls -r . -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' -E ".*gtest.*" -E ".*CMakeFiles.*" -e build/lib -e build/tests -e build/examples -e tests -e examples
 
 workflows:
   commit:
