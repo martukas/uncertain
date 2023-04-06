@@ -17,3 +17,8 @@ add_executable(full_demo
 target_link_libraries(full_demo
   PRIVATE uncertain
   )
+
+add_custom_target(examples DEPENDS
+  ms_demo
+  full_demo
+  )

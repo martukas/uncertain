@@ -1,5 +1,8 @@
 /build
 /install
+/coverage-reports
+/static-checks
+codecov
 *.app
 *.desktop
 *.user
