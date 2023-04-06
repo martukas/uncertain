@@ -333,7 +333,7 @@ elif [ "$1" == "cov" ]; then
   if [ "$2" == "--upload" ]; then
     source "${HOME}/.profile"
     upload_codecov
-#    upload_coveralls
+    upload_coveralls
   else
     view_coverage
   fi
