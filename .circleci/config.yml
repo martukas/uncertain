@@ -9,13 +9,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo rm -rf /var/lib/apt/lists/*
-            sudo apt-get update
-            sudo apt-get install python3-pip python3-setuptools
-            sudo -H pip3 install conan==1.59
-            sudo -H pip3 install codecov cpp-coveralls gcovr==3.4 
-            conan profile new --detect default
-            conan profile update settings.compiler.libcxx=libstdc++11 default
+            export FORCED_ROOT=1
+            ./uncertain.sh install
       - run:
           name: CMake
           command: |
@@ -26,14 +21,11 @@ jobs:
           name: Build
           command: |
             cd build
-            make
+            make everything
       - run:
-          name: Run
+          name: Run tests and demos
           command: |
-            cd build
-            ./bin/ms_demo > null
-            ./bin/full_demo > null
-            make coverage
+            ./uncertain.sh test
       - run:
           name: Upload codecov
           command: |

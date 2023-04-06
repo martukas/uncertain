@@ -1,5 +1,5 @@
 #include <uncertain/double_ms.hpp>
-#include "gtest_print.hpp"
+#include "test_lib/gtest_print.hpp"
 
 class UDoubleMSTest : public TestBase
 {

@@ -1,6 +1,6 @@
 #include <uncertain/double_ensemble.hpp>
 
-#include "gtest_print.hpp"
+#include "test_lib/gtest_print.hpp"
 
 static constexpr size_t ens_a_size = 128u;
 static constexpr size_t ens_b_size = 1024u;

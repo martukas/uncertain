@@ -1,5 +1,7 @@
 /build
 /install
+/coverage_reports
+/static-checks
 *.app
 *.desktop
 *.user

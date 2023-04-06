@@ -2,7 +2,8 @@
 #include <uncertain/simple_array.hpp>
 #include <uncertain/scaled_array.hpp>
 
-#include "gtest_print.hpp"
+#include "test_lib/gtest_print.hpp"
+
 
 namespace uncertain
 {

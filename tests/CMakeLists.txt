@@ -11,14 +11,15 @@ set(test_sources
   ${dir}/main.cpp
   ${dir}/functions.cpp
   ${dir}/double_ms.cpp
-#  ${dir}/double_msc.cpp
-#  ${dir}/double_ct.cpp
-#  ${dir}/double_ensemble.cpp
+  #  ${dir}/double_msc.cpp
+  #  ${dir}/double_ct.cpp
+  #  ${dir}/double_ensemble.cpp
   )
 
 set(test_headers
-    ${dir}/gtest_print.hpp
-    )
+  ${dir}/test_lib/gtest_print.hpp
+  ${dir}/test_lib/color_bash.hpp
+  )
 add_executable(unit_tests
   EXCLUDE_FROM_ALL
   ${test_sources}
@@ -26,11 +27,13 @@ add_executable(unit_tests
 add_dependencies(unit_tests uncertain)
 target_include_directories(unit_tests
   PRIVATE ${GTEST_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/source
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+  PRIVATE ${PROJECT_SOURCE_DIR}/source
   )
 target_link_libraries(unit_tests
   PRIVATE uncertain
-  PRIVATE ${GTEST_LIBRARIES}
+  PRIVATE ${GTest_LIBRARIES}
+  PRIVATE ${CMAKE_THREAD_LIBS_INIT}
   PRIVATE ${COVERAGE_LIBRARIES}
   )
 enable_coverage(unit_tests)
