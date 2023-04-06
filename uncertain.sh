@@ -2,7 +2,7 @@
 
 # \todo: keep CONAN_VERSION updated, test thoroughly whenever you do, leave this "todo" here
 CONAN_VERSION=1.59
-GCOVR_VERSION=6.0
+GCOVR_VERSION=3.4
 COVERAGE_INPUT_DIR=build
 COVERAGE_OUTPUT_DIR=coverage-reports
 STATIC_CHECKS_DIR=static-checks
@@ -88,7 +88,7 @@ create_clean_directory() {
 }
 
 install_linux() {
-  sudo apt-get update
+#  sudo apt-get update
   sudo apt-get install -y cmake python3-pip python3-setuptools clang-tidy cppcheck lcov
 }
 
