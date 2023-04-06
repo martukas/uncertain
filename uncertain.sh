@@ -47,10 +47,13 @@ EOF
 }
 
 ensure_not_root() {
-  echo "FORCED_ROOT = ${FORCED_ROOT}"
-  if [ "$EUID" -eq 0 ] && [ -z "${FORCED_ROOT}" ]; then
-    echo "Please do not run with root privileges!"
-    exit $FAILURE
+  if [ "$EUID" -eq 0 ]; then
+    if [ -z "${FORCED_ROOT}" ]; then
+      echo "Please do not run with root privileges!"
+      exit $FAILURE
+    else
+      echo "---=== FORCED_ROOT override ===---"
+    fi
   fi
 }
 
@@ -98,6 +101,11 @@ install_pip() {
   pip3 install install conan==$CONAN_VERSION
   pip3 install install gcovr==$GCOVR_VERSION
   pip3 install install codecov cpp-coveralls clang-html
+  conan profile new --detect default
+  conan profile update settings.compiler.libcxx=libstdc++11 default
+}
+
+configure_conan() {
   source "${HOME}/.profile"
   conan profile new --detect default
   conan profile update settings.compiler.libcxx=libstdc++11 default
@@ -231,6 +239,14 @@ elif [ "$1" == "install" ]; then
       exit $FAILURE
       ;;
   esac
+
+#############
+# CONFIGURE #
+#############
+elif [ "$1" == "install" ]; then
+  ensure_not_root
+  configure_conan
+  exit $SUCCESS
 
 #########
 # CLEAN #
