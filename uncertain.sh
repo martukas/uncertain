@@ -2,9 +2,9 @@
 
 # \todo: keep CONAN_VERSION updated, test thoroughly whenever you do, leave this "todo" here
 CONAN_VERSION=1.59
-GCOVR_VERSION=3.4
+GCOVR_VERSION=6.0
 COVERAGE_INPUT_DIR=build
-COVERAGE_OUTPUT_DIR=coverage_reports
+COVERAGE_OUTPUT_DIR=coverage-reports
 STATIC_CHECKS_DIR=static-checks
 
 # Fail if any command fails
@@ -188,13 +188,22 @@ view_coverage() {
   python -m webbrowser "${COVERAGE_OUTPUT_DIR}/index.html"
 }
 
-upload_coverage_reports() {
+upload_codecov() {
   echo "Uploading coverage reports to Codecov"
 
   curl -Os https://uploader.codecov.io/latest/linux/codecov
   chmod +x codecov
   ./codecov
   rm codecov
+}
+
+upload_coveralls() {
+  echo "Uploading coverage reports to Coveralls"
+
+  coveralls -t $COVERALLS_REPO_TOKEN --build-root build --gcov-options '\-lp' \
+    -r . \
+    -E ".*gtest.*" -E ".*CMakeFiles.*" \
+    -e build/lib -e build/tests -e build/examples -e tests -e examples
 }
 
 ########
@@ -307,7 +316,8 @@ elif [ "$1" == "cov" ]; then
   ensure_not_root
   generate_coverage_reports
   if [ "$2" == "--upload" ]; then
-    upload_coverage_reports
+    upload_coveralls
+    upload_codecov
   else
     view_coverage
   fi
