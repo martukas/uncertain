@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build-run:
+  run-tests:
     machine:
       image: ubuntu-2204:current
     steps:
@@ -14,17 +14,6 @@ jobs:
             sudo -E -H ./uncertain.sh install
             ./uncertain.sh configure
       - run:
-          name: CMake
-          command: |
-            mkdir build
-            cd build
-            cmake -DCOV=1 ..
-      - run:
-          name: Build
-          command: |
-            cd build
-            make everything
-      - run:
           name: Run tests and demos
           command: |
             ./uncertain.sh test
@@ -34,7 +23,29 @@ jobs:
             export TRAVIS_JOB_ID="#${CIRCLE_BUILD_NUM}"
             ./uncertain.sh cov --upload
 
+  static-checks:
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            sudo rm -rf /var/lib/apt/lists/*
+            export FORCED_ROOT=1
+            sudo -E -H ./uncertain.sh install
+            ./uncertain.sh configure
+      - run:
+          name: Build
+          command: |
+            ./uncertain.sh build
+      - run:
+          name: Perform static checks
+          command: |
+            ./uncertain.sh check
+
 workflows:
   commit:
     jobs:
-      - build-run
+      - run-tests
+      - static-checks

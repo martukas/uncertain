@@ -175,11 +175,9 @@ generate_coverage_reports() {
 
   lcov ${QUIET} --remove "$COVERAGE_OUTPUT_DIR/coverage.info" \
        --output-file "$COVERAGE_OUTPUT_DIR/coverage_trimmed.info" \
+       "/usr/include*" \
        "*/tests/*" \
-       "*gtest*" \
-       "*spdlog*" \
-       "*fmt*" \
-       "/usr/include*"
+       "*gtest*"
 
   rm "$COVERAGE_OUTPUT_DIR/coverage.info"
   mv "$COVERAGE_OUTPUT_DIR/coverage_trimmed.info" "$COVERAGE_OUTPUT_DIR/coverage.info"
