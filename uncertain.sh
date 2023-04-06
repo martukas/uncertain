@@ -197,7 +197,10 @@ view_coverage() {
 
 upload_codecov() {
   echo "Uploading coverage reports to Codecov"
-  bash <(curl -s https://uploader.codecov.io/latest/linux/codecov)
+  curl -Os https://uploader.codecov.io/latest/linux/codecov
+  chmod +x codecov
+  ./codecov
+  rm codecov
 }
 
 upload_coveralls() {
