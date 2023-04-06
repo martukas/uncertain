@@ -46,9 +46,25 @@ fi
 
 print_help() {
     cat <<EOF
+Uncertain library build & test utilities.
 
 The following options are available:
-
+  install     One-time installation of build toolchain and dependencies
+  config      One-time configuration of conan remotes
+  clean       Clean build directory
+  build       Build tests and examples, options:
+      [--debug]      - what it says (default=release)
+      [-j]           - parallel build (auto select max-1 cores)
+      [--no-checks]  - build without exporting symbols for static checks
+  check       Run static checks - cppcheck and clang-tidy, options:
+      [--html]       - run silent, but generate html reports, and open them in browser
+  test        Run unit tests and demos, options:
+      [-j]           - parallel build (auto select max-1 cores)
+  cov          Generate code coverage reports
+      [--upload]     - upload reports to codecov and coveralls
+  coverity     Generate coverity static analysis and package for upload
+      [--yes]        - actually upload it, eating into your quota
+  help/-h     Display this dialog
 EOF
 }
 
