@@ -101,8 +101,6 @@ install_pip() {
   pip3 install install conan==$CONAN_VERSION
   pip3 install install gcovr==$GCOVR_VERSION
   pip3 install install codecov cpp-coveralls clang-html
-  conan profile new --detect default
-  conan profile update settings.compiler.libcxx=libstdc++11 default
 }
 
 configure_conan() {
@@ -112,8 +110,8 @@ configure_conan() {
 }
 
 run_cppcheck() {
-  CPPCHECK_OUTPUT_DIR=${STATIC_CHECKS_DIR}/cppcheck
   if [ "$1" == "html" ]; then
+    CPPCHECK_OUTPUT_DIR=${STATIC_CHECKS_DIR}/cppcheck
     create_clean_directory ${CPPCHECK_OUTPUT_DIR}
     xml_opts="--xml --output-file=${CPPCHECK_OUTPUT_DIR}/report.xml"
   fi
@@ -243,7 +241,7 @@ elif [ "$1" == "install" ]; then
 #############
 # CONFIGURE #
 #############
-elif [ "$1" == "install" ]; then
+elif [ "$1" == "configure" ]; then
   ensure_not_root
   configure_conan
   exit $SUCCESS
