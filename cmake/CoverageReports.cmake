@@ -16,7 +16,8 @@
 #       output_path -- where reports should be written to
 #
 #   3. when building, invoke cmake with -DCOV=1 option
-#
+
+# gersemi: off
 
 option(COV "Enable code coverage reporting for unit tests (if possible)." OFF)
 
@@ -103,3 +104,5 @@ function(create_coverage_targets target_base_name run_target bin_dir source_dir 
     endif ()
   endif ()
 endfunction()
+
+# gersemi: on

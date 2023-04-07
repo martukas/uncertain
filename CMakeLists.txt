@@ -1,8 +1,5 @@
-cmake_minimum_required(VERSION 3.7.0)
-project(uncertain
-    LANGUAGES CXX C
-    VERSION 0.1.0
-    )
+cmake_minimum_required(VERSION 3.10.0)
+project(uncertain LANGUAGES CXX C VERSION 0.1.0)
 
 #=============================================================================
 # Augment CMake with our custom scripts
@@ -20,7 +17,7 @@ include(EnsureBuildType)
 #=============================================================================
 # Conan
 #=============================================================================
-
+# gersemi: off
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
   file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
@@ -47,7 +44,7 @@ elseif(${CONAN} MATCHES "MANUAL")
 elseif(NOT ${CONAN} MATCHES "DISABLE")
   message(FATAL_ERROR "Unrecognised option for CONAN (${CONAN}), use AUTO, MANUAL or DISABLE")
 endif()
-
+# gersemi: on
 #=============================================================================
 # General configuration
 #=============================================================================
@@ -80,9 +77,4 @@ find_package(GTest REQUIRED)
 enable_testing()
 add_subdirectory(tests)
 
-add_custom_target(everything DEPENDS
-  uncertain
-  unit_tests
-  examples
-  )
-
+add_custom_target(everything DEPENDS uncertain unit_tests examples)

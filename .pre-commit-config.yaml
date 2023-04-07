@@ -1,0 +1,36 @@
+repos:
+- repo: https://github.com/RespiraWorks/pre-commit-hooks
+  rev: 811bd8a6bca330f563c08ce52576c0bdf7d03693
+  hooks:
+  - id: clang-format-whole-file
+    name: clang-format C++
+    types: [c++]
+  - id: clang-format-whole-file
+    name: clang-format C
+    types: [c]
+    exclude_types: [c++]
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: check-yaml
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.5.1
+  hooks:
+    - id: remove-crlf
+
+- repo: local
+  hooks:
+    - id: c-file-naming
+      name: C++ sources and headers must be named in snake case (like_this)
+      entry: C++ sources and headers must be named in snake case (like_this)
+      language: fail
+      files: '[A-Z-].*\.(h|cpp|c|py)$'
+
+- repo: https://github.com/BlankSpruce/gersemi
+  rev: 0.8.3
+  hooks:
+    - id: gersemi

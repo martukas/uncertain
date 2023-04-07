@@ -2,29 +2,15 @@
 
 #pragma once
 
-#include <string>
 #include <sstream>
+#include <string>
 
-enum BashColor
-{
-  NONE = 0,
-  BLACK, RED, GREEN,
-  YELLOW, BLUE, MAGENTA,
-  CYAN, WHITE
-};
+enum BashColor { NONE = 0, BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 
-enum BashSpecial
-{
-  RESET = 0,
-  BRIGHT, DIM, UNDER,
-  BLINK, REVERSE, HIDDEN
-};
+enum BashSpecial { RESET = 0, BRIGHT, DIM, UNDER, BLINK, REVERSE, HIDDEN };
 
-
-inline std::string col(BashColor foreground = NONE,
-                       BashColor background = NONE,
-                       BashSpecial special = RESET)
-{
+inline std::string col(BashColor foreground = NONE, BashColor background = NONE,
+                       BashSpecial special = RESET) {
   std::stringstream s;
 
 #ifdef NOCOLORBASH
@@ -33,25 +19,19 @@ inline std::string col(BashColor foreground = NONE,
 
   s << "\033[";
 
-  if (!foreground && !background && !special)
-    s << "0"; // reset colors if no params
+  if (!foreground && !background && !special) s << "0";  // reset colors if no params
 
-  if (special)
-  {
+  if (special) {
     s << special << "m";
-    if (foreground || background)
-      s << "\033[";
+    if (foreground || background) s << "\033[";
   }
 
-  if (foreground)
-  {
+  if (foreground) {
     s << 29 + foreground;
-    if (background)
-      s << ";";
+    if (background) s << ";";
   }
 
-  if (background)
-    s << 39 + background;
+  if (background) s << 39 + background;
 
   s << "m";
 
