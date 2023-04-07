@@ -10,12 +10,6 @@ repos:
     types: [c]
     exclude_types: [c++]
 
-- repo: https://github.com/psf/black
-  rev: 23.3.0
-  hooks:
-  - id: black
-    language_version: python3.10.7
-
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
   hooks:
@@ -36,12 +30,12 @@ repos:
       language: fail
       files: '[A-Z-].*\.(h|cpp|c|py)$'
 
-- repo: https://github.com/cmake-lint/cmake-lint
-  rev: 1.4.2
-  hooks:
-    - id: cmakelint
-
-#- repo: https://github.com/BlankSpruce/gersemi
-#  rev: 0.8.3
+#- repo: https://github.com/cmake-lint/cmake-lint
+#  rev: 1.4.2
 #  hooks:
-#    - id: gersemi
+#    - id: cmakelint
+
+- repo: https://github.com/BlankSpruce/gersemi
+  rev: 0.8.3
+  hooks:
+    - id: gersemi
