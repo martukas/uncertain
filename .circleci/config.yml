@@ -44,8 +44,27 @@ jobs:
           command: |
             ./uncertain.sh check
 
+  pre-commit-checks:
+    docker:
+      - image: cimg/python:3.10.7
+    steps:
+      - checkout
+      - run:
+          name: Install pre-commit
+          command: |
+            pip install pre-commit
+      - run:
+          name: Run pre-commit hooks
+          command: |
+            merge_base=$(git merge-base -a HEAD origin/master)
+            changed_files=$(git diff --name-only $merge_base...HEAD)
+            echo "Changed files since branched from origin/master: " $changed_files
+            git reset --soft $merge_base
+            pre-commit run --show-diff-on-failure --files $changed_files
+
 workflows:
-  commit:
+  circleci-tests:
     jobs:
       - run-tests
       - static-checks
+      - pre-commit-checks
