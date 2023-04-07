@@ -30,11 +30,6 @@ repos:
       language: fail
       files: '[A-Z-].*\.(h|cpp|c|py)$'
 
-#- repo: https://github.com/cmake-lint/cmake-lint
-#  rev: 1.4.2
-#  hooks:
-#    - id: cmakelint
-
 - repo: https://github.com/BlankSpruce/gersemi
   rev: 0.8.3
   hooks:

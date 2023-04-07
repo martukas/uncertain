@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.10.0)
 project(uncertain LANGUAGES CXX C VERSION 0.1.0)
 
 #=============================================================================
