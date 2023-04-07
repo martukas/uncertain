@@ -30,104 +30,75 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 // udouble.h: This file includes classes for propagation of uncertainties
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
-
 
 #pragma once
 
 #include <uncertain/functions.hpp>
 #include <vector>
 
-namespace uncertain
-{
+namespace uncertain {
 
 // Specialized array class has only those members needed to be an array
 // of uncertainty elements used as the template parameter in UDoubleCT<>.
 // This is the simplest possible implementation.
-class SimpleArray
-{
+class SimpleArray {
  private:
   std::vector<double> elements;
 
  public:
   SimpleArray() = default;
 
-  SimpleArray(const SimpleArray& a) = default;
+  SimpleArray(const SimpleArray &a) = default;
 
   ~SimpleArray() = default;
 
-  SimpleArray operator-() const
-  {
+  SimpleArray operator-() const {
     SimpleArray retval = *this;
-    for (auto& e : retval.elements)
-      e = -e;
+    for (auto &e : retval.elements) e = -e;
     return retval;
   }
 
-  SimpleArray& operator+=(const SimpleArray& b)
-  {
-    if (elements.size() < b.elements.size())
-      elements.resize(b.elements.size(), 0.0);
-    for (size_t i = 0; i < b.elements.size(); i++)
-      elements[i] += b.elements[i];
+  SimpleArray &operator+=(const SimpleArray &b) {
+    if (elements.size() < b.elements.size()) elements.resize(b.elements.size(), 0.0);
+    for (size_t i = 0; i < b.elements.size(); i++) elements[i] += b.elements[i];
     return *this;
   }
 
-  friend SimpleArray operator+(SimpleArray a, const SimpleArray& b)
-  {
-    return a += b;
-  }
+  friend SimpleArray operator+(SimpleArray a, const SimpleArray &b) { return a += b; }
 
-  SimpleArray& operator-=(const SimpleArray& b)
-  {
-    if (elements.size() < b.elements.size())
-      elements.resize(b.elements.size(), 0.0);
-    for (size_t i = 0; i < b.elements.size(); i++)
-      elements[i] -= b.elements[i];
+  SimpleArray &operator-=(const SimpleArray &b) {
+    if (elements.size() < b.elements.size()) elements.resize(b.elements.size(), 0.0);
+    for (size_t i = 0; i < b.elements.size(); i++) elements[i] -= b.elements[i];
     return *this;
   }
 
-  SimpleArray& operator*=(double b)
-  {
-    for (auto& e : elements)
-      e *= b;
+  SimpleArray &operator*=(double b) {
+    for (auto &e : elements) e *= b;
     return *this;
   }
 
-  friend SimpleArray operator*(SimpleArray a, double b)
-  {
-    return a *= b;
-  }
+  friend SimpleArray operator*(SimpleArray a, double b) { return a *= b; }
 
-  SimpleArray& operator/=(double b)
-  {
-    for (auto& e : elements)
-      e /= b;
+  SimpleArray &operator/=(double b) {
+    for (auto &e : elements) e /= b;
     return *this;
   }
 
-  double operator[](size_t subscript) const
-  {
-    return elements[subscript];
-  }
+  double operator[](size_t subscript) const { return elements[subscript]; }
 
-  void set_element(size_t idx, double value)
-  {
-    if (idx >= elements.size())
-      elements.resize(idx + 1, 0.0);
+  void set_element(size_t idx, double value) {
+    if (idx >= elements.size()) elements.resize(idx + 1, 0.0);
     elements[idx] = value;
   }
 
-  double norm() const
-  {
+  double norm() const {
     double tot = 0.0;
-    for (const auto& e : elements)
-      tot += sqr(e);
+    for (const auto &e : elements) tot += sqr(e);
     return std::sqrt(tot);
   }
 };
 
-}
+}  // namespace uncertain

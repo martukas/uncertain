@@ -30,33 +30,26 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 // udouble.h: This file includes classes for propagation of uncertainties
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
 
-
-#include <uncertain/functions.hpp>
 #include <iomanip>
+#include <uncertain/functions.hpp>
 
-namespace uncertain
-{
+namespace uncertain {
 
 // prints uncertainty to 2 digits and value to same precision
-void uncertain_print(double mean, double sigma, std::ostream& os)
-{
+void uncertain_print(double mean, double sigma, std::ostream &os) {
   auto original_precision = os.precision();
   auto original_format = os.flags(std::ios::showpoint);
 
   // std::cerr << "<" << mean << " +/- " << sigma << "> " << std::endl;
   int precision;
   // special cases for zero, NaN, and Infinities (positive & negative)
-  if ((sigma == 0.0) || (sigma != sigma) || (1.0 / sigma == 0.0))
-  {
+  if ((sigma == 0.0) || (sigma != sigma) || (1.0 / sigma == 0.0)) {
     precision = 0;
-  }
-  else
-  {
+  } else {
     // round sigma to 2 digits
     int sigma_digits = 1 - int(floor(log10(fabs(sigma))));
     double round_10_pow = pow(10.0, sigma_digits);
@@ -64,18 +57,14 @@ void uncertain_print(double mean, double sigma, std::ostream& os)
 
     // round mean to same # of digits
     mean = floor(mean * round_10_pow + 0.5) / round_10_pow;
-    if (mean == 0.0)
-    {
+    if (mean == 0.0) {
       if (sigma_digits > 0)
         precision = sigma_digits + 1;
       else
         precision = 1;
-    }
-    else
-    {
+    } else {
       precision = int(floor(log10(fabs(mean)))) + sigma_digits + 1;
-      if (precision < 1)
-      {
+      if (precision < 1) {
         mean = 0.0;
         if (sigma_digits > 0)
           precision = sigma_digits + 1;
@@ -84,39 +73,28 @@ void uncertain_print(double mean, double sigma, std::ostream& os)
       }
     }
   }
-  os << std::setprecision(precision)
-     << mean << " +/- "
-     << std::setprecision(2)
-     << sigma
+  os << std::setprecision(precision) << mean << " +/- " << std::setprecision(2) << sigma
      << std::setprecision(original_precision);
   os.flags(original_format);
 }
 
 // reads uncertainty as mean +/- sigma
-void uncertain_read(double& mean, double& sigma, std::istream& is)
-{
+void uncertain_read(double &mean, double &sigma, std::istream &is) {
   char plus, slash, minus;
   is >> mean >> plus >> slash >> minus >> sigma;
-  if ((plus != '+') || (slash != '/') || (minus != '-'))
-  {
+  if ((plus != '+') || (slash != '/') || (minus != '-')) {
     throw std::runtime_error("Error: illegal characters encountered in reading mean +/- sigma");
   }
 }
 
 // \todo include skewing of distribution
-void gauss_loss(double uncertainty, double disc_dist,
-                const discontinuity_type& disc_type,
-                std::string id_string,
-                std::string func_str,
-                double disc_thresh)
-{
+void gauss_loss(double uncertainty, double disc_dist, const discontinuity_type &disc_type,
+                std::string id_string, std::string func_str, double disc_thresh) {
   double scaled_disc_dist = fabs(disc_dist / uncertainty);
-  if ((scaled_disc_dist < disc_thresh) && (disc_type != discontinuity_type::none))
-  {
+  if ((scaled_disc_dist < disc_thresh) && (disc_type != discontinuity_type::none)) {
     auto original_precision = std::cerr.precision();
     std::cerr << std::setprecision(2);
-    std::cerr << func_str << "is " << scaled_disc_dist << " sigmas"
-              << id_string;
+    std::cerr << func_str << "is " << scaled_disc_dist << " sigmas" << id_string;
     if (disc_type == discontinuity_type::step)
       std::cerr << " from a step discontinuity" << std::endl;
     else if (disc_type == discontinuity_type::infinite_wrap)
@@ -129,10 +107,9 @@ void gauss_loss(double uncertainty, double disc_dist,
     else if (disc_type == discontinuity_type::undefined_beyond)
       std::cerr << " from a point beyond which it is undefined" << std::endl;
     else
-      std::cerr << " from unknown discontinuity "
-      << int(disc_type) << std::endl;
+      std::cerr << " from unknown discontinuity " << int(disc_type) << std::endl;
     std::cerr << std::setprecision(original_precision);
   }
 }
 
-}
+}  // namespace uncertain

@@ -30,77 +30,58 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
 // udouble.h: This file includes classes for propagation of uncertainties
 // and supporting classes and functions.
 // By Evan Manning (manning@alumni.caltech.edu).
 
-
 #pragma once
 
-#include <uncertain/functions.hpp>
 #include <sstream>
+#include <uncertain/functions.hpp>
 #include <vector>
 
-namespace uncertain
-{
+namespace uncertain {
 
 // A class for sources of uncertainties.
-class SourceSet
-{
+class SourceSet {
  private:
   size_t source_epoch{0};
   std::vector<std::string> source_names;
   std::string class_name;
+
  public:
-  SourceSet(const std::string& cname = {})
-      : class_name(cname)
-  {}
+  SourceSet(const std::string &cname = {}) : class_name(cname) {}
 
   // \todo reserve
 
-  size_t get_epoch() const
-  {
-    return source_epoch;
-  }
+  size_t get_epoch() const { return source_epoch; }
 
-  void check_epoch(size_t epoch) const
-  {
-    if (epoch != source_epoch)
-    {
-      throw std::runtime_error("Wrong epoch: "
-                                   + std::to_string(epoch) + " expected: "
-                                   + std::to_string(source_epoch)
-                                   + " in class " + class_name);
+  void check_epoch(size_t epoch) const {
+    if (epoch != source_epoch) {
+      throw std::runtime_error("Wrong epoch: " + std::to_string(epoch) + " expected: " +
+                               std::to_string(source_epoch) + " in class " + class_name);
     }
   }
 
-  void new_epoch()
-  {
+  void new_epoch() {
     source_names.clear();
     source_epoch++;
   }
 
-  size_t get_new_source(std::string name)
-  {
+  size_t get_new_source(std::string name) {
     source_names.push_back(name);
     return source_names.size() - 1;
   }
 
-  size_t get_num_sources() const
-  {
-    return source_names.size();
-  }
+  size_t get_num_sources() const { return source_names.size(); }
 
-  std::string get_source_name(size_t i) const
-  {
-    if (i >= source_names.size())
-    {
-      throw std::runtime_error("get_source_name called with illegal source number: "
-                                   + std::to_string(i));
+  std::string get_source_name(size_t i) const {
+    if (i >= source_names.size()) {
+      throw std::runtime_error("get_source_name called with illegal source number: " +
+                               std::to_string(i));
     }
     return source_names[i];
   }
 };
 
-}
+}  // namespace uncertain

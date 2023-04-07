@@ -5,72 +5,61 @@
 static constexpr size_t ens_a_size = 128u;
 static constexpr size_t ens_b_size = 1024u;
 
-namespace uncertain
-{
+namespace uncertain {
 
 using EnsembleSmall = UDoubleEnsemble<ens_a_size>;
 using EnsembleLarge = UDoubleEnsemble<ens_b_size>;
 
-template<>
+template <>
 SourceSet EnsembleSmall::sources("Small Ensemble");
 
-template<>
+template <>
 SourceSet EnsembleLarge::sources("Large Ensemble");
 
-template<>
+template <>
 std::vector<std::vector<double>> EnsembleSmall::src_ensemble = {};
 
-template<>
+template <>
 std::vector<double> EnsembleSmall::gauss_ensemble = {};
 
-template<>
+template <>
 std::vector<std::vector<double>> EnsembleLarge::src_ensemble = {};
 
-template<>
+template <>
 std::vector<double> EnsembleLarge::gauss_ensemble = {};
 
-}
+}  // namespace uncertain
 
-class UDoubleEnsembleTest : public TestBase
-{
-  virtual void SetUp()
-  {
+class UDoubleEnsembleTest : public TestBase {
+  virtual void SetUp() {
     uncertain::EnsembleSmall::new_epoch();
     uncertain::EnsembleLarge::new_epoch();
   }
 
-  virtual void TearDown()
-  {
-
-  }
+  virtual void TearDown() {}
 };
 
-TEST_F(UDoubleEnsembleTest, ConstructSmall)
-{
+TEST_F(UDoubleEnsembleTest, ConstructSmall) {
   uncertain::EnsembleSmall ud(2.0, 1.0);
   EXPECT_DOUBLE_EQ(ud.mean(), 2.0);
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, SmallNegativeThrows)
-{
+TEST_F(UDoubleEnsembleTest, SmallNegativeThrows) {
   EXPECT_ANY_THROW(uncertain::EnsembleSmall(2.0, -1.0));
 }
 
-TEST_F(UDoubleEnsembleTest, ConstructLarge)
-{
+TEST_F(UDoubleEnsembleTest, ConstructLarge) {
   uncertain::EnsembleLarge ud(2.0, 1.0);
   EXPECT_DOUBLE_EQ(ud.mean(), 2.0);
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, LargeNegativeThrows)
-{
+TEST_F(UDoubleEnsembleTest, LargeNegativeThrows) {
   EXPECT_ANY_THROW(uncertain::EnsembleLarge(2.0, -1.0));
 }
 
-TEST_F(UDoubleEnsembleTest, Copy)
-{
+TEST_F(UDoubleEnsembleTest, Copy) {
   uncertain::EnsembleSmall ud(2.0, 1.0);
   EXPECT_DOUBLE_EQ(ud.mean(), 2.0);
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.0);
@@ -80,32 +69,28 @@ TEST_F(UDoubleEnsembleTest, Copy)
   EXPECT_DOUBLE_EQ(ud2.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, UnaryPlus)
-{
+TEST_F(UDoubleEnsembleTest, UnaryPlus) {
   uncertain::EnsembleSmall ud(2.0, 1.0);
   uncertain::EnsembleSmall ud2 = +ud;
   EXPECT_DOUBLE_EQ(ud2.mean(), 2.0);
   EXPECT_DOUBLE_EQ(ud2.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, UnaryNegateSmall)
-{
+TEST_F(UDoubleEnsembleTest, UnaryNegateSmall) {
   uncertain::EnsembleSmall ud(2.0, 1.0);
   uncertain::EnsembleSmall ud2 = -ud;
   EXPECT_DOUBLE_EQ(ud2.mean(), -2.0);
   EXPECT_DOUBLE_EQ(ud2.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, UnaryNegateLarge)
-{
+TEST_F(UDoubleEnsembleTest, UnaryNegateLarge) {
   uncertain::EnsembleLarge ud(2.0, 1.0);
   uncertain::EnsembleLarge ud2 = -ud;
   EXPECT_DOUBLE_EQ(ud2.mean(), -2.0);
   EXPECT_DOUBLE_EQ(ud2.deviation(), 1.0);
 }
 
-TEST_F(UDoubleEnsembleTest, PlusEquals)
-{
+TEST_F(UDoubleEnsembleTest, PlusEquals) {
   uncertain::EnsembleSmall ud(2.0, 1.0);
   uncertain::EnsembleSmall ud2(3.0, 0.5);
 
@@ -114,8 +99,7 @@ TEST_F(UDoubleEnsembleTest, PlusEquals)
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.1530961);
 }
 
-TEST_F(UDoubleEnsembleTest, PlusEqualsLarge)
-{
+TEST_F(UDoubleEnsembleTest, PlusEqualsLarge) {
   uncertain::EnsembleLarge ud(2.0, 3.0);
   uncertain::EnsembleLarge ud2(3.0, 4.0);
 
@@ -124,8 +108,7 @@ TEST_F(UDoubleEnsembleTest, PlusEqualsLarge)
   EXPECT_DOUBLE_EQ(ud.deviation(), 5.1418414);
 }
 
-TEST_F(UDoubleEnsembleTest, MinusEquals)
-{
+TEST_F(UDoubleEnsembleTest, MinusEquals) {
   uncertain::EnsembleSmall ud(3.0, 1.0);
   uncertain::EnsembleSmall ud2(1.0, 0.5);
 
@@ -134,8 +117,7 @@ TEST_F(UDoubleEnsembleTest, MinusEquals)
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.1260865);
 }
 
-TEST_F(UDoubleEnsembleTest, MinusEqualsLarge)
-{
+TEST_F(UDoubleEnsembleTest, MinusEqualsLarge) {
   uncertain::EnsembleLarge ud(3.0, 3.0);
   uncertain::EnsembleLarge ud2(2.0, 4.0);
 
@@ -144,8 +126,7 @@ TEST_F(UDoubleEnsembleTest, MinusEqualsLarge)
   EXPECT_DOUBLE_EQ(ud.deviation(), 5.1139555);
 }
 
-TEST_F(UDoubleEnsembleTest, DivEquals)
-{
+TEST_F(UDoubleEnsembleTest, DivEquals) {
   uncertain::EnsembleSmall ud(4.0, 2.0);
 
   ud /= uncertain::EnsembleSmall(2.0, 1.0);
@@ -153,16 +134,14 @@ TEST_F(UDoubleEnsembleTest, DivEquals)
   EXPECT_DOUBLE_EQ(ud.deviation(), 7.9007583);
 }
 
-TEST_F(UDoubleEnsembleTest, DivEqualsReciprocal)
-{
+TEST_F(UDoubleEnsembleTest, DivEqualsReciprocal) {
   auto ud = uncertain::EnsembleSmall(1.0, 0.0);
   ud /= uncertain::EnsembleSmall(2.0, 1.0);
   EXPECT_DOUBLE_EQ(ud.mean(), 0.63049471);
   EXPECT_DOUBLE_EQ(ud.deviation(), 1.8518502);
 }
 
-TEST_F(UDoubleEnsembleTest, DivEqualsLarge)
-{
+TEST_F(UDoubleEnsembleTest, DivEqualsLarge) {
   uncertain::EnsembleLarge ud(8.0, 6.0);
 
   ud /= uncertain::EnsembleLarge(2.0, 2.0);
@@ -170,8 +149,7 @@ TEST_F(UDoubleEnsembleTest, DivEqualsLarge)
   EXPECT_DOUBLE_EQ(ud.deviation(), 272.90494);
 }
 
-TEST_F(UDoubleEnsembleTest, DivEqualsLargeReciprocal)
-{
+TEST_F(UDoubleEnsembleTest, DivEqualsLargeReciprocal) {
   uncertain::EnsembleLarge ud(1.0, 0.0);
 
   ud /= uncertain::EnsembleLarge(2.0, 2.0);
@@ -179,8 +157,7 @@ TEST_F(UDoubleEnsembleTest, DivEqualsLargeReciprocal)
   EXPECT_DOUBLE_EQ(ud.deviation(), 18.990055);
 }
 
-TEST_F(UDoubleEnsembleTest, TimesEquals)
-{
+TEST_F(UDoubleEnsembleTest, TimesEquals) {
   uncertain::EnsembleSmall ud(1.0, 0.0);
 
   ud /= uncertain::EnsembleSmall(2.0, 1.0);
@@ -193,8 +170,7 @@ TEST_F(UDoubleEnsembleTest, TimesEquals)
   EXPECT_DOUBLE_EQ(ud2.deviation(), 2.0);
 }
 
-TEST_F(UDoubleEnsembleTest, TimesEqualsLarge)
-{
+TEST_F(UDoubleEnsembleTest, TimesEqualsLarge) {
   uncertain::EnsembleLarge ud(1.0, 0.0);
 
   ud /= uncertain::EnsembleLarge(2.0, 2.0);
@@ -205,19 +181,17 @@ TEST_F(UDoubleEnsembleTest, TimesEqualsLarge)
   ud2 /= ud;
   EXPECT_DOUBLE_EQ(ud2.mean(), 7.330265);
   EXPECT_DOUBLE_EQ(ud2.deviation(), 15.943852);
-//  EXPECT_DOUBLE_EQ(ud2.deviation(), 6.0);
+  //  EXPECT_DOUBLE_EQ(ud2.deviation(), 6.0);
 }
 
-TEST_F(UDoubleEnsembleTest, Ceiling)
-{
+TEST_F(UDoubleEnsembleTest, Ceiling) {
   uncertain::EnsembleLarge ud(2.5, 1.0);
   auto ud2 = ceil(ud);
   EXPECT_DOUBLE_EQ(ud2.mean(), 3.0);
   EXPECT_DOUBLE_EQ(ud2.deviation(), 1.0364453);
 }
 
-TEST_F(UDoubleEnsembleTest, SqrtSmall)
-{
+TEST_F(UDoubleEnsembleTest, SqrtSmall) {
   uncertain::EnsembleSmall ud(64.0, 1.0);
 
   auto ud2 = sqrt(ud);
@@ -225,8 +199,7 @@ TEST_F(UDoubleEnsembleTest, SqrtSmall)
   EXPECT_DOUBLE_EQ(ud2.deviation(), 0.062506683);
 }
 
-TEST_F(UDoubleEnsembleTest, SqrtLarge)
-{
+TEST_F(UDoubleEnsembleTest, SqrtLarge) {
   uncertain::EnsembleLarge ud(64.0, 2.0);
 
   auto ud2 = sqrt(ud);
@@ -234,8 +207,7 @@ TEST_F(UDoubleEnsembleTest, SqrtLarge)
   EXPECT_DOUBLE_EQ(ud2.deviation(), 0.12505354);
 }
 
-TEST_F(UDoubleEnsembleTest, PowSmall)
-{
+TEST_F(UDoubleEnsembleTest, PowSmall) {
   uncertain::EnsembleSmall ud(8.0, 1.0);
   uncertain::EnsembleSmall ud2(2.0, 0.1);
 
@@ -244,8 +216,7 @@ TEST_F(UDoubleEnsembleTest, PowSmall)
   EXPECT_DOUBLE_EQ(ud3.deviation(), 21.70063);
 }
 
-TEST_F(UDoubleEnsembleTest, PowLarge)
-{
+TEST_F(UDoubleEnsembleTest, PowLarge) {
   uncertain::EnsembleLarge ud(8.0, 1.0);
   uncertain::EnsembleLarge ud2(2.0, 0.1);
 
